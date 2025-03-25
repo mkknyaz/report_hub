@@ -1,0 +1,6 @@
+@Exadel.ReportHub.Host_HostAddress = http://localhost:5228
+
+GET {{Exadel.ReportHub.Host_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
