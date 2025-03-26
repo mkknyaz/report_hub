@@ -5,19 +5,19 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A8ECB1D2-3858-4B88-A148-DC4BFD9B4383}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.RA", "Exadel.ReportHub.RA\Exadel.ReportHub.RA.csproj", "{91F731B0-7337-4303-986D-B45A8AA0CE2F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.RA", "Exadel.ReportHub.RA\Exadel.ReportHub.RA.csproj", "{91F731B0-7337-4303-986D-B45A8AA0CE2F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{B6CC3523-FA57-4B5C-B890-44CFBD6AA3E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Handlers", "Exadel.ReportHub.Handlers\Exadel.ReportHub.Handlers.csproj", "{CC0BDD35-2D6B-4E9B-8337-DA70F67A4307}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.Handlers", "Exadel.ReportHub.Handlers\Exadel.ReportHub.Handlers.csproj", "{CC0BDD35-2D6B-4E9B-8337-DA70F67A4307}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Host", "Exadel.ReportHub.Host\Exadel.ReportHub.Host.csproj", "{04E6BA34-8595-4310-88F9-B25A12F7229D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.Host", "Exadel.ReportHub.Host\Exadel.ReportHub.Host.csproj", "{04E6BA34-8595-4310-88F9-B25A12F7229D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{6A4FE6FB-DDF4-44DB-96DF-52C8E08E42DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Tests", "Exadel.ReportHub.Tests\Exadel.ReportHub.Tests.csproj", "{33679034-4CBE-475C-9E63-F51078465729}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.Tests", "Exadel.ReportHub.Tests\Exadel.ReportHub.Tests.csproj", "{33679034-4CBE-475C-9E63-F51078465729}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Data", "Exadel.ReportHub.Data\Exadel.ReportHub.Data.csproj", "{D8AD2927-2246-4007-A75C-32591FE8CFBF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.Data", "Exadel.ReportHub.Data\Exadel.ReportHub.Data.csproj", "{D8AD2927-2246-4007-A75C-32591FE8CFBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,5 +54,8 @@ Global
 		{CC0BDD35-2D6B-4E9B-8337-DA70F67A4307} = {B6CC3523-FA57-4B5C-B890-44CFBD6AA3E1}
 		{33679034-4CBE-475C-9E63-F51078465729} = {6A4FE6FB-DDF4-44DB-96DF-52C8E08E42DE}
 		{D8AD2927-2246-4007-A75C-32591FE8CFBF} = {A8ECB1D2-3858-4B88-A148-DC4BFD9B4383}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3195911D-8F36-411D-B5B3-B1C727FA44D2}
 	EndGlobalSection
 EndGlobal
