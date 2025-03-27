@@ -7,7 +7,6 @@
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <DocumentationFile>ReportHub.XML</DocumentationFile>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445">
       <PrivateAssets>all</PrivateAssets>
