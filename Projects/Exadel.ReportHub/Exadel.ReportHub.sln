@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.Tests", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Exadel.ReportHub.Data", "Exadel.ReportHub.Data\Exadel.ReportHub.Data.csproj", "{D8AD2927-2246-4007-A75C-32591FE8CFBF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.SDK", "Exadel.ReportHub.SDK\Exadel.ReportHub.SDK.csproj", "{0DFE34E1-81B3-4DC7-9776-B080786E1A10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{D8AD2927-2246-4007-A75C-32591FE8CFBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8AD2927-2246-4007-A75C-32591FE8CFBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8AD2927-2246-4007-A75C-32591FE8CFBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DFE34E1-81B3-4DC7-9776-B080786E1A10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DFE34E1-81B3-4DC7-9776-B080786E1A10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DFE34E1-81B3-4DC7-9776-B080786E1A10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DFE34E1-81B3-4DC7-9776-B080786E1A10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{CC0BDD35-2D6B-4E9B-8337-DA70F67A4307} = {B6CC3523-FA57-4B5C-B890-44CFBD6AA3E1}
 		{33679034-4CBE-475C-9E63-F51078465729} = {6A4FE6FB-DDF4-44DB-96DF-52C8E08E42DE}
 		{D8AD2927-2246-4007-A75C-32591FE8CFBF} = {A8ECB1D2-3858-4B88-A148-DC4BFD9B4383}
+		{0DFE34E1-81B3-4DC7-9776-B080786E1A10} = {B6CC3523-FA57-4B5C-B890-44CFBD6AA3E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3195911D-8F36-411D-B5B3-B1C727FA44D2}
