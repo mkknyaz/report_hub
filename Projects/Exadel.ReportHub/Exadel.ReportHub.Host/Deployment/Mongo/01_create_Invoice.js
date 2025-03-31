@@ -1,7 +1,8 @@
 ﻿const scriptName = "01_create_Invoice";
 const version = NumberInt(1);
 
-if (db.MigrationHistory.findOne({ scriptName, version })) {
+
+if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
     quit();
 }
@@ -178,7 +179,7 @@ db.Invoice.insertMany([
 ]);
 
 db.MigrationHistory.insertOne({
-    SriptName: scriptName,
+    ScriptName: scriptName,
     Version: version,
     ScriptRunTime: new Date()
 });

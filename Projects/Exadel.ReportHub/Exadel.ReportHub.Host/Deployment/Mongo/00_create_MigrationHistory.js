@@ -1,5 +1,5 @@
 ﻿db.MigrationHistory.createIndex(
-    { scriptName: 1, version: 1 },
+    { ScriptName: 1, Version: 1 },
     {
         unique: true,
         background: true
