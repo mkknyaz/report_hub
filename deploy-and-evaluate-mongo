@@ -1,0 +1,33 @@
+name: Deploy Service and Evaluate Mongo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest  
+
+    env:
+       SOLUTION_NAME: Projects\Exadel.ReportHub\Exadel.ReportHub.sln
+       RENDER_REPO: report_hub
+       DEPLOY_HOOK: "https://api.render.com/deploy/srv-cvkhpahr0fns739rtghg?key=fx_zMRhRBs4"
+       DOCKERFILE_PATH: Projects/Exadel.ReportHub/Dockerfile
+       IMAGE_NAME: report-hub
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+        
+    - name: Build Docker Image
+      run: docker build -f ${{ env.DOCKERFILE_PATH }} . -t registry.render.com/${{ env.RENDER_REPO }}/${{ env.IMAGE_NAME }}:latest
+      
+    - name: Login to Render
+      run: docker login registry.render.com -u ${{ secrets.RENDER_USERNAME }} -p ${{ secrets.RENDER_TOKEN }}
+      
+    - name: Push Image to Render
+      run: docker push registry.render.com/${{ env.RENDER_REPO }}/${{ env.IMAGE_NAME }}:latest
+           
+    - name: Trigger Deploy Hook
+      run: curl -X POST "${{ env.DEPLOY_HOOK }}"
+    
