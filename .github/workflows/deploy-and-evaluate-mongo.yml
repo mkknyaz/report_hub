@@ -1,7 +1,7 @@
 name: Deploy Service and Evaluate Mongo
 
 on:
-  pull_request:
+  workflow_dispatch:
   push:
     branches: [main]
 
