@@ -6,16 +6,16 @@ on:
     branches: [main]
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
+    
+    env: 
+      deploy_url: ${{ secrets.DEPLOY_HOOK }}
+    
     steps:
-      - name: Chechout
-      - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v4
       
-      - name: Deploy
-        # Only run this step if the branch is main
-        if: github.ref == 'refs/heads/main'
-        env:
-          deploy_url: ${{ secrets.DEPLOY_HOOK }}
-        run: |
+    - name: Deploy
+      run: |
           curl "$deploy_url"
