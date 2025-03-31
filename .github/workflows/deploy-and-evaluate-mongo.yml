@@ -15,6 +15,8 @@ jobs:
        DEPLOY_HOOK: "https://api.render.com/deploy/srv-cvkhpahr0fns739rtghg?key=fx_zMRhRBs4"
        DOCKERFILE_PATH: Projects/Exadel.ReportHub/Dockerfile
        IMAGE_NAME: report-hub
+       RENDER_USERNAME: makar.kniazeu@gmail.com
+       RENDER_TOKEN: rnd_pHpyr5tHU9iajHDrOCsZCIHlOZrO
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
