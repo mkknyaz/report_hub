@@ -1,4 +1,4 @@
-nname: Deploy Service and Evaluate Mongo
+name: Deploy Service and Evaluate Mongo
 
 on:
   workflow_dispatch:
