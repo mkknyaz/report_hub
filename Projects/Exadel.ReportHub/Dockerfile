@@ -17,6 +17,7 @@ COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Common/", "Exadel.ReportHub.Co
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Handlers/", "Exadel.ReportHub.Handlers/"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Host/", "Exadel.ReportHub.Host/"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.RA/", "Exadel.ReportHub.RA/"]
+COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Data/", "Exadel.ReportHub.Data/"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.SDK/", "Exadel.ReportHub.SDK/"]
 
 
