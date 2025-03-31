@@ -9,6 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
+    env:
+       Mongo_Scripts_Path: Projects/Exadel.ReportHub/Exadel.ReportHub.Host/Deployment/Mongo
+       Db_Connection_Uri: mongodb+srv://cluster0.zpnu6.mongodb.net
+       Db_Name: ReportHub
+       Db_User_Name: ${{ exadelgroupe1 }}
+       Db_User_Password: ${{ 5VESyWEiUwUmc9r0 }}
+       
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -16,3 +23,18 @@ jobs:
     - name: Deploy
       run: |
           curl -X POST https://api.render.com/deploy/srv-cvlfmrggjchc73bmtsf0?key=n0jnrV7O2wU
+          
+    - name: Install MongoSh
+      run: |
+        sudo apt-get install gnupg
+        wget -qO- https://www.mongodb.org/static/pgp/server-7.0.asc | sudo tee /etc/apt/trusted.gpg.d/server-7.0.asc
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+        sudo apt-get update
+        sudo apt-get install -y mongodb-mongosh
+
+    - name: Load Mongo scripts
+      run: |
+        mongosh "${{ env.Db_Connection_Uri }}/${{ env.Db_Name }}" --apiVersion 1 -u ${{ env.Db_User_Name }} -p ${{ env.Db_User_Password }} <<EOF
+          load("${{ env.Mongo_Scripts_Path }}/00_create_MigrationHistory.js")
+          load("${{ env.Mongo_Scripts_Path }}/01_create_Invoice.js")
+        EOF
