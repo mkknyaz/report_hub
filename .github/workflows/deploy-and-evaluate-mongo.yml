@@ -17,19 +17,9 @@ jobs:
        IMAGE_NAME: report-hub
        RENDER_USERNAME: makar.kniazeu@gmail.com
        RENDER_TOKEN: rnd_pHpyr5tHU9iajHDrOCsZCIHlOZrO
+       
+  deploy:
+    runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
-        
-    - name: Build Docker Image
-      run: docker build -f ${{ env.DOCKERFILE_PATH }} . -t registry.render.com/${{ env.RENDER_REPO }}/${{ env.IMAGE_NAME }}:latest
-      
-    - name: Login to Render
-      run: docker login registry.render.com -u ${{ env.RENDER_USERNAME }} -p ${{ env.RENDER_TOKEN }}
-      
-    - name: Push Image to Render
-      run: docker push registry.render.com/${{ env.RENDER_REPO }}/${{ env.IMAGE_NAME }}:latest
-           
-    - name: Trigger Deploy Hook
-      run: curl -X POST "${{ env.DEPLOY_HOOK }}"
-    
+      - name: Trigger Deploy Hook
+        run: curl -X POST "https://api.render.com/deploy/srv-cvkhpahr0fns739rtghg?key=fx_zMRhRBs4"
