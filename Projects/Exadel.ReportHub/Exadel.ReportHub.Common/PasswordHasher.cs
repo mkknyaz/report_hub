@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +15,11 @@ public class PasswordHasher
     private const int iterations = 100000;
     private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
 
-    public static (string PasswordHash, string PasswordSalt) CreatePasswordHash(string password)
+    public static (string PasswordHash, string PasswordSalt) CreatePasswordHash(SecureString password)
     {
         byte[] saltData = RandomNumberGenerator.GetBytes(saltSize);
         string passwordSalt = Convert.ToBase64String(saltData);
-        byte[] hashedData = Rfc2898DeriveBytes.Pbkdf2(password,saltData,iterations,hashAlgorithm, hashSize);
+        byte[] hashedData = Rfc2898DeriveBytes.Pbkdf2(password.ToString(),saltData,iterations,hashAlgorithm, hashSize);
         string passwordHash = Convert.ToBase64String(hashedData);
         return (passwordHash, passwordSalt);
     }

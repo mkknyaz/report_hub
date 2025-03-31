@@ -29,11 +29,11 @@ public abstract class BaseService : ControllerBase
             errors => GetErrorResult(errors));
     }
 
-    protected IActionResult FromResult<TResult>(ErrorOr<TResult> result)
+    protected IActionResult FromResult<TResult>(ErrorOr<TResult> result, int statusCode = StatusCodes.Status200OK)
         where TResult : class
     {
         return result.Match(
-            success => Ok(success),
+            success => new ObjectResult(success) { StatusCode = statusCode },
             errors => GetErrorResult(errors));
     }
 
