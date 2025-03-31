@@ -1,4 +1,4 @@
-name: Deploy Service and Evaluate Mongo
+nname: Deploy Service and Evaluate Mongo
 
 on:
   workflow_dispatch:
@@ -25,7 +25,7 @@ jobs:
       run: docker build -f ${{ env.DOCKERFILE_PATH }} . -t registry.render.com/${{ env.RENDER_REPO }}/${{ env.IMAGE_NAME }}:latest
       
     - name: Login to Render
-      run: docker login registry.render.com -u ${{ secrets.RENDER_USERNAME }} -p ${{ secrets.RENDER_TOKEN }}
+      run: docker login registry.render.com -u ${{ env.RENDER_USERNAME }} -p ${{ env.RENDER_TOKEN }}
       
     - name: Push Image to Render
       run: docker push registry.render.com/${{ env.RENDER_REPO }}/${{ env.IMAGE_NAME }}:latest
