@@ -20,10 +20,10 @@ public class Startup
             c.SwaggerDoc(apiVersion, new OpenApiInfo { Title = "ReportHubAPI", Version = apiVersion });
         });
 
-        services.AddMongo();
         services.AddAuthorization();
 
-        services.AddMediatr();
+        services.AddMongo();
+        services.AddMediatR();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

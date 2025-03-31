@@ -8,19 +8,19 @@ using MediatR;
 
 namespace Exadel.ReportHub.Handlers.User.Create;
 
-public record CreateUserRequest(CreateUserDTO CreateUserDTO) : IRequest<ErrorOr<UserDTO>>;
+public record CreateUserRequest(CreateUserDTO CreateUserDto) : IRequest<ErrorOr<UserDTO>>;
 
 public class CreateUserHandler(IUserRepository userRepository) : IRequestHandler<CreateUserRequest, ErrorOr<UserDTO>>
 {
     public async Task<ErrorOr<UserDTO>> Handle(CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var (passwordHash, passwordSalt) = PasswordHasher.CreatePasswordHash(request.CreateUserDTO.Password);
+        var (passwordHash, passwordSalt) = PasswordHasher.CreatePasswordHash(request.CreateUserDto.Password);
 
         var user = new Data.Models.User
         {
             Id = Guid.NewGuid(),
-            Email = request.CreateUserDTO.Email,
-            FullName = request.CreateUserDTO.FullName,
+            Email = request.CreateUserDto.Email,
+            FullName = request.CreateUserDto.FullName,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt
         };

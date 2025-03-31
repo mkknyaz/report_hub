@@ -11,10 +11,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     {
     }
 
-    public async Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.Email, email);
-        return await GetCollection().Find(filter).SingleOrDefaultAsync(cancellationToken);
+        var count = await GetCollection().Find(filter).CountDocumentsAsync(cancellationToken);
+        return count > 0;
     }
 
     public async Task<IEnumerable<User>> GetAllActiveAsync(CancellationToken cancellationToken)
