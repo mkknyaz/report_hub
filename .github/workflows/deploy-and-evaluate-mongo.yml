@@ -11,7 +11,7 @@ jobs:
     
     env:
        Mongo_Scripts_Path: Projects/Exadel.ReportHub/Exadel.ReportHub.Host/Deployment/Mongo
-       Db_Connection_Uri: mongodb+srv://cluster0.zpnu6.mongodb.net
+       Db_Connection_Uri: mongodb+srv://…@cluster0.69vyv.mongodb.net
        Db_Name: ReportHub
        Db_User_Name: exadelgroupe1
        Db_User_Password: 5VESyWEiUwUmc9r0
