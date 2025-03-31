@@ -15,4 +15,4 @@ jobs:
       
     - name: Deploy
       run: |
-          curl -X POST https://api.render.com/deploy/srv-cvkhpahr0fns739rtghg?key=fx_zMRhRBs4
+          curl -X POST https://api.render.com/deploy/srv-cvlfmrggjchc73bmtsf0?key=n0jnrV7O2wU
