@@ -35,5 +35,6 @@ jobs:
     - name: Load Mongo scripts
       run: |
         mongosh "${{ env.Db_Connection_Uri }}/${{ env.Db_Name }}" --apiVersion 1 -u ${{ env.Db_User_Name }} -p ${{ env.Db_User_Password }} <<EOF
-          load("${{ env.Mongo_Scripts_Path }}/*.js")
+           for script in "${{ env.Mongo_Scripts_Path }}"/*.js;
+           echo "Executing script: $script"
         EOF
