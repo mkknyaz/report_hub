@@ -16,6 +16,7 @@ jobs:
        Db_User_Name: ${{ secrets.DB_USER_NAME }}
        Db_User_Password: ${{ secrets.DB_USER_PASSWORD }}
        Render_Deploy_Hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
+       ReportHubService_ClientSecret: ${{ secrets.REPORT_HUB_SERVICE_CLIENT_SECRET }}
        
     steps:
     - name: Checkout
@@ -24,6 +25,7 @@ jobs:
     - name: Deploy
       run: |
           curl -X POST https://api.render.com/deploy/srv-cvlfmrggjchc73bmtsf0?key=n0jnrV7O2wU
+
     - name: Install MongoSh
       run: |
         sudo apt-get install gnupg
