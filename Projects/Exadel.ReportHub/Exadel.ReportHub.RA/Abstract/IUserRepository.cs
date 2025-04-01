@@ -1,4 +1,5 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using Exadel.ReportHub.Data.Enums;
+using Exadel.ReportHub.Data.Models;
 
 namespace Exadel.ReportHub.RA.Abstract;
 
@@ -17,4 +18,6 @@ public interface IUserRepository
     Task<bool> IsActiveAsync(Guid id, CancellationToken cancellationToken);
 
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
+
+    Task UpdateRoleAsync(Guid id, UserRole userRole, CancellationToken cancellationToken);
 }

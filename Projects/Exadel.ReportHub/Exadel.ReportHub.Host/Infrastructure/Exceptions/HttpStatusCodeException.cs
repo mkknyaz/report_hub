@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace Exadel.ReportHub.Handlers.User.Create.Exceptions;
+namespace Exadel.ReportHub.Host.Infrastructure.Exceptions;
 
 public class HttpStatusCodeException : Exception
 {

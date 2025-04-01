@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Exadel.ReportHub.SDK.Enums;
 
 namespace Exadel.ReportHub.SDK.DTOs.User;
 
@@ -13,4 +9,6 @@ public class UserDTO
     public string Email { get; set; }
 
     public string FullName { get; set; }
+
+    public UserRole UserRole { get; set; }
 }

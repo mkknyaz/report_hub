@@ -1,4 +1,4 @@
-﻿using Exadel.ReportHub.Handlers.User.Create.Exceptions;
+﻿using Exadel.ReportHub.Host.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

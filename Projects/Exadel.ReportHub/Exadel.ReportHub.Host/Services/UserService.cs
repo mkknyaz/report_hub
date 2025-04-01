@@ -1,9 +1,12 @@
-﻿using Exadel.ReportHub.Handlers.User.Create;
+﻿using Exadel.ReportHub.Data.Enums;
+using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.Handlers.User.Get;
 using Exadel.ReportHub.Handlers.User.GetAllActive;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
+using Exadel.ReportHub.Handlers.User.UpdateRole;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exadel.ReportHub.Host.Services;
@@ -40,6 +43,15 @@ public class UserService(ISender sender) : BaseService
     public async Task<IActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
     {
         var result = await sender.Send(new UpdateUserActivityRequest(id, isActive));
+
+        return FromResult(result);
+    }
+
+    [Authorize(Roles = nameof(UserRole.Admin))]
+    [HttpPatch("{id:guid}/role")]
+    public async Task<IActionResult> UpdateUserRole([FromRoute] Guid id, [FromBody] UserRole userRole)
+    {
+        var result = await sender.Send(new UpdateUserRoleRequest(id, userRole));
 
         return FromResult(result);
     }

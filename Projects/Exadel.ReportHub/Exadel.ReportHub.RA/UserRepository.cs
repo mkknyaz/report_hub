@@ -1,4 +1,5 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using Exadel.ReportHub.Data.Enums;
+using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Driver;
 
@@ -42,5 +43,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         var filter = _filterBuilder.Eq(x => x.Id, id);
         var count = await GetCollection().Find(filter).CountDocumentsAsync(cancellationToken);
         return count > 0;
+    }
+
+    public async Task UpdateRoleAsync(Guid id, UserRole userRole, CancellationToken cancellationToken)
+    {
+        var update = Builders<User>.Update.Set(x => x.Role, userRole);
+        await UpdateAsync(id, update, cancellationToken);
     }
 }
