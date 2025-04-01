@@ -1,3 +1,4 @@
+using AutoMapper;
 using Exadel.ReportHub.Host.Filters;
 using Exadel.ReportHub.Host.Registrations;
 using Microsoft.OpenApi.Models;
@@ -24,13 +25,15 @@ public class Startup
 
         services.AddMongo();
         services.AddMediatR();
+        services.AddAutoMapper(typeof(Startup));
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMapper mapper)
     {
+        mapper.ConfigurationProvider.AssertConfigurationIsValid();
+
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Report Hub API"));
-
         app.UseRouting();
 
         app.UseHttpsRedirection();
