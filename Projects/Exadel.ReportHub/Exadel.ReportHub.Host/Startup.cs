@@ -1,5 +1,5 @@
 using AutoMapper;
-using Exadel.ReportHub.Host.Filters;
+using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.Registrations;
 using Microsoft.OpenApi.Models;
 
