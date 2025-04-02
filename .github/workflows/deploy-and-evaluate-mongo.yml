@@ -22,7 +22,7 @@ jobs:
       
     - name: Deploy
       run: |
-          curl -X POST https://api.render.com/deploy/srv-cvlfmrggjchc73bmtsf0?key=n0jnrV7O2wU
+          curl -X POST https://api.render.com/deploy/srv-cvloj68dl3ps739thvvg?key=KjPj0d4J-P0
           
     - name: Install MongoSh
       run: |
