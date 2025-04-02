@@ -9,6 +9,11 @@ public class UserProfile : Profile
     public UserProfile()
     {
         CreateMap<User, UserDTO>();
-        CreateMap<CreateUserDTO, User>();
+        CreateMap<CreateUserDTO, User>()
+            .ForMember(x => x.Id, opt => opt.Ignore())
+            .ForMember(x => x.PasswordHash, opt => opt.Ignore())
+            .ForMember(x => x.PasswordSalt, opt => opt.Ignore())
+            .ForMember(x => x.Role, opt => opt.Ignore())
+            .ForMember(x => x.IsActive, opt => opt.Ignore());
     }
 }

@@ -10,5 +10,5 @@ public class UserDTO
 
     public string FullName { get; set; }
 
-    public UserRole UserRole { get; set; }
+    public UserRole Role { get; set; }
 }
