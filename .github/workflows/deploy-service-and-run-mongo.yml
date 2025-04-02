@@ -24,7 +24,7 @@ jobs:
         
     - name: Deploy
       run: |
-          curl -X POST https://api.render.com/deploy/srv-cvlfmrggjchc73bmtsf0?key=n0jnrV7O2wU
+          curl -X POST "${{ env.Render_Deploy_Hook }}"
 
     - name: Install MongoSh
       run: |
