@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AutoMapper;
 using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.Registrations;
@@ -12,6 +13,10 @@ public class Startup(IConfiguration configuration)
         services.AddControllers(options =>
         {
             options.Filters.Add<ExceptionFilter>();
+        })
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         });
 
         services.AddSwaggerGen(c =>

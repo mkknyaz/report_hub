@@ -39,7 +39,7 @@ public class UserService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [HttpPatch("{id:guid}")]
+    [HttpPatch("{id:guid}/activity")]
     public async Task<IActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
     {
         var result = await sender.Send(new UpdateUserActivityRequest(id, isActive));
