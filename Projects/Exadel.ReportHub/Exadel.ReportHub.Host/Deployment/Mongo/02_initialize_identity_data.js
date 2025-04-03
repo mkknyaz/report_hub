@@ -1,5 +1,5 @@
 ﻿const scriptName = "02_initialize_identity_data";
-const version = NumberInt(1);
+const version = NumberInt(2);
 const reportHubServiceClientSecret = process.env.ReportHubService_ClientSecret
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
@@ -85,6 +85,7 @@ db.Client.insertMany([
         ClientId: "report_hub_service",
         ClientName: "Report Hub Service",
         AllowedGrantTypes: ["client_credentials"],
+        RequireClientSecret: true,
         ClientSecrets: [{ Value: reportHubServiceClientSecret }],
         AllowedScopes: ["report_hub_api"]
     },
@@ -92,7 +93,8 @@ db.Client.insertMany([
         _id: UUID(),
         ClientId: "report_hub_resource_owner",
         ClientName: "Report Hub Resource Owner",
-        AllowedGrantTypes: ["resource_owner_password"],
+        RequireClientSecret: false,
+        AllowedGrantTypes: ["password"],
         AllowedScopes: ["report_hub_api"]
     }
 ]);

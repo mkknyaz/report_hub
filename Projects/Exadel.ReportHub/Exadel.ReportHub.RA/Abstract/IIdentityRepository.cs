@@ -1,11 +1,15 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using Duende.IdentityServer.Models;
 
 namespace Exadel.ReportHub.RA.Abstract;
 
-public interface IIdentityRepository<TDocument>
-    where TDocument : IDocument
+public interface IIdentityRepository
 {
-    Task<IEnumerable<TDocument>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IEnumerable<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken);
 
-    Task<TDocument> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<IEnumerable<TDocument>> GetByNamesAsync<TDocument>(IEnumerable<string> names, CancellationToken cancellationToken)
+        where TDocument : Resource;
+
+    Task<IEnumerable<ApiResource>> GetApiResourcesByScopeNameAsync(IEnumerable<string> scopeNames, CancellationToken cancellationToken);
+
+    Task<Client> GetClientByIdAsync(string clientId, CancellationToken cancellationToken);
 }
