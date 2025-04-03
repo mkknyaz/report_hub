@@ -7,18 +7,15 @@ COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Handlers/Exadel.ReportHub.Hand
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Host/Exadel.ReportHub.Host.csproj", "Exadel.ReportHub.Host/"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.RA/Exadel.ReportHub.RA.csproj", "Exadel.ReportHub.RA/"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.SDK/Exadel.ReportHub.SDK.csproj", "Exadel.ReportHub.SDK/"]
+COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Common/Exadel.ReportHub.Common.csproj", "Exadel.ReportHub.Common/"]
+COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Identity/Exadel.ReportHub.Identity.csproj", "Exadel.ReportHub.Identity/"]
 COPY ["Projects/Exadel.ReportHub/Directory.Build.props", "./"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.ruleset", "./"]
 
 RUN dotnet restore "Exadel.ReportHub.Host/Exadel.ReportHub.Host.csproj"
 
 
-COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Common/", "Exadel.ReportHub.Common/"]
-COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Handlers/", "Exadel.ReportHub.Handlers/"]
-COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Host/", "Exadel.ReportHub.Host/"]
-COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.RA/", "Exadel.ReportHub.RA/"]
-COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Data/", "Exadel.ReportHub.Data/"]
-COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.SDK/", "Exadel.ReportHub.SDK/"]
+COPY ["Projects/Exadel.ReportHub/", "./"]
 
 
 RUN dotnet publish "Exadel.ReportHub.Host/Exadel.ReportHub.Host.csproj" -c Release -o /app/publish
