@@ -68,4 +68,12 @@ public class UserRepository : BaseRepository, IUserRepository
         var update = Builders<User>.Update.Set(x => x.Role, userRole);
         await UpdateAsync(id, update, cancellationToken);
     }
+
+    public async Task UpdatePasswordAsync(Guid id, string passwordHash, string passwordSalt, CancellationToken cancellationToken)
+    {
+        var update = Builders<User>.Update
+            .Set(x => x.PasswordHash, passwordHash)
+            .Set(x => x.PasswordSalt, passwordSalt);
+        await UpdateAsync(id, update, cancellationToken);
+    }
 }

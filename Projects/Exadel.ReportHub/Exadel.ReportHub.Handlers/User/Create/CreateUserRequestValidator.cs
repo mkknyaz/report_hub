@@ -6,10 +6,12 @@ namespace Exadel.ReportHub.Handlers.User.Create;
 public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IValidator<string> _passwordValidator;
 
-    public CreateUserRequestValidator(IUserRepository userRepository)
+    public CreateUserRequestValidator(IUserRepository userRepository, IValidator<string> passwordValidator)
     {
         _userRepository = userRepository;
+        _passwordValidator = passwordValidator;
         ConfigureRules();
     }
 
@@ -30,18 +32,8 @@ public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
                 child.RuleFor(x => x.FullName)
                     .NotEmpty();
 
-                child.RuleFor(x => x.Password.ToString())
-                    .NotEmpty()
-                    .MinimumLength(Constants.Validation.User.PasswordMinimumLength)
-                    .WithMessage(Constants.Validation.User.PasswordMinLengthMessage)
-                    .Matches("[A-Z]")
-                    .WithMessage(Constants.Validation.User.PasswordUppercaseMessage)
-                    .Matches("[a-z]")
-                    .WithMessage(Constants.Validation.User.PasswordLowercaseMessage)
-                    .Matches("[0-9]")
-                    .WithMessage(Constants.Validation.User.PasswordDigitMessage)
-                    .Matches("[^a-zA-Z0-9]")
-                    .WithMessage(Constants.Validation.User.PasswordSpecialCharacterMessage);
+                child.RuleFor(x => x.Password)
+                    .SetValidator(_passwordValidator);
             });
     }
 
