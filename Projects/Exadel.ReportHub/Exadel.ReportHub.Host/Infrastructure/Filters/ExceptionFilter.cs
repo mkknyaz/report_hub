@@ -1,4 +1,4 @@
-﻿using Exadel.ReportHub.Host.Infrastructure.Exceptions;
+﻿using Exadel.ReportHub.Common.Exceptions;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -25,7 +25,10 @@ public class ExceptionFilter(ILogger<ExceptionFilter> logger, IHostEnvironment h
 
     private IActionResult CreateStatusCodeErrorResult(HttpStatusCodeException exception)
     {
-        return new BadRequestObjectResult(new ErrorResponse { Errors = exception.Errors });
+        return new ObjectResult(new ErrorResponse { Errors = exception.Errors })
+        {
+            StatusCode = exception.StatusCode
+        };
     }
 
     private IActionResult CreateErrorResult(Exception exception, IHostEnvironment hostEnvironment)

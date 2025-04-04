@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Exadel.ReportHub.Host.Infrastructure.Exceptions;
+using Exadel.ReportHub.Common.Exceptions;
 using FluentValidation;
 using MediatR;
 
@@ -29,7 +29,7 @@ public class RequestValidationBehavior<TRequest, TResponse> : IPipelineBehavior<
 
         if (failures.Any())
         {
-            throw new HttpStatusCodeException(failures, HttpStatusCode.BadRequest);
+            throw new HttpStatusCodeException(StatusCodes.Status400BadRequest, failures);
         }
 
         return await next();

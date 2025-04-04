@@ -1,7 +1,9 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
+using Exadel.ReportHub.Common.Providers;
 using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.Registrations;
+using Exadel.ReportHub.RA;
 using Microsoft.OpenApi.Models;
 
 namespace Exadel.ReportHub.Host;
@@ -59,6 +61,8 @@ public class Startup(IConfiguration configuration)
         services.AddMongo();
         services.AddMediatR();
         services.AddAutoMapper(typeof(Startup));
+        services.AddHttpContextAccessor();
+        services.AddScoped<IUserProvider, UserProvider>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMapper mapper)

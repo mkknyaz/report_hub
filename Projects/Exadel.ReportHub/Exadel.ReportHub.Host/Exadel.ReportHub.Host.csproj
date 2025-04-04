@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Exadel.ReportHub.Common\Exadel.ReportHub.Common.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.Handlers\Exadel.ReportHub.Handlers.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.Identity\Exadel.ReportHub.Identity.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.RA\Exadel.ReportHub.RA.csproj" />

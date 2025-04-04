@@ -1,14 +1,14 @@
 ﻿using System.Net;
 
-namespace Exadel.ReportHub.Host.Infrastructure.Exceptions;
+namespace Exadel.ReportHub.Common.Exceptions;
 
 public class HttpStatusCodeException : Exception
 {
-    public HttpStatusCode StatusCode { get; }
+    public int StatusCode { get; }
 
     public IList<string> Errors { get; }
 
-    public HttpStatusCodeException(IList<string> errors, HttpStatusCode statusCode)
+    public HttpStatusCodeException(int statusCode, IList<string> errors)
         : base(string.Join(',', errors))
     {
         Errors = errors;
