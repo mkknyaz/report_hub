@@ -38,8 +38,8 @@ jobs:
     - name: Generate HTML coverage report
       run: |
         reportgenerator \
-        "-reports:${{ env.Test_Project }}/testResults/coverage.xml" \
-        "-targetdir:${{ env.Test_Project }}/testResults/CoverageReport" -reporttypes:Html
+        "-reports:${{ env.Test_Project }}/TestResults/coverage.xml" \
+        "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" -reporttypes:Html
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
