@@ -47,10 +47,10 @@ jobs:
         "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" -reporttypes:Html
         
     - name: Coverage check
-      uses: dorny/coverage-check@v2
+      uses: dorny/coverage-check@main
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        paths: ${{ env.Test_Project }}/TestResults/coverage.xml
+        paths: "${{ env.Test_Project }}/TestResults/coverage.xml"
         format: "opencover"
         thresholds: |
           lines:
