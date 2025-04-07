@@ -49,13 +49,14 @@ jobs:
       uses: dorny/coverage-check@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        paths: "Projects/Exadel.ReportHub/Exadel.ReportHub.Tests/TestResults/coverage.xml"
-        format: opencover
+        paths: "${{ env.Test_Project }}/TestResults/coverage.xml"
+        format: "opencover"
         thresholds: |
           lines:
             min: 30
           branches:
             min: 30
+        publish: both
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
