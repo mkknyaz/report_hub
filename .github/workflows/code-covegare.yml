@@ -50,7 +50,7 @@ jobs:
       uses: dorny/coverage-check@v2
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        paths: "${{ env.Test_Project }}/TestResults/coverage.xml"
+        paths: ${{ env.Test_Project }}/TestResults/coverage.xml
         format: "opencover"
         thresholds: |
           lines:
@@ -63,4 +63,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: CoverageReport
-        path: ${{ env.Test_Project }}/TestResults/CoverageReport"
+        path: ${{ env.Test_Project }}/TestResults/CoverageReport
