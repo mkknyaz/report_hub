@@ -50,7 +50,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         paths: "Projects/Exadel.ReportHub/Exadel.ReportHub.Tests/TestResults/coverage.xml"
-        format: "opencover"
+        format: opencover
         thresholds: |
           lines:
             min: 30
