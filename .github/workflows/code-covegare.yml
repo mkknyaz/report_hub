@@ -28,9 +28,9 @@ jobs:
     - name: Run tests with code coverage
       run: |
         dotnet test ${{ env.Test_Project }} \
-          --property:CollectCoverage=true \
-          --property:CoverletOutputFormat=opencover \
-          --property:CoverletOutput=TestResults/coverage.xml
+          /p:CollectCoverage=true \
+          /p:CoverletOutputFormat=opencover \
+          /p:CoverletOutput=TestResults/coverage.xml
 
 
     - name: Install ReportGenerator tool
