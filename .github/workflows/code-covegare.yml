@@ -33,10 +33,13 @@ jobs:
     - name: Run tests with code coverage
       run: |
         dotnet test ${{ env.Test_Project }}/Exadel.ReportHub.Tests.csproj \
-          --logger "trx;LogFileName=test_results.trx"\
+          --logger "trx;LogFileName=test_results.trx" \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=opencover \
-          /p:CoverletOutput=TestResults/coverage.xml
+          /p:CoverletOutput=TestResults/coverage.xml \
+          /p:Threshold=30 \
+          /p:ThresholdType=line \
+          /p:ThresholdStat=total
 
     - name: Install ReportGenerator tool
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -48,7 +51,7 @@ jobs:
         "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" \
         -reporttypes:Html
         
-    - name: Publish test results (NUnit)
+    - name: Publish test results
       uses: dorny/test-reporter@v2
       with:
         name: NUnit Test Results
