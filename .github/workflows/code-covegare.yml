@@ -33,9 +33,10 @@ jobs:
     - name: Run tests with code coverage
       run: |
         dotnet test ${{ env.Test_Project }}/Exadel.ReportHub.Tests.csproj \
+          --logger "trx;LogFileName=TestResults/test_results.trx"\
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=opencover \
-          /p:CoverletOutput=TestResults/coverage.trx
+          /p:CoverletOutput=TestResults/coverage.xml
 
     - name: Install ReportGenerator tool
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -43,14 +44,14 @@ jobs:
     - name: Generate HTML coverage report
       run: |
         reportgenerator \
-        "-reports:${{ env.Test_Project }}/TestResults/coverage.trx" \
+        "-reports:${{ env.Test_Project }}/TestResults/coverage.xml," \
         "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" -reporttypes:Html
         
     - name: Publish test results (NUnit)
       uses: dorny/test-reporter@v2.0.0
       with:
         name: "NUnit Test Results"
-        path: "${{ env.Test_Project }}/TestResults/coverage.trx"
+        path: "${{ env.Test_Project }}/TestResults/test_results.trx"
         reporter: "trx"
 
     - name: Upload coverage report artifact
