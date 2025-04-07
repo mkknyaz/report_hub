@@ -1,4 +1,5 @@
 name: Unit Test With Coverage
+
 on:
   workflow_dispatch:
 jobs:
@@ -6,8 +7,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      Solution_Name: Projects\Exadel.ReportHub\Exadel.ReportHub.sln
-      Test_Project: Projects\Exadel.ReportHub\Exadel.ReportHub.Tests\Exadel.ReportHub.Tests.csproj 
+      Solution_Name: Projects/Exadel.ReportHub/Exadel.ReportHub.sln
+      Test_Project: Projects/Exadel.ReportHub/Exadel.ReportHub.Tests/Exadel.ReportHub.Tests.csproj 
       
     steps:
     - name: Checkout
