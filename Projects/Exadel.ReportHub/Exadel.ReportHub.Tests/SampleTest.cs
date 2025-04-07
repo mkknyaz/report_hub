@@ -6,7 +6,7 @@ public class SampleTest
     [Test]
     public void AlwaysPasses()
     {
-        var a = 5;
+        var a = 5 + 1;
         var b = a;
 
         Assert.That(b, Is.EqualTo(a));
