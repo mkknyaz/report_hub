@@ -44,13 +44,13 @@ jobs:
     - name: Generate HTML coverage report
       run: |
         reportgenerator \
-        "-reports:${{ env.Test_Project }}/TestResults/coverage.xml," \
-        "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" -reporttypes:Html
+        -reports:${{ env.Test_Project }}/TestResults/coverage.xml, \
+        -targetdir:${{ env.Test_Project }}/TestResults/CoverageReport -reporttypes:Html
         
     - name: Publish test results (NUnit)
       uses: dorny/test-reporter@v2
       with:
-        name: "NUnit Test Results"
+        name: NUnit Test Results
         path: "${{ env.Test_Project }}/TestResults/test_results.trx"
         reporter: "dotnet-trx"
 
