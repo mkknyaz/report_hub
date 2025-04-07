@@ -5,6 +5,8 @@ using Exadel.ReportHub.Common.Providers;
 using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.Registrations;
 using Exadel.ReportHub.RA;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.OpenApi.Models;
 
 namespace Exadel.ReportHub.Host;
@@ -18,16 +20,14 @@ public class Startup(IConfiguration configuration)
         {
             options.Filters.Add<ExceptionFilter>();
         })
-        .AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
 
         services.AddSwaggerGen(c =>
         {
             const string apiVersion = "v1";
-            const string scopeName = "report_hub_api";
-            const string scopeDescription = "Full access to Report Hub API";
 
             var tokenUrl = new Uri($"{configuration["Authority"]}/connect/token");
 
@@ -42,7 +42,7 @@ public class Startup(IConfiguration configuration)
                         TokenUrl = tokenUrl,
                         Scopes = new Dictionary<string, string>
                         {
-                            { scopeName, scopeDescription }
+                            { Constants.Authorization.ScopeName, Constants.Authorization.ScopeDescription }
                         }
                     },
                     Password = new OpenApiOAuthFlow
@@ -50,12 +50,33 @@ public class Startup(IConfiguration configuration)
                         TokenUrl = tokenUrl,
                         Scopes = new Dictionary<string, string>
                         {
-                            { scopeName, scopeDescription }
+                            { Constants.Authorization.ScopeName, Constants.Authorization.ScopeDescription }
                         }
                     }
                 }
             });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "oauth2"
+                        }
+                    },
+                    new[] { Constants.Authorization.ScopeName }
+                }
+            });
         });
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = configuration["Authority"];
+                options.Audience = Constants.Authorization.ResourceName;
+            });
 
         services.AddAuthorization();
 
@@ -74,6 +95,11 @@ public class Startup(IConfiguration configuration)
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Report Hub API"));
         app.UseRouting();
+
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedProto
+        });
 
         app.UseIdentityServer();
 
