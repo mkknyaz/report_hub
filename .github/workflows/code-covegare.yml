@@ -8,7 +8,7 @@ jobs:
 
     env:
       Solution_Name: Projects/Exadel.ReportHub/Exadel.ReportHub.sln
-      Test_Project: Projects/Exadel.ReportHub/Exadel.ReportHub.Tests/Exadel.ReportHub.Tests.csproj 
+      Test_Project: Projects/Exadel.ReportHub/Exadel.ReportHub.Tests
       
     steps:
     - name: Checkout
@@ -27,19 +27,19 @@ jobs:
 
     - name: Run tests with code coverage
       run: |
-        dotnet test ${{ env.Test_Project }} \
+        dotnet test ${{ env.Test_Project }}/Exadel.ReportHub.Tests.csproj \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=opencover \
           /p:CoverletOutput=TestResults/coverage.xml
-
-    - name: List directory structure
-      run: ls -R
 
     - name: Install ReportGenerator tool
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Generate HTML coverage report
-      run: reportgenerator "-reports:TestResults/coverage.xml" "-targetdir:TestResults/CoverageReport" -reporttypes:Html
+      run: |
+        reportgenerator \
+        "-reports:${{ env.Test_Project }}/coverage.xml" \
+        "-targetdir:${{ env.Test_Project }}/CoverageReport" -reporttypes:Html
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
