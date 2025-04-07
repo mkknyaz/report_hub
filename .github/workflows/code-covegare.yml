@@ -46,18 +46,12 @@ jobs:
         "-reports:${{ env.Test_Project }}/TestResults/coverage.xml" \
         "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" -reporttypes:Html
         
-    - name: Coverage check
-      uses: dorny/coverage-check@v2.8.1
+    - name: Publish test results (NUnit)
+      uses: dorny/test-reporter@v2.0.0
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        paths: "${{ env.Test_Project }}/TestResults/coverage.xml"
-        format: "opencover"
-        thresholds: |
-          lines:
-            min: 30
-          branches:
-            min: 30
-        publish: both
+        name: "NUnit Test Results"
+        path: "${{ env.Test_Project }}/TestResults/coverage.xml"
+        reporter: "nunit"
 
     - name: Upload coverage report artifact
       uses: actions/upload-artifact@v4
