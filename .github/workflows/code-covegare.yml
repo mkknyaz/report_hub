@@ -44,12 +44,6 @@ jobs:
         reportgenerator \
         "-reports:${{ env.Test_Project }}/TestResults/coverage.xml" \
         "-targetdir:${{ env.Test_Project }}/TestResults/CoverageReport" -reporttypes:Html
-
-    - name: Upload coverage report artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: CoverageReport
-        path: ${{ env.Test_Project }}/TestResults/CoverageReport
         
     - name: Coverage check
       uses: dorny/coverage-check@v2
