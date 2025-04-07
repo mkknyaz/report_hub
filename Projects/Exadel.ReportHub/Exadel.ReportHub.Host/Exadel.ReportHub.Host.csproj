@@ -8,6 +8,7 @@
     <DocumentationFile>ReportHub.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,7 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Exadel.ReportHub.Common\Exadel.ReportHub.Common.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.Handlers\Exadel.ReportHub.Handlers.csproj" />
+    <ProjectReference Include="..\Exadel.ReportHub.Identity\Exadel.ReportHub.Identity.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.RA\Exadel.ReportHub.RA.csproj" />
   </ItemGroup>
 

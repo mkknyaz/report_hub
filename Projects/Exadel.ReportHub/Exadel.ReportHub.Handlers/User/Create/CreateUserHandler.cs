@@ -1,37 +1,27 @@
-﻿using System.Runtime.InteropServices;
+﻿using AutoMapper;
 using ErrorOr;
 using Exadel.ReportHub.Common;
-using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
 
 namespace Exadel.ReportHub.Handlers.User.Create;
 
-public record CreateUserRequest(CreateUserDTO CreateUserDTO) : IRequest<ErrorOr<UserDTO>>;
+public record CreateUserRequest(CreateUserDTO CreateUserDto) : IRequest<ErrorOr<UserDTO>>;
 
-public class CreateUserHandler(IUserRepository userRepository) : IRequestHandler<CreateUserRequest, ErrorOr<UserDTO>>
+public class CreateUserHandler(IUserRepository userRepository, IMapper mapper) : IRequestHandler<CreateUserRequest, ErrorOr<UserDTO>>
 {
     public async Task<ErrorOr<UserDTO>> Handle(CreateUserRequest request, CancellationToken cancellationToken)
     {
-        var (passwordHash, passwordSalt) = PasswordHasher.CreatePasswordHash(request.CreateUserDTO.Password);
+        var (passwordHash, passwordSalt) = PasswordHasher.CreatePasswordHash(request.CreateUserDto.Password);
 
-        var user = new Data.Models.User
-        {
-            Id = Guid.NewGuid(),
-            Email = request.CreateUserDTO.Email,
-            FullName = request.CreateUserDTO.FullName,
-            PasswordHash = passwordHash,
-            PasswordSalt = passwordSalt
-        };
+        var user = mapper.Map<Data.Models.User>(request.CreateUserDto);
+        user.Id = Guid.NewGuid();
+        user.PasswordSalt = passwordSalt;
+        user.PasswordHash = passwordHash;
 
         await userRepository.AddAsync(user, cancellationToken);
-
-        return new UserDTO
-        {
-            Id = user.Id,
-            Email = user.Email,
-            FullName = user.FullName
-        };
+        var userDto = mapper.Map<UserDTO>(user);
+        return userDto;
     }
 }

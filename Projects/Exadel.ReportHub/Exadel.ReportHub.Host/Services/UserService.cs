@@ -1,13 +1,19 @@
-﻿using Exadel.ReportHub.Handlers.User.Create;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Enums;
+using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.Handlers.User.Get;
-using Exadel.ReportHub.Handlers.User.GetAllActive;
+using Exadel.ReportHub.Handlers.User.GetActive;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
+using Exadel.ReportHub.Handlers.User.UpdatePassword;
+using Exadel.ReportHub.Handlers.User.UpdateRole;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exadel.ReportHub.Host.Services;
 
+[ExcludeFromCodeCoverage]
 [ApiController]
 [Route("api/users")]
 public class UserService(ISender sender) : BaseService
@@ -36,11 +42,28 @@ public class UserService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [HttpPatch("{id:guid}")]
+    [HttpPatch("{id:guid}/activity")]
     public async Task<IActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
     {
         var result = await sender.Send(new UpdateUserActivityRequest(id, isActive));
 
+        return FromResult(result);
+    }
+
+    [Authorize(Roles = nameof(UserRole.Admin))]
+    [HttpPatch("{id:guid}/role")]
+    public async Task<IActionResult> UpdateUserRole([FromRoute] Guid id, [FromBody] UserRole userRole)
+    {
+        var result = await sender.Send(new UpdateUserRoleRequest(id, userRole));
+
+        return FromResult(result);
+    }
+
+    [Authorize]
+    [HttpPatch("password")]
+    public async Task<IActionResult> UpdateUserPassword([FromBody] string password)
+    {
+        var result = await sender.Send(new UpdateUserPasswordRequest(password));
         return FromResult(result);
     }
 }

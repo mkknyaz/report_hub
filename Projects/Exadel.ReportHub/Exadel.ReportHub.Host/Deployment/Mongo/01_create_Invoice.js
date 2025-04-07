@@ -1,7 +1,6 @@
 ﻿const scriptName = "01_create_Invoice";
 const version = NumberInt(1);
 
-
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
     quit();

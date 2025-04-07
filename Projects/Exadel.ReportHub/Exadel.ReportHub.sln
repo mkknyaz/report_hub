@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
@@ -22,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.SDK", "Exadel.ReportHub.SDK\Exadel.ReportHub.SDK.csproj", "{0DFE34E1-81B3-4DC7-9776-B080786E1A10}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Common", "Exadel.ReportHub.Common\Exadel.ReportHub.Common.csproj", "{F1C32F37-C6DA-48E9-BBE3-EEE4C0310E5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Identity", "Exadel.ReportHub.Identity\Exadel.ReportHub.Identity.csproj", "{0455C5B4-C7B5-4044-81F1-6D90FE48F865}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +58,10 @@ Global
 		{F1C32F37-C6DA-48E9-BBE3-EEE4C0310E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1C32F37-C6DA-48E9-BBE3-EEE4C0310E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C32F37-C6DA-48E9-BBE3-EEE4C0310E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0455C5B4-C7B5-4044-81F1-6D90FE48F865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0455C5B4-C7B5-4044-81F1-6D90FE48F865}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0455C5B4-C7B5-4044-81F1-6D90FE48F865}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0455C5B4-C7B5-4044-81F1-6D90FE48F865}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

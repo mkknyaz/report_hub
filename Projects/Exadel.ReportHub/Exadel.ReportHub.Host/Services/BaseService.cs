@@ -1,9 +1,11 @@
-﻿using ErrorOr;
-using MediatR;
+﻿using System.Diagnostics.CodeAnalysis;
+using ErrorOr;
+using Exadel.ReportHub.Host.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exadel.ReportHub.Host.Services;
 
+[ExcludeFromCodeCoverage]
 [ApiController]
 [Route("api/[controller]")]
 public abstract class BaseService : ControllerBase
@@ -11,21 +13,21 @@ public abstract class BaseService : ControllerBase
     protected IActionResult FromResult(ErrorOr<Created> result)
     {
         return result.Match(
-            success => Created(),
+            _ => Created(),
             errors => GetErrorResult(errors));
     }
 
     protected IActionResult FromResult(ErrorOr<Updated> result)
     {
         return result.Match(
-            success => NoContent(),
+            _ => NoContent(),
             errors => GetErrorResult(errors));
     }
 
     protected IActionResult FromResult(ErrorOr<Deleted> result)
     {
         return result.Match(
-            success => NoContent(),
+            _ => NoContent(),
             errors => GetErrorResult(errors));
     }
 
@@ -33,30 +35,31 @@ public abstract class BaseService : ControllerBase
         where TResult : class
     {
         return result.Match(
-            success => new ObjectResult(success) { StatusCode = statusCode },
+            value => StatusCode(statusCode, value),
             errors => GetErrorResult(errors));
     }
 
     private IActionResult GetErrorResult(List<Error> errors)
     {
-        if (errors.Count == 0)
+        var errorResponse = new ErrorResponse
         {
-            return Problem();
+            Errors = errors.Select(e => e.Description).ToList()
+        };
+        var statusCode = StatusCodes.Status500InternalServerError;
+
+        if (errors.Any(e => e.Type == ErrorType.Validation))
+        {
+            statusCode = StatusCodes.Status400BadRequest;
+        }
+        else if(errors.Any(e => e.Type == ErrorType.Forbidden))
+        {
+            statusCode = StatusCodes.Status403Forbidden;
+        }
+        else if (errors.Any(e => e.Type == ErrorType.NotFound))
+        {
+            statusCode = StatusCodes.Status404NotFound;
         }
 
-        return GetErrorResult(errors[0]);
-    }
-
-    private IActionResult GetErrorResult(Error error)
-    {
-        var statusCode = error.Type switch
-        {
-            ErrorType.Validation => StatusCodes.Status400BadRequest,
-            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ErrorType.NotFound => StatusCodes.Status404NotFound,
-            _ => StatusCodes.Status500InternalServerError
-        };
-
-        return Problem(statusCode: statusCode, title: error.Description);
+        return StatusCode(statusCode, errorResponse);
     }
 }
