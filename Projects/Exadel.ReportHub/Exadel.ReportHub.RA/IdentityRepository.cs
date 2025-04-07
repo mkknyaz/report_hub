@@ -1,9 +1,11 @@
-﻿using Duende.IdentityServer.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Duende.IdentityServer.Models;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
 
+[ExcludeFromCodeCoverage]
 public class IdentityRepository : BaseRepository, IIdentityRepository
 {
     public IdentityRepository(MongoDbContext context)

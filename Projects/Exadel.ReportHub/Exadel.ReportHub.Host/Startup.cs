@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Exadel.ReportHub.Common.Providers;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Exadel.ReportHub.Host;
 
+[ExcludeFromCodeCoverage]
 public class Startup(IConfiguration configuration)
 {
     public void ConfigureServices(IServiceCollection services)

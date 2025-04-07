@@ -1,10 +1,12 @@
-﻿using Exadel.ReportHub.Data.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
 
+[ExcludeFromCodeCoverage]
 public class UserRepository : BaseRepository, IUserRepository
 {
     private static readonly FilterDefinitionBuilder<User> _filterBuilder = Builders<User>.Filter;

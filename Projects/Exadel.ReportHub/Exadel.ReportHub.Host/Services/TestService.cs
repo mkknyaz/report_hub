@@ -1,9 +1,11 @@
-﻿using Exadel.ReportHub.Handlers.Test;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Handlers.Test;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exadel.ReportHub.Host.Services;
 
+[ExcludeFromCodeCoverage]
 public class TestService(ISender sender) : BaseService
 {
     [HttpGet]

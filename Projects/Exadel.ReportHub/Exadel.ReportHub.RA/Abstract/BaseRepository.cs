@@ -1,8 +1,10 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Models;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA.Abstract;
 
+[ExcludeFromCodeCoverage]
 public abstract class BaseRepository(MongoDbContext context)
 {
     public async Task<IEnumerable<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken)
