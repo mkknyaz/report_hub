@@ -1,8 +1,6 @@
-﻿using System.Runtime.InteropServices;
-using AutoMapper;
+﻿using AutoMapper;
 using ErrorOr;
 using Exadel.ReportHub.Common;
-using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
@@ -18,6 +16,7 @@ public class CreateUserHandler(IUserRepository userRepository, IMapper mapper) :
         var (passwordHash, passwordSalt) = PasswordHasher.CreatePasswordHash(request.CreateUserDto.Password);
 
         var user = mapper.Map<Data.Models.User>(request.CreateUserDto);
+        user.Id = Guid.NewGuid();
         user.PasswordSalt = passwordSalt;
         user.PasswordHash = passwordHash;
 

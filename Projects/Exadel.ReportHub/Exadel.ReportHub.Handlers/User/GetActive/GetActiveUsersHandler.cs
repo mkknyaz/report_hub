@@ -1,10 +1,11 @@
-﻿using AutoMapper;
+﻿using System.Collections.ObjectModel;
+using AutoMapper;
 using ErrorOr;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
 
-namespace Exadel.ReportHub.Handlers.User.GetAllActive;
+namespace Exadel.ReportHub.Handlers.User.GetActive;
 
 public record GetActiveUsersRequest : IRequest<ErrorOr<IEnumerable<UserDTO>>>;
 
