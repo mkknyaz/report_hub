@@ -50,3 +50,17 @@ jobs:
       with:
         name: CoverageReport
         path: ${{ env.Test_Project }}/TestResults/CoverageReport
+        
+    - name: Upload test report
+      uses: dorny/test-reporter@v2
+      if: always()
+      with:
+        name: "Coverage Report"
+        path: ${{ env.Test_Project }}/TestResults/coverage.xml
+        reporter: opencover
+
+    - name: Upload coverage report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: CoverageReport
+        path: ${{ env.Test_Project }}/TestResults/CoverageReport
