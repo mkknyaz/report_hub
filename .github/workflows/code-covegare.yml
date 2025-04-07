@@ -33,7 +33,7 @@ jobs:
     - name: Run tests with code coverage
       run: |
         dotnet test ${{ env.Test_Project }}/Exadel.ReportHub.Tests.csproj \
-          --logger "trx;LogFileName=TestResults/test_results.trx"\
+          --logger "trx;LogFileName=${{ env.Test_Project }}/TestResults/test_results.trx"\
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=opencover \
           /p:CoverletOutput=TestResults/coverage.xml
