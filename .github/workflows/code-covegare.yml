@@ -26,10 +26,14 @@ jobs:
       run: dotnet build ${{ env.Solution_Name }}
 
     - name: Run tests with code coverage
-      run: dotnet test ${{ env.Test_Project }} --configuration Release --no-build --verbosity normal \
-        --property:CollectCoverage=true \
-        --property:CoverletOutputFormat=opencover \
-        --property:CoverletOutput=TestResults/coverage.xml
+      run: dotnet test ${{ env.Test_Project }} \
+          --configuration Release \
+          --no-build \
+          --verbosity normal \
+          --property:CollectCoverage=true \
+          --property:CoverletOutputFormat=opencover \
+          --property:CoverletOutput=TestResults/coverage.xml
+
 
     - name: Install ReportGenerator tool
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
