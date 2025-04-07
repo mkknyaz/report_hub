@@ -30,7 +30,7 @@ jobs:
         dotnet test ${{ env.Test_Project }} \
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=opencover \
-          /p:CoverletOutput=TestResults/coverage.xml
+          /p:CoverletOutput=Projects/Exadel.ReportHub/Exadel.ReportHub.Tests/TestResults/coverage.xml
 
 
     - name: Install ReportGenerator tool
