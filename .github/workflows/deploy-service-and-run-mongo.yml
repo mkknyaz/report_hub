@@ -3,10 +3,10 @@ name: Deploy Service and Run Mongo
 on:
   workflow_dispatch:
   push:
-    branches: [master]
+    branches: [ "master" ]
 
 jobs:
-  publish:
+  Publish:
     runs-on: ubuntu-latest  
 
     env:
