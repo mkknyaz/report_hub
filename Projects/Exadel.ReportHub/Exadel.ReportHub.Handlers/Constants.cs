@@ -15,5 +15,19 @@ public static class Constants
             public const string PasswordDigitMessage = "Password must have at least one digit.";
             public const string PasswordSpecialCharacterMessage = "Password must contain at least one special character.";
         }
+
+        public static class Invoice
+        {
+            public const int CurrencyCodeLength = 3;
+            public const int InvoiceMaximumNumberLength = 15;
+            public const string InvoiceNumberErrorMessage = "Invoice number must start with 'INV' followed by digits.";
+            public const string IssueDateErrorMessage = "Issue date cannot be in the future.";
+            public const string DueDateErrorMessage = "Due date must be greater than issue date.";
+            public const int BankAccountNumberMinLength = 8;
+            public const int BankAccountNumberMaxLength = 17;
+            public const string BankAccountNumberErrorMessage = "Bank account number must only contain digits and dashes.";
+            public const string CustomerDoesntExistsErrorMessage = "Customer does not exist.";
+            public const string ClientDoesntExistsErrorMessage = "Client does not exist.";
+        }
     }
 }

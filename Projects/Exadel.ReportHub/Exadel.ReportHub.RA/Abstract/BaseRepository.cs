@@ -25,6 +25,14 @@ public abstract class BaseRepository(MongoDbContext context)
         return await GetCollection<TDocument>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<bool> ExistsAsync<TDocument>(Guid id, CancellationToken cancellationToken)
+        where TDocument : IDocument
+    {
+        var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
+        var count = await GetCollection<TDocument>().CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+        return count > 0;
+    }
+
     public async Task AddAsync<TDocument>(TDocument entity, CancellationToken cancellationToken)
     {
         await GetCollection<TDocument>().InsertOneAsync(entity, cancellationToken: cancellationToken);
