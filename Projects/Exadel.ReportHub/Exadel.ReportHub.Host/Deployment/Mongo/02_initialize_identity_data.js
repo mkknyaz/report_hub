@@ -73,13 +73,13 @@ db.ApiResource.insertOne(
         Enabled: true
     });
 
-db.createCollection("Client", {
+db.createCollection("IdentityClient", {
     collation: {
         locale: "en"
     }
 });
 
-db.Client.insertMany([
+db.IdentityClient.insertMany([
     {
         _id: UUID(),
         ClientId: "report_hub_service",

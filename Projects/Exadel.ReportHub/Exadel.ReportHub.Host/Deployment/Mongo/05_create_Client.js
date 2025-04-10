@@ -13,16 +13,16 @@ db.createCollection("Client", {
 });
 
 const clientIds = [
-    UUID("f89e1e75-d61c-4c51-b0be-c285500988cf"),
-    UUID("e1509ec2-2b05-406f-befa-149f051586a9"),
-    UUID("6d024627-568b-4d57-b477-2274c9d807b9"),
-    UUID("ba045076-4837-47ab-80d5-546192851bab"),
-    UUID("ba18cc29-c7ff-48c4-9b7b-456bcef231d0"),
-    UUID("8595ec4b-0f5b-4b38-9b1a-388844debba6"),
-    UUID("d4baebdc-ae9b-42d9-b7bf-cbdbe6abef9e"),
-    UUID("c77838e5-1385-4495-bca3-c90f8d70834d"),
-    UUID("60c2ba28-3bc7-443a-9b90-1ea84c33a0c6"),
-    UUID("b74d6a47-9f18-4dcd-8344-32f39f219881")
+    UUID("ea94747b-3d45-46d6-8775-bf27eb5da02b"),
+    UUID("866eb606-d074-4237-bcf2-aa7798002f7f"),
+    UUID("5cb0b8ed-45f4-4432-9ff7-3a9f896362f9"),
+    UUID("15de1dcc-98c2-4463-85ed-b36a6a31445a"),
+    UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7"),
+    UUID("d728b231-0b5d-4c90-a2d4-675cbcb64ff2"),
+    UUID("4e1f0ed6-0915-48cd-9bf0-eb804e7a919e"),
+    UUID("b40ef306-6ac2-4fa8-b703-df291799feef"),
+    UUID("00c1df50-320e-447b-8b94-7b2fab0fcf58"),
+    UUID("31e52122-ea93-448a-8827-fb5f079cbd1a")
 ]
 
 const customerIds = [
