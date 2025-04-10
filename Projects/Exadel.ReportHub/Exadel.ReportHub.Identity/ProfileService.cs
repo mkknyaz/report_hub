@@ -22,10 +22,10 @@ public class ProfileService(IUserRepository userRepository) : IProfileService
             new Claim(JwtClaimTypes.Email, user.Email)
         };
 
-        if (user.Role == UserRole.Admin)
-        {
-            claims.Add(new Claim(JwtClaimTypes.Role, UserRole.Regular.ToString()));
-        }
+        //if (user.Role == UserRole.Admin)
+        //{
+        //    claims.Add(new Claim(JwtClaimTypes.Role, UserRole.Regular.ToString()));
+        //}
 
         context.IssuedClaims.AddRange(claims);
     }

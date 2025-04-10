@@ -22,7 +22,7 @@ public class UpdateUserRoleHandlerTests
     }
 
     [TestCase(UserRole.Regular)]
-    [TestCase(UserRole.Admin)]
+    [TestCase(UserRole.SuperAdmin)]
     public async Task UpdateUserRole_WhenUserExists_ReturnsUpdated(UserRole role)
     {
         // Arrange

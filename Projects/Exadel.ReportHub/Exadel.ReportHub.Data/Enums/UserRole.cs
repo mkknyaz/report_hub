@@ -3,5 +3,6 @@
 public enum UserRole
 {
     Regular,
-    Admin
+    ClientAdmin,
+    SuperAdmin
 }
