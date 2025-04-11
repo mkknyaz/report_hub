@@ -17,10 +17,11 @@ db.UserAssignment.createIndex(
         unique: true,
         background: true
     });
-db.UserAssignment.createIndex([
+db.UserAssignment.createIndex(
     { UserId: 1, Role: 1 },
-],
-    { background: true });
+    {
+        background: true
+    });
 
 const userAssignmentIds = [
     UUID("72f70b7b-5bc8-4b11-85a9-2c9002d3e6fa"),
