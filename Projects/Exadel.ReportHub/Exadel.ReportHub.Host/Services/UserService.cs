@@ -26,7 +26,7 @@ public class UserService(ISender sender) : BaseService
         return FromResult(result, StatusCodes.Status201Created);
     }
 
-    [Authorize(Roles = nameof(UserRole.Regular))]
+    [Authorize(Policy = Constants.Authorization.Policy.AllUsers)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetUserById([FromRoute] Guid id)
     {
@@ -35,7 +35,7 @@ public class UserService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Roles = nameof(UserRole.Regular))]
+    [Authorize(Policy = Constants.Authorization.Policy.AllUsers)]
     [HttpGet("active")]
     public async Task<IActionResult> GetActiveUsers()
     {
@@ -44,7 +44,7 @@ public class UserService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Roles = nameof(UserRole.SuperAdmin))]
+    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
     [HttpPatch("{id:guid}/activity")]
     public async Task<IActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
     {
@@ -53,16 +53,16 @@ public class UserService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Roles = nameof(UserRole.SuperAdmin))]
-    [HttpPatch("{id:guid}/role")]
-    public async Task<IActionResult> UpdateUserRole([FromRoute] Guid id, [FromBody] UserRole userRole)
+    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
+    [HttpPatch("{id:guid}/{clientId:guid}/role")]
+    public async Task<IActionResult> UpdateUserRole([FromRoute] Guid id, [FromRoute] Guid clientId, [FromBody] UserRole userRole)
     {
-        var result = await sender.Send(new UpdateUserRoleRequest(id, userRole));
+        var result = await sender.Send(new UpdateUserRoleRequest(id, clientId, userRole));
 
         return FromResult(result);
     }
 
-    [Authorize(Roles = nameof(UserRole.Regular))]
+    [Authorize(Policy = Constants.Authorization.Policy.AllUsers)]
     [HttpPatch("password")]
     public async Task<IActionResult> UpdateUserPassword([FromBody] string password)
     {

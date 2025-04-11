@@ -59,5 +59,8 @@ public abstract class BaseRepository(MongoDbContext context)
         await GetCollection<TDocument>().DeleteOneAsync(filter, cancellationToken: cancellationToken);
     }
 
-    public IMongoCollection<TDocument> GetCollection<TDocument>() => context.GetCollection<TDocument>();
+    public IMongoCollection<TDocument> GetCollection<TDocument>(string collectionName = null)
+    {
+        return context.GetCollection<TDocument>(collectionName);
+    }
 }

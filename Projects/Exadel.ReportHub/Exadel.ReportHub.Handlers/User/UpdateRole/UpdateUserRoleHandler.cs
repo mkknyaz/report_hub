@@ -1,24 +1,22 @@
 ﻿using ErrorOr;
 using Exadel.ReportHub.Data.Enums;
-using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.RA.Abstract;
 using MediatR;
 
 namespace Exadel.ReportHub.Handlers.User.UpdateRole;
 
-public record UpdateUserRoleRequest(Guid Id, UserRole Role) : IRequest<ErrorOr<Updated>>;
+public record UpdateUserRoleRequest(Guid Id, Guid СlientId, UserRole Role) : IRequest<ErrorOr<Updated>>;
 
-public class UpdateUserRoleHandler(IUserRepository userRepository) : IRequestHandler<UpdateUserRoleRequest, ErrorOr<Updated>>
+public class UpdateUserRoleHandler(IUserAssignmentRepository userAssignmentRepository) : IRequestHandler<UpdateUserRoleRequest, ErrorOr<Updated>>
 {
     public async Task<ErrorOr<Updated>> Handle(UpdateUserRoleRequest request, CancellationToken cancellationToken)
     {
-        var isExists = await userRepository.ExistsAsync(request.Id, cancellationToken);
-        if (!isExists)
+        if (!await userAssignmentRepository.ExistsAsync(request.Id, request.СlientId, cancellationToken))
         {
             return Error.NotFound();
         }
 
-        await userRepository.UpdateRoleAsync(request.Id, request.Role, cancellationToken);
+        await userAssignmentRepository.UpdateRoleAsync(request.Id, request.СlientId, request.Role, cancellationToken);
         return Result.Updated;
     }
 }

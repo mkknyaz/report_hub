@@ -13,7 +13,6 @@ public class UserProfile : Profile
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.PasswordHash, opt => opt.Ignore())
             .ForMember(x => x.PasswordSalt, opt => opt.Ignore())
-            .ForMember(x => x.Role, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore());
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Exadel.ReportHub.Handlers;
 using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
@@ -11,13 +12,15 @@ namespace Exadel.ReportHub.Tests.User.Create;
 public class CreateUserHandlerTests : BaseTestFixture
 {
     private Mock<IUserRepository> _userRepositoryMock;
+    private Mock<IUserAssignmentRepository> _userAssignmentRepositoryMock;
     private CreateUserHandler _handler;
 
     [SetUp]
     public void Setup()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _handler = new CreateUserHandler(_userRepositoryMock.Object, Mapper);
+        _userAssignmentRepositoryMock = new Mock<IUserAssignmentRepository>();
+        _handler = new CreateUserHandler(_userRepositoryMock.Object, _userAssignmentRepositoryMock.Object, Mapper);
     }
 
     [Test]
@@ -45,6 +48,15 @@ public class CreateUserHandlerTests : BaseTestFixture
                     u.FullName == createUserDto.FullName &&
                     u.PasswordHash != string.Empty &&
                     u.PasswordSalt != string.Empty),
+                CancellationToken.None),
+            Times.Once);
+
+        _userAssignmentRepositoryMock.Verify(
+            mock => mock.AddAsync(
+                It.Is<Data.Models.UserAssignment>(
+                    ua => ua.UserId == result.Value.Id &&
+                    ua.ClientId == Constants.Client.GlobalId &&
+                    ua.Role == Data.Enums.UserRole.Regular),
                 CancellationToken.None),
             Times.Once);
     }

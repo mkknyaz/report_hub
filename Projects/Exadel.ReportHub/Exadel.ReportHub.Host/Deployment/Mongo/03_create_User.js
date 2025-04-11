@@ -1,5 +1,5 @@
 ﻿const scriptName = "03_create_User";
-const version = NumberInt(1);
+const version = NumberInt(2);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -11,7 +11,6 @@ db.createCollection("User", {
         locale: "en"
     }
 });
-
 db.User.createIndex(
     { Email: 1 },
     {
@@ -19,48 +18,99 @@ db.User.createIndex(
         background: true
     });
 
-db.User.insertMany([
+const userIds = [
+    UUID("ae04b52b-0daa-4e79-b332-616c47ed3cd7"),
+    UUID("c5b92a8e-6528-4f13-bff2-7b84cdc4d721"),
+    UUID("991dd59d-e249-491d-846c-77c2622cb3de"),
+    UUID("2d66669f-8254-4300-be5c-fd5f15da1fe2"),
+    UUID("1aca144a-5536-482b-8850-bc2ecac93582"),
+    UUID("11b69eb1-a4fd-4d06-a42e-dd654d538e02"),
+    UUID("ef107186-19d9-4124-a60e-9f95db89dc89"),
+    UUID("8d31447f-bc88-4588-85c3-274c65ba0975"),
+    UUID("1343eb98-18e1-4f0b-8ee3-a8e0455e59e7"),
+    UUID("fabefb5b-fe77-4513-800c-7ee647b4ac09")
+]
+
+const userNames = [
+    "John Travolta",
+    "Jim Carrey",
+    "Benedict Cumberbatch",
+    "Hugh Jackman",
+    "Johnny Depp",
+    "Kevin Spacey",
+    "Denzel Washington",
+    "Brad Pitt",
+    "Angelina Jolie",
+    "Tom Cruise"
+]
+
+// Password is user first name
+const passwords = [
     {
-        _id: UUID(),
-        Email: "demo.user1@gmail.com",
-        FullName: "Tony Stark",
-        // Pa$$word
-        PasswordHash: "fA0ifIwA6cePXixAIKglM/WYky9Eg5cf0rTQM/i4VPCweTEFZlaRFXbNbze7AxCg8ph8bVGaby9ja8Jv1JGtAw==",
-        PasswordSalt: "g2X1ISQcfqmdvtxH1QEeww==",
-        Role: "Regular",
-        IsActive: false
+        Hash: "JOAo5O8oruDQf2B4VQ1V6LMKYK0JWDy7fNZB4XB7GVDTYOfoD0wxud9LfFyaQM2U+Ni/7clgF8+eA/5KzUMdbg==",
+        Salt: "9ZA4jp5J/78Y8XJcmyAj8Q=="
     },
     {
-        _id: UUID(),
-        Email: "demo.user2@gmail.com",
-        FullName: "Jim Carrey",
-        // Dem0Pass
-        PasswordHash: "MCX7P74ysH4lGSFFnjSxLgG85yClViLoqExm9zuFbtPW2GivIYzg7UsnLO6AsGpjX9iWHSc9VYotfWYcglvxqg==",
-        PasswordSalt: "X7VVi0KB03QUOV422OGouw==",
-        Role: "Admin",
-        IsActive: false
+        Hash: "EwfrTotuZPeNmyvGrp3wSDu8p+Bj5OvcpebFSgFWSNPZLNUcYZr7qJpoNHPoKjsnN2xgdUVR9cGAUFTc1iXZ/w==",
+        Salt: "8GVmvIHlfxXte64+lw71RA=="
     },
     {
-        _id: UUID(),
-        Email: "demo.user3@gmail.com",
-        FullName: "Benedict Cumberbatch",
-        // UserPaSS
-        PasswordHash: "cMwDkUtR/0q+WTZSTju7zncdBn6u3vjpJQsPZPSkF7M0dGKrD3HsTE7hIhHNKuypdm78/ycGv1hfXp8VCnVpww==",
-        PasswordSalt: "IvV1bQJQHmVgc38aUvYG4A==",
-        Role: "Regular",
-        IsActive: true
+        Hash: "W1aj7oWttdVt4fnLXXEX4Ei0z4Wq+qEzgRWAhNLX20DZoYvvj0b/6lRHztNFoOj5c8+UfseUpE+oeUD2D5tIsQ==",
+        Salt: "Ies/mNpuwqXB1/39gdzgyw=="
     },
     {
-        _id: UUID(),
-        Email: "demo.user4@gmail.com",
-        FullName: "Hugh Jackman",
-        // AdminPa$$
-        PasswordHash: "ILbBFLxfZi+Vn6/vXyiDOK8dQrdSMAKJMpZPEdQwex9HH2Xy1e84yk4FJLufxf76YqerG8yoPWKegK+/qY/PfQ==",
-        PasswordSalt: "7XRYciM8IydOwzaUWbYo2Q==",
-        Role: "Admin",
-        IsActive: true
+        Hash: "+rH+5kYGVn9bpb9Nywqa6BIipIEFzzOIn+TC2os/iVcWtTOMA+UGStBp7LihnV1lGDUZ6mwmqSARFJ1P9XSd2A==",
+        Salt: "yD8RG0O2iiaxEJh5Jwktcg=="
+    },
+    {
+        Hash: "+OsKb1xrQXNNv9kOIQCY0e9ZUa/mClrhWmHxP/aL7Li4UnDUN2sYSq1vPtF9BkPsSq2yaklkuQdGh8IiLJjQxA==",
+        Salt: "4tciCCYpdvBfVtWs8qoYFA=="
+    },
+    {
+        Hash: "u8W7cysuLKDV40tig5xiqBNlMmA2zaVZD/LmxKgxZXHlg+J9GF6oIvKMkSpc4PNGKR8tGoqEx1rzC0JGbz402A==",
+        Salt: "iTZYzaBFE2hi4EDij+0z3Q=="
+    },
+    {
+        Hash: "noHrtHxjdi3MwpPfJ78bm4kvXeAh+acAtO6v5RnGrBsU9RovTVL4KHdydoQcB8T6jki9kUKrVzP+HHbbzaFH+g==",
+        Salt: "XbCky1tvZvlseEZ/uOmVJw=="
+    },
+    {
+        Hash: "leocdbJC+8Ua5EPyzlWRlxE0bcOsk0/o6TcAusp0F1qKCCM9XPbB09RUpdYPXG19pYt9adX0xAVlKbd9aJQJGQ==",
+        Salt: "HFYW9AiKAFkGNJXn4Su8Lw=="
+    },
+    {
+        Hash: "3xLeaaFkqNoeFzWxvJLGA1Ql/Hk34DocFDIPl8j4rPv33Ghyn38JTXeXm6W9loz7hoMc0W2veM0an0pJut3bQQ==",
+        Salt: "3fzUHnYsvpTzblX5aAWvGA=="
+    },
+    {
+        Hash: "nuJMGIWnR2IGgWxo9vd2Jf4ksFD6Toe9smt+lkjLUq2LReji80HgQGOj87Y/NAoc4KklBr6UnbHTAwTE/HyAzg==",
+        Salt: "b7nkA/NDk65Uvw8SI97ksg=="
     }
-]);
+]
+
+const users = [];
+const userCount = 10;
+
+for (let i = 0; i < userCount; i++) {
+    users.push({
+        _id: userIds[i],
+        Email: userNames[i].replace(/\s/g, '').toLowerCase() + "@test.com",
+        FullName: userNames[i],
+        PasswordHash: passwords[i].Hash,
+        PasswordSalt: passwords[i].Salt,
+        IsActive: true
+    });
+}
+
+const opt = users.map(user => ({
+    replaceOne: {
+        filter: { _id: user._id },
+        replacement: user,
+        upsert: true
+    }
+}));
+
+db.User.bulkWrite(opt);
 
 db.MigrationHistory.insertOne({
     ScriptName: scriptName,

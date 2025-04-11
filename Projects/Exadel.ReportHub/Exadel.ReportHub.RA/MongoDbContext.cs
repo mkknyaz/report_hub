@@ -1,6 +1,4 @@
-﻿using Exadel.ReportHub.Data.Models;
-using Microsoft.Extensions.Configuration;
-using MongoDB.Bson.Serialization;
+﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
@@ -16,8 +14,8 @@ public class MongoDbContext
         _database = client.GetDatabase("ReportHub");
     }
 
-    public IMongoCollection<T> GetCollection<T>()
+    public IMongoCollection<T> GetCollection<T>(string collectionName = null)
     {
-        return _database.GetCollection<T>(typeof(T).Name);
+        return _database.GetCollection<T>(collectionName ?? typeof(T).Name);
     }
 }

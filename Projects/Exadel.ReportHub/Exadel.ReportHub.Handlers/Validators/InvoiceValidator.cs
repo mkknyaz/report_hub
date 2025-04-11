@@ -1,6 +1,5 @@
 ﻿using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
-using Exadel.ReportHub.SDK.Enums;
 using FluentValidation;
 
 namespace Exadel.ReportHub.Handlers.Validators;

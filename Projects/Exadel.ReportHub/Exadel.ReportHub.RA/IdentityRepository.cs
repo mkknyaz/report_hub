@@ -29,6 +29,6 @@ public class IdentityRepository : BaseRepository, IIdentityRepository
     public async Task<Client> GetClientByIdAsync(string clientId, CancellationToken cancellationToken)
     {
         var filter = Builders<Client>.Filter.Eq(x => x.ClientId, clientId);
-        return await GetCollection<Client>().Find(filter).SingleOrDefaultAsync();
+        return await GetCollection<Client>("IdentityClient").Find(filter).SingleOrDefaultAsync();
     }
 }

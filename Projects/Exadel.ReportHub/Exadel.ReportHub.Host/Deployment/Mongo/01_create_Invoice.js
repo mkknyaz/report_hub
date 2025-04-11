@@ -123,7 +123,7 @@ function generateDueDate(issueDate) {
 function generateRandomItem(clientId, currency, id) {
     const index = getRandomInt(itemNames.length);
     return {
-        _id: id, 
+        _id: id,
         ClientId: clientId,
         Name: itemNames[index],
         Description: descriptions[index],

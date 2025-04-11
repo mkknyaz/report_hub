@@ -20,10 +20,13 @@ public static class MongoRegistrations
         {
             new IgnoreExtraElementsConvention(true)
         }, _ => true);
+
         services.AddSingleton<IUserRepository, UserRepository>();
+        services.AddSingleton<IUserAssignmentRepository, UserAssignmentRepository>();
         services.AddSingleton<IIdentityRepository, IdentityRepository>();
         services.AddSingleton<IClientRepository, ClientRepository>();
         services.AddSingleton<ICustomerRepository, CustomerRepository>();
+
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         return services;
     }
