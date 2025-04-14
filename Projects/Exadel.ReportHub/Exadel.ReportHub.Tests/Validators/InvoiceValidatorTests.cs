@@ -282,7 +282,7 @@ public class InvoiceValidatorTests : BaseTestFixture
     {
         // Arrange
         var invoice = GetValidInvoice();
-        invoice.IssueDate = DateTime.UtcNow.AddDays(5);
+        invoice.IssueDate = DateTime.UtcNow.Date.AddDays(5);
 
         // Act
         var result = await _invoiceValidator.TestValidateAsync(invoice);
@@ -299,8 +299,8 @@ public class InvoiceValidatorTests : BaseTestFixture
     {
         // Arrange
         var invoice = GetValidInvoice();
-        invoice.IssueDate = DateTime.UtcNow.AddDays(-5);
-        invoice.DueDate = DateTime.UtcNow.AddDays(-10);
+        invoice.IssueDate = DateTime.UtcNow.Date.AddDays(-5);
+        invoice.DueDate = DateTime.UtcNow.Date.AddDays(-10);
 
         // Act
         var result = await _invoiceValidator.TestValidateAsync(invoice);
@@ -348,7 +348,7 @@ public class InvoiceValidatorTests : BaseTestFixture
     }
 
     [Test]
-    [TestCase("2232323-322323-322323")]
+    [TestCase("2232323-322323-322323-234234233424-23423423")]
     [TestCase("2332-23")]
     public async Task ValidateAsync_BankAccountNumberNotCorrectLength_ErrorReturned(string bankAccountNumber)
     {
@@ -434,8 +434,8 @@ public class InvoiceValidatorTests : BaseTestFixture
                 .With(x => x.ClientId, clientId )
                 .With(x => x.CustomerId, customerId)
                 .With(x => x.InvoiceNumber, "INV123456")
-                .With(x => x.IssueDate, DateTime.UtcNow.AddDays(-5))
-                .With(x => x.DueDate, DateTime.UtcNow.AddDays(30))
+                .With(x => x.IssueDate, DateTime.UtcNow.Date.AddDays(-5))
+                .With(x => x.DueDate, DateTime.UtcNow.Date.AddDays(30))
                 .With(x => x.Currency, "USD")
                 .With(x => x.BankAccountNumber, "1234-1234-1234")
                 .Create();

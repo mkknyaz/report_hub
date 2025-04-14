@@ -39,12 +39,24 @@ public class InvoiceValidator : AbstractValidator<CreateInvoiceDTO>
         RuleFor(x => x.IssueDate)
             .NotEmpty()
             .LessThan(DateTime.UtcNow)
-            .WithMessage(Constants.Validation.Invoice.IssueDateErrorMessage);
+            .WithMessage(Constants.Validation.Invoice.IssueDateErrorMessage)
+            .ChildRules(time =>
+            {
+                RuleFor(x => x.IssueDate.TimeOfDay)
+                .Equal(TimeSpan.Zero)
+                .WithMessage(Constants.Validation.Invoice.TimeComponentErrorMassage);
+            });
 
         RuleFor(x => x.DueDate)
             .NotEmpty()
             .GreaterThan(x => x.IssueDate)
-            .WithMessage(Constants.Validation.Invoice.DueDateErrorMessage);
+            .WithMessage(Constants.Validation.Invoice.DueDateErrorMessage)
+            .ChildRules(time =>
+            {
+                time.RuleFor(x => x.TimeOfDay)
+                .Equal(TimeSpan.Zero)
+                .WithMessage(Constants.Validation.Invoice.TimeComponentErrorMassage);
+            });
 
         RuleFor(x => x.Amount)
             .GreaterThan(0);
@@ -60,10 +72,10 @@ public class InvoiceValidator : AbstractValidator<CreateInvoiceDTO>
             .IsInEnum();
 
         RuleFor(x => x.BankAccountNumber)
-            .NotEmpty()
-            .Length(Constants.Validation.Invoice.BankAccountNumberMinLength, Constants.Validation.Invoice.BankAccountNumberMaxLength)
-            .Matches(@"^[0-9\-]+$")
-            .WithMessage(Constants.Validation.Invoice.BankAccountNumberErrorMessage);
+           .NotEmpty()
+           .Length(Constants.Validation.Invoice.BankAccountNumberMinLength, Constants.Validation.Invoice.BankAccountNumberMaxLength)
+           .Matches(@"^[0-9\-]+$")
+           .WithMessage(Constants.Validation.Invoice.BankAccountNumberErrorMessage);
 
         RuleFor(x => x.ItemIds)
             .NotEmpty();

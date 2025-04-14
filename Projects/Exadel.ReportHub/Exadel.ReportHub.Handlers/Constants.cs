@@ -23,11 +23,18 @@ public static class Constants
             public const string InvoiceNumberErrorMessage = "Invoice number must start with 'INV' followed by digits.";
             public const string IssueDateErrorMessage = "Issue date cannot be in the future.";
             public const string DueDateErrorMessage = "Due date must be greater than issue date.";
+            public const string TimeComponentErrorMassage = "Date cannot have a time component.";
             public const int BankAccountNumberMinLength = 8;
-            public const int BankAccountNumberMaxLength = 17;
+            public const int BankAccountNumberMaxLength = 28;
             public const string BankAccountNumberErrorMessage = "Bank account number must only contain digits and dashes.";
             public const string CustomerDoesntExistsErrorMessage = "Customer does not exist.";
             public const string ClientDoesntExistsErrorMessage = "Client does not exist.";
+        }
+
+        public static class Import
+        {
+            public const string FileExtentionError = "The file must be in CSV format (.csv extension).";
+            public const string UploadedFileLengthError = "Uploaded file must not be empty.";
         }
     }
 

@@ -2,7 +2,6 @@
 using ErrorOr;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.RA.Abstract;
-using Exadel.ReportHub.Tests.Abstracts;
 using Moq;
 
 namespace Exadel.ReportHub.Tests.User.UpdateActivity;

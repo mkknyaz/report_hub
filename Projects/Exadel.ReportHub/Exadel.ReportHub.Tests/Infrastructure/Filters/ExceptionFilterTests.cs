@@ -1,5 +1,4 @@
-﻿using Duende.IdentityServer.Models;
-using Exadel.ReportHub.Common.Exceptions;
+﻿using Exadel.ReportHub.Common.Exceptions;
 using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Microsoft.AspNetCore.Http;

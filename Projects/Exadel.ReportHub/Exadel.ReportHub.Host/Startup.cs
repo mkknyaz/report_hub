@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using AutoMapper;
 using Exadel.ReportHub.Common.Providers;
+using Exadel.ReportHub.Csv;
+using Exadel.ReportHub.Csv.Abstract;
 using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.PolicyHandlers;
@@ -103,6 +105,7 @@ public class Startup(IConfiguration configuration)
         services.AddHttpContextAccessor();
         services.AddScoped<IUserProvider, UserProvider>();
         services.AddSingleton<IAuthorizationHandler, ClientAssignmentHandler>();
+        services.AddSingleton<ICsvProcessor, CsvProcessor>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMapper mapper)
