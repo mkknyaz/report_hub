@@ -1,5 +1,5 @@
 ﻿const scriptName = "05_create_Client";
-const version = NumberInt(2);
+const version = NumberInt(3);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -82,7 +82,8 @@ for (let i = 0; i < clientCount; i++) {
     clients.push({
         _id: clientIds[i],
         Name: clientNames[i],
-        CustomerIds: randomCustomerIds(i)
+        CustomerIds: randomCustomerIds(i),
+        IsDeleted: false
     });
 }
 clients.push(globalClient);

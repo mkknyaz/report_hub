@@ -19,7 +19,6 @@ public class GetUserByIdHandler(IUserRepository userRepository, IMapper mapper) 
         }
 
         var userDto = mapper.Map<UserDTO>(user);
-
         return userDto;
     }
 }

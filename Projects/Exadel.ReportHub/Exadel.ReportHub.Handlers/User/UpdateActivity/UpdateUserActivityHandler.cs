@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ErrorOr;
+﻿using ErrorOr;
 using Exadel.ReportHub.RA.Abstract;
 using MediatR;
 
@@ -22,6 +17,7 @@ public class UpdateUserActivityHandler(IUserRepository userRepository) : IReques
         }
 
         await userRepository.UpdateActivityAsync(request.Id, request.IsActive, cancellationToken);
+
         return Result.Updated;
     }
 }

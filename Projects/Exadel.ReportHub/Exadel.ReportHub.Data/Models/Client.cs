@@ -7,4 +7,6 @@ public class Client : IDocument
     public string Name { get; set; }
 
     public IList<Guid> CustomerIds { get; set; }
+
+    public bool IsDeleted { get; set; }
 }

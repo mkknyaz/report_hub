@@ -9,7 +9,7 @@ namespace Exadel.ReportHub.Host.Services;
 [ExcludeFromCodeCoverage]
 [ApiController]
 [Route("api/invoices")]
-public class InvoiceService(ISender sender) : BaseService
+public class InvoicesService(ISender sender) : BaseService
 {
     [HttpPost("import")]
     public async Task<IActionResult> ImportInvoicesAsync([FromForm] ImportDTO importDto)
