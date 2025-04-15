@@ -4,7 +4,7 @@ using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
 
-namespace Exadel.ReportHub.Handlers.User.Get;
+namespace Exadel.ReportHub.Handlers.User.GetById;
 
 public record GetUserByIdRequest(Guid Id) : IRequest<ErrorOr<UserDTO>>;
 

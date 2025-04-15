@@ -1,35 +1,44 @@
 ﻿using AutoFixture;
-using Exadel.ReportHub.Handlers.User.GetActive;
+using Exadel.ReportHub.Handlers.User.Get;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.Tests.Abstracts;
 using Moq;
 
-namespace Exadel.ReportHub.Tests.User.GetActive;
+namespace Exadel.ReportHub.Tests.User.Get;
 
 [TestFixture]
 public class GetActiveUsersHandlerTests : BaseTestFixture
 {
     private Mock<IUserRepository> _userRepositoryMock;
-    private GetActiveUsersHandler _handler;
+    private GetUsersHandler _handler;
 
     [SetUp]
     public void Setup()
     {
         _userRepositoryMock = new Mock<IUserRepository>();
-        _handler = new GetActiveUsersHandler(_userRepositoryMock.Object, Mapper);
+        _handler = new GetUsersHandler(_userRepositoryMock.Object, Mapper);
     }
 
     [Test]
-    public async Task GetActiveUsers_ValidRequest_ReturnsActiveUserDTOs()
+    [TestCase(true)]
+    [TestCase(false)]
+    [TestCase(null)]
+    public async Task GetActiveUsers_ValidRequest_ReturnsActiveUserDTOs(bool? isActive)
     {
         // Arrange
-        var users = Fixture.Build<Data.Models.User>().With(x => x.IsActive, true).CreateMany(30).ToList();
+        if(isActive == null)
+        {
+            Random random = new Random();
+            isActive = random.Next(0, 2) == 1;
+        }
+
+        var users = Fixture.Build<Data.Models.User>().With(x => x.IsActive, isActive).CreateMany(30).ToList();
         _userRepositoryMock
-            .Setup(repo => repo.GetAllActiveAsync(CancellationToken.None))
+            .Setup(repo => repo.GetAsync(isActive, CancellationToken.None))
             .ReturnsAsync(users);
 
         // Act
-        var request = new GetActiveUsersRequest();
+        var request = new GetUsersRequest(isActive);
         var result = await _handler.Handle(request, CancellationToken.None);
 
         // Assert
@@ -38,7 +47,7 @@ public class GetActiveUsersHandlerTests : BaseTestFixture
         Assert.That(result.Value.ToList(), Has.Count.EqualTo(users.Count));
 
         _userRepositoryMock.Verify(
-            mock => mock.GetAllActiveAsync(CancellationToken.None),
+            mock => mock.GetAsync(isActive, CancellationToken.None),
             Times.Once);
     }
 }

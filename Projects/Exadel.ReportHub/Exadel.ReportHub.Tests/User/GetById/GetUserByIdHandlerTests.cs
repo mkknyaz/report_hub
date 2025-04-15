@@ -1,12 +1,12 @@
 ﻿using AutoFixture;
 using ErrorOr;
-using Exadel.ReportHub.Handlers.User.Get;
+using Exadel.ReportHub.Handlers.User.GetById;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using Exadel.ReportHub.Tests.Abstracts;
 using Moq;
 
-namespace Exadel.ReportHub.Tests.User.Get;
+namespace Exadel.ReportHub.Tests.User.GetById;
 
 [TestFixture]
 public class GetUserByIdHandlerTests : BaseTestFixture

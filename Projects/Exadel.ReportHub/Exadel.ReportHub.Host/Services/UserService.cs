@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Handlers.User.Create;
+using Exadel.ReportHub.Handlers.User.Delete;
 using Exadel.ReportHub.Handlers.User.Get;
-using Exadel.ReportHub.Handlers.User.GetActive;
+using Exadel.ReportHub.Handlers.User.GetById;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
+using Exadel.ReportHub.Handlers.User.UpdateName;
 using Exadel.ReportHub.Handlers.User.UpdatePassword;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
@@ -35,10 +37,10 @@ public class UserService(ISender sender) : BaseService
     }
 
     [Authorize(Policy = Constants.Authorization.Policy.AllUsers)]
-    [HttpGet("active")]
-    public async Task<IActionResult> GetActiveUsers()
+    [HttpGet]
+    public async Task<IActionResult> GetUsers([FromQuery] bool? isActive)
     {
-        var result = await sender.Send(new GetActiveUsersRequest());
+        var result = await sender.Send(new GetUsersRequest(isActive));
 
         return FromResult(result);
     }
@@ -57,6 +59,22 @@ public class UserService(ISender sender) : BaseService
     public async Task<IActionResult> UpdateUserPassword([FromBody] string password)
     {
         var result = await sender.Send(new UpdateUserPasswordRequest(password));
+        return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
+    [HttpPatch("{id:guid}/fullname")]
+    public async Task<IActionResult> UpdateUserFullName([FromRoute] Guid id, [FromBody] string fullName)
+    {
+        var result = await sender.Send(new UpdateUserNameRequest(id, fullName));
+        return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
+    {
+        var result = await sender.Send(new DeleteUserRequest(id));
         return FromResult(result);
     }
 }
