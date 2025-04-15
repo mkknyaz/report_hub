@@ -16,6 +16,7 @@ namespace Exadel.ReportHub.Host.Services;
 [Route("api/users")]
 public class UserService(ISender sender) : BaseService
 {
+    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
     [HttpPost]
     public async Task<IActionResult> AddUser([FromBody] CreateUserDTO createUserDto)
     {
