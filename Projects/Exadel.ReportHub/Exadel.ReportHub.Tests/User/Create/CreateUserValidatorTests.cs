@@ -1,13 +1,12 @@
 ﻿using Exadel.ReportHub.Handlers;
 using Exadel.ReportHub.Handlers.User.Create;
-using Exadel.ReportHub.Handlers.Validators;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Moq;
 
-namespace Exadel.ReportHub.Tests.Validators;
+namespace Exadel.ReportHub.Tests.User.Create;
 
 [TestFixture]
 public class CreateUserValidatorTests

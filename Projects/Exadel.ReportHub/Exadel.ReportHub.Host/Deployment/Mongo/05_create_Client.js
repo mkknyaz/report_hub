@@ -1,5 +1,5 @@
 ﻿const scriptName = "05_create_Client";
-const version = NumberInt(1);
+const version = NumberInt(2);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -56,6 +56,11 @@ const clientNames = [
     "Maxwell"
 ]
 
+const globalClient = {
+    _id: UUID("e47501a8-547b-4dc4-ba97-e65ccfc39477"),
+    Name: "Global client"
+}
+
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
@@ -80,6 +85,7 @@ for (let i = 0; i < clientCount; i++) {
         CustomerIds: randomCustomerIds(i)
     });
 }
+clients.push(globalClient);
 
 const opt = clients.map(client => ({
     replaceOne: {

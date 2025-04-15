@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using ErrorOr;
 using Exadel.ReportHub.Common;
-using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
@@ -21,10 +20,10 @@ public class CreateUserHandler(IUserRepository userRepository, IUserAssignmentRe
         user.PasswordSalt = passwordSalt;
         user.PasswordHash = passwordHash;
 
-        var userAssignment = new UserAssignment { Id = Guid.NewGuid(), UserId = user.Id, ClientId = Constants.Client.GlobalId };
+        var userAssignment = new Data.Models.UserAssignment { Id = Guid.NewGuid(), UserId = user.Id, ClientId = Constants.Client.GlobalId };
 
         await userRepository.AddAsync(user, cancellationToken);
-        await userAssignmentRepository.AddAsync(userAssignment, cancellationToken);
+        await userAssignmentRepository.UpsertAsync(userAssignment, cancellationToken);
 
         var userDto = mapper.Map<UserDTO>(user);
         return userDto;

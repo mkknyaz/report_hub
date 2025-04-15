@@ -1,11 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.Handlers.User.Get;
 using Exadel.ReportHub.Handlers.User.GetActive;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.Handlers.User.UpdatePassword;
-using Exadel.ReportHub.Handlers.User.UpdateRole;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -49,15 +47,6 @@ public class UserService(ISender sender) : BaseService
     public async Task<IActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
     {
         var result = await sender.Send(new UpdateUserActivityRequest(id, isActive));
-
-        return FromResult(result);
-    }
-
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
-    [HttpPatch("{id:guid}/{clientId:guid}/role")]
-    public async Task<IActionResult> UpdateUserRole([FromRoute] Guid id, [FromRoute] Guid clientId, [FromBody] UserRole userRole)
-    {
-        var result = await sender.Send(new UpdateUserRoleRequest(id, clientId, userRole));
 
         return FromResult(result);
     }

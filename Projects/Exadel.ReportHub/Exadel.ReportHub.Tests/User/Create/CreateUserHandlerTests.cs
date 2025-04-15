@@ -52,7 +52,7 @@ public class CreateUserHandlerTests : BaseTestFixture
             Times.Once);
 
         _userAssignmentRepositoryMock.Verify(
-            mock => mock.AddAsync(
+            mock => mock.UpsertAsync(
                 It.Is<Data.Models.UserAssignment>(
                     ua => ua.UserId == result.Value.Id &&
                     ua.ClientId == Constants.Client.GlobalId &&

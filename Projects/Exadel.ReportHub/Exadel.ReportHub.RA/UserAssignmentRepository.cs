@@ -14,9 +14,14 @@ public class UserAssignmentRepository : BaseRepository, IUserAssignmentRepositor
     {
     }
 
-    public async Task AddAsync(UserAssignment userAssignment, CancellationToken cancellationToken)
+    public async Task UpsertAsync(UserAssignment userAssignment, CancellationToken cancellationToken)
     {
-        await base.AddAsync(userAssignment, cancellationToken);
+        var filter = _filterBuilder.And(_filterBuilder.Eq(x => x.UserId, userAssignment.UserId), _filterBuilder.Eq(x => x.ClientId, userAssignment.ClientId));
+        var update = Builders<UserAssignment>.Update
+            .Set(x => x.Role, userAssignment.Role)
+            .SetOnInsert(x => x.Id, Guid.NewGuid());
+
+        await GetCollection<UserAssignment>().UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = true }, cancellationToken);
     }
 
     public async Task<bool> ExistsAsync(Guid userId, Guid clientId, CancellationToken cancellationToken)
@@ -42,12 +47,5 @@ public class UserAssignmentRepository : BaseRepository, IUserAssignmentRepositor
         var field = new ExpressionFieldDefinition<UserAssignment, UserRole>(x => x.Role);
         var userRoles = await GetCollection<UserAssignment>().DistinctAsync(field, filter);
         return await userRoles.ToListAsync();
-    }
-
-    public async Task UpdateRoleAsync(Guid userId, Guid clientId, UserRole userRole, CancellationToken cancellationToken)
-    {
-        var filter = _filterBuilder.And(_filterBuilder.Eq(x => x.UserId, userId), _filterBuilder.Eq(x => x.ClientId, clientId));
-        var update = Builders<UserAssignment>.Update.Set(x => x.Role, userRole);
-        await GetCollection<UserAssignment>().UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
 }

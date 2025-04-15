@@ -31,6 +31,12 @@ public static class Constants
             public const string ClientDoesntExistsErrorMessage = "Client does not exist.";
         }
 
+        public static class UserAssignment
+        {
+            public const string UserDoesNotExistMessage = "User does not exist.";
+            public const string ClientDoesNotExistMessage = "Client does not exist.";
+        }
+
         public static class Import
         {
             public const string FileExtentionError = "The file must be in CSV format (.csv extension).";
