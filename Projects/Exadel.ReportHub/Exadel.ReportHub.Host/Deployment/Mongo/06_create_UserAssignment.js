@@ -1,5 +1,5 @@
 ﻿const scriptName = "06_create_UserAssignment";
-const version = NumberInt(1);
+const version = NumberInt(2);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -43,7 +43,12 @@ const userAssignmentIds = [
     UUID("d63575d6-21cd-4e54-a47a-8310b1797b61"),
     UUID("59718017-cad4-4ae5-b827-1ee278b0f99a"),
     UUID("222a644b-6446-44bc-9b8e-8010e498f0b3"),
-    UUID("d5f65b79-7410-420e-b113-7633338f5f82")
+    UUID("d5f65b79-7410-420e-b113-7633338f5f82"),
+    UUID("ef28c734-7efc-4d79-827b-25bc5b95fa8c"),
+    UUID("51a3ef07-8400-4d2a-81a9-6db978151cf0"),
+    UUID("aba200cc-9469-4941-8411-d257eccfd1b7"),
+    UUID("7db68750-e47a-42f8-ae82-99dd856ade34"),
+    UUID("5f669e78-f757-4039-9135-355069df6314")
 ]
 
 const userIds = [
@@ -66,16 +71,22 @@ const clientIds = [
     UUID("866eb606-d074-4237-bcf2-aa7798002f7f"),
     UUID("5cb0b8ed-45f4-4432-9ff7-3a9f896362f9"),
     UUID("15de1dcc-98c2-4463-85ed-b36a6a31445a"),
-    UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7")
+    UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7"),
+    UUID("d728b231-0b5d-4c90-a2d4-675cbcb64ff2"),
+    UUID("4e1f0ed6-0915-48cd-9bf0-eb804e7a919e"),
+    UUID("b40ef306-6ac2-4fa8-b703-df291799feef"),
+    UUID("00c1df50-320e-447b-8b94-7b2fab0fcf58"),
+    UUID("31e52122-ea93-448a-8827-fb5f079cbd1a")
 ]
 
 const globalRoles = [
-    "Regular",
     "SuperAdmin"
 ]
 
 const clientRoles = [
-    "ClientAdmin"
+    "Operator",
+    "ClientAdmin",
+    "Owner"
 ]
 
 function getRandomInt(max) {
@@ -83,9 +94,9 @@ function getRandomInt(max) {
 }
 
 const userAssignments = [];
-const userAssignmentCount = 20;
+const userAssignmentCount = 25;
 
-for (let i = 0; i < userAssignmentCount / 2; i++) {
+for (let i = 0; i < userAssignmentCount / 5; i++) {
     userAssignments.push({
         _id: userAssignmentIds[i],
         UserId: userIds[i],
@@ -94,11 +105,13 @@ for (let i = 0; i < userAssignmentCount / 2; i++) {
     });
 }
 
-for (let i = userAssignmentCount / 2; i < userAssignmentCount; i++) {
+for (let i = userAssignmentCount / 5; i < userAssignmentCount; i++) {
+    var userIndex = (i - userAssignmentCount / 5) % userIds.length;
+    var clientIndex = NumberInt((i - userAssignmentCount / 5) / 2)
     userAssignments.push({
         _id: userAssignmentIds[i],
-        UserId: userIds[i - userAssignmentCount / 2],
-        ClientId: clientIds[NumberInt((i - userAssignmentCount / 2) / 2)],
+        UserId: userIds[userIndex],
+        ClientId: clientIds[clientIndex],
         Role: clientRoles[getRandomInt(clientRoles.length)]
     });
 }

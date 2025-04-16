@@ -2,7 +2,8 @@
 
 public enum UserRole
 {
-    Regular,
+    Operator,
     ClientAdmin,
-    SuperAdmin,
+    Owner,
+    SuperAdmin
 }

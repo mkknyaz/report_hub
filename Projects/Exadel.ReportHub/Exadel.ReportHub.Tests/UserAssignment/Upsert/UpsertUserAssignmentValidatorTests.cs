@@ -25,8 +25,9 @@ public class UpsertUserAssignmentValidatorTests : BaseTestFixture
         _validator = new UpsertUserAssignmentRequestValidator(_userRepositoryMock.Object, _clientRepositoryMock.Object);
     }
 
-    [TestCase(UserRole.Regular)]
+    [TestCase(UserRole.Operator)]
     [TestCase(UserRole.ClientAdmin)]
+    [TestCase(UserRole.Owner)]
     [TestCase(UserRole.SuperAdmin)]
     public async Task ValidateAsync_ValidRequest_NoErrorReturned(UserRole role)
     {
@@ -55,8 +56,9 @@ public class UpsertUserAssignmentValidatorTests : BaseTestFixture
             Times.Once);
     }
 
-    [TestCase(UserRole.Regular)]
+    [TestCase(UserRole.Operator)]
     [TestCase(UserRole.ClientAdmin)]
+    [TestCase(UserRole.Owner)]
     [TestCase(UserRole.SuperAdmin)]
     public async Task ValidateAsync_UserIdIsEmpty_ErrorReturned(UserRole role)
     {
@@ -84,8 +86,9 @@ public class UpsertUserAssignmentValidatorTests : BaseTestFixture
             Times.Once);
     }
 
-    [TestCase(UserRole.Regular)]
+    [TestCase(UserRole.Operator)]
     [TestCase(UserRole.ClientAdmin)]
+    [TestCase(UserRole.Owner)]
     [TestCase(UserRole.SuperAdmin)]
     public async Task ValidateAsync_UserNotExist_ErrorReturned(UserRole role)
     {
@@ -115,8 +118,9 @@ public class UpsertUserAssignmentValidatorTests : BaseTestFixture
             Times.Once);
     }
 
-    [TestCase(UserRole.Regular)]
+    [TestCase(UserRole.Operator)]
     [TestCase(UserRole.ClientAdmin)]
+    [TestCase(UserRole.Owner)]
     [TestCase(UserRole.SuperAdmin)]
     public async Task ValidateAsync_ClientIdIsEmpty_ErrorReturned(UserRole role)
     {
@@ -144,8 +148,9 @@ public class UpsertUserAssignmentValidatorTests : BaseTestFixture
             Times.Never);
     }
 
-    [TestCase(UserRole.Regular)]
+    [TestCase(UserRole.Operator)]
     [TestCase(UserRole.ClientAdmin)]
+    [TestCase(UserRole.Owner)]
     [TestCase(UserRole.SuperAdmin)]
     public async Task ValidateAsync_ClientNotExist_ErrorReturned(UserRole role)
     {

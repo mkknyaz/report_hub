@@ -1,33 +1,29 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using Duende.IdentityServer.Extensions;
-using Exadel.ReportHub.Data.Enums;
+using Exadel.ReportHub.Host.Infrastructure.Authorization;
 using Exadel.ReportHub.Host.Services;
 using Exadel.ReportHub.RA.Abstract;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Exadel.ReportHub.Host.PolicyHandlers;
 
-public class ClientAssignmentRequirement : IAuthorizationRequirement
+public class PermissionRequirement : IAuthorizationRequirement
 {
-    public IList<UserRole> Roles { get; }
+    public Permission Permission { get; }
 
-    public ClientAssignmentRequirement(params UserRole[] roles)
+    public PermissionRequirement(Permission permission)
     {
-        Roles = roles.ToList();
-        if (!Roles.Contains(UserRole.SuperAdmin))
-        {
-            Roles.Add(UserRole.SuperAdmin);
-        }
+        Permission = permission;
     }
 }
 
-public class ClientAssignmentHandler(
-        IHttpContextAccessor httpContextAccessor,
-        IUserAssignmentRepository userAssignmentRepository,
-        ILogger<ClientAssignmentHandler> logger) : AuthorizationHandler<ClientAssignmentRequirement>
+public class PermissionHandler(
+    IHttpContextAccessor httpContextAccessor,
+    IUserAssignmentRepository userAssignmentRepository,
+    ILogger<PermissionHandler> logger) : AuthorizationHandler<PermissionRequirement>
 {
-    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, ClientAssignmentRequirement requirement)
+    protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
     {
         Claim userIdClaim;
         if (!context.User.IsAuthenticated() ||
@@ -36,7 +32,15 @@ public class ClientAssignmentHandler(
             return;
         }
 
-        var matchingRoles = requirement.Roles.Where(r => context.User.IsInRole(r.ToString())).ToList();
+        if(!httpContextAccessor.HttpContext.Request.RouteValues.TryGetValue("controller", out var serviceName))
+        {
+            return;
+        }
+
+        var allowedRoles = Permissions.GetAllowedRoles(
+            serviceName.ToString().Replace("sService", string.Empty, StringComparison.Ordinal), requirement.Permission);
+        var matchingRoles = allowedRoles.Where(r => context.User.IsInRole(r.ToString())).ToList();
+
         if (matchingRoles.Count == 0)
         {
             return;

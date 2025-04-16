@@ -8,9 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exadel.ReportHub.Host.Services;
 
 [ExcludeFromCodeCoverage]
-public class UserAssignmentService(ISender sender) : BaseService
+public class UserAssignmentsService(ISender sender) : BaseService
 {
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
+    [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPost]
     public async Task<IActionResult> UpsertUserAssignment([FromBody] UpsertUserAssignmentDTO upsertUserAssignmentDto)
     {

@@ -22,8 +22,9 @@ public class UpsertUserAssignmentHandlerTests : BaseTestFixture
         _handler = new UpsertUserAssignmentHandler(_userAssignmentRepositoryMock.Object, Mapper);
     }
 
-    [TestCase(UserRole.Regular)]
+    [TestCase(UserRole.Operator)]
     [TestCase(UserRole.ClientAdmin)]
+    [TestCase(UserRole.Owner)]
     [TestCase(UserRole.SuperAdmin)]
     public async Task UpsertUserAssignment_ValidRequest_ReturnsUpdated(UserRole role)
     {

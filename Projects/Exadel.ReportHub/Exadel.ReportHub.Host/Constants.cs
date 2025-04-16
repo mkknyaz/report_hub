@@ -10,11 +10,10 @@ public static class Constants
 
         public static class Policy
         {
-            public const string SuperAdmin = "SuperAdmin";
-            public const string Owner = "Owner";
-            public const string ClientAdmin = "ClientAdmin";
-            public const string Operator = "Operator";
-            public const string AllUsers = "AllUsers";
+            public const string Create = nameof(Create);
+            public const string Read = nameof(Read);
+            public const string Update = nameof(Update);
+            public const string Delete = nameof(Delete);
         }
     }
 

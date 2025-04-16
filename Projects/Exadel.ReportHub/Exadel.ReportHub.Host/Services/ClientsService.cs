@@ -16,7 +16,7 @@ namespace Exadel.ReportHub.Host.Services;
 [Route("api/clients")]
 public class ClientsService(ISender sender) : BaseService
 {
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
+    [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost]
     public async Task<IActionResult> AddClient([FromBody] CreateClientDTO createClientDto)
     {
@@ -25,10 +25,7 @@ public class ClientsService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
-    [Authorize(Policy = Constants.Authorization.Policy.Owner)]
-    [Authorize(Policy = Constants.Authorization.Policy.ClientAdmin)]
-    [Authorize(Policy = Constants.Authorization.Policy.Operator)]
+    [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetClientById([FromRoute] Guid id)
     {
@@ -37,10 +34,7 @@ public class ClientsService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
-    [Authorize(Policy = Constants.Authorization.Policy.Owner)]
-    [Authorize(Policy = Constants.Authorization.Policy.ClientAdmin)]
-    [Authorize(Policy = Constants.Authorization.Policy.Operator)]
+    [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet]
     public async Task<IActionResult> GetClients()
     {
@@ -49,8 +43,7 @@ public class ClientsService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
-    [Authorize(Policy = Constants.Authorization.Policy.Owner)]
+    [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPatch("{id:guid}/name")]
     public async Task<IActionResult> UpdateClientName([FromRoute] Guid id, [FromBody] string name)
     {
@@ -59,7 +52,7 @@ public class ClientsService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Policy = Constants.Authorization.Policy.SuperAdmin)]
+    [Authorize(Policy = Constants.Authorization.Policy.Delete)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteClient([FromRoute] Guid id)
     {
