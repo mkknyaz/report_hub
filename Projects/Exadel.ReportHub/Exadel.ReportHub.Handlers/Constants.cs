@@ -17,6 +17,16 @@ public static class Constants
             public const string PasswordSpecialCharacterMessage = "Password must contain at least one special character.";
         }
 
+        public static class Customer
+        {
+            public const int CountryMaxLength = 56;
+            public const int NameMaxLength = 100;
+            public const string CountryShouldStartWithCapitalMessage = "Country must begin with a capital letter.";
+            public const string NameShouldStartWithCapitalMessage = "Name must begin with a capital letter.";
+            public const string EmailTakenMessage = "Email is already taken.";
+            public const string EmailInvalidMessage = "Email is invalid.";
+        }
+
         public static class Client
         {
             public const string ShouldStartWithCapitalMessage = "The name must begin with a capital letter.";

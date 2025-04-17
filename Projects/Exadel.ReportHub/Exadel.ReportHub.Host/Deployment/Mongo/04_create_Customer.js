@@ -1,5 +1,5 @@
 ﻿const scriptName = "04_create_Customer";
-const version = NumberInt(1);
+const version = NumberInt(2);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -54,7 +54,8 @@ for (let i = 0; i < customerCount; i++) {
         _id: customerIds[i],
         Country: country,
         Email: customerNames[i].replace(/\s/g, '').toLowerCase() + "@test.com",
-        Name: customerNames[i]
+        Name: customerNames[i],
+        IsDeleted: false
     });
 }
 

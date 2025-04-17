@@ -81,7 +81,6 @@ public class UserRepository : BaseRepository, IUserRepository
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.Eq(x => x.Id, id);
-        await GetCollection<User>().DeleteOneAsync(filter, cancellationToken);
+        await DeleteAsync<User>(id, cancellationToken);
     }
 }
