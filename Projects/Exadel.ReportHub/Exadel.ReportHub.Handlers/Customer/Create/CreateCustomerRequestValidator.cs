@@ -1,6 +1,4 @@
-﻿using Exadel.ReportHub.Handlers.Validators;
-using Exadel.ReportHub.RA;
-using Exadel.ReportHub.RA.Abstract;
+﻿using Exadel.ReportHub.RA.Abstract;
 using FluentValidation;
 
 namespace Exadel.ReportHub.Handlers.Customer.Create;
@@ -8,10 +6,12 @@ namespace Exadel.ReportHub.Handlers.Customer.Create;
 public class CreateCustomerRequestValidator : AbstractValidator<CreateCustomerRequest>
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly IValidator<string> _stringValidator;
 
-    public CreateCustomerRequestValidator(ICustomerRepository customerRepository)
+    public CreateCustomerRequestValidator(ICustomerRepository customerRepository, IValidator<string> stringValidator)
     {
         _customerRepository = customerRepository;
+        _stringValidator = stringValidator;
         ConfigureRules();
     }
 
@@ -25,7 +25,7 @@ public class CreateCustomerRequestValidator : AbstractValidator<CreateCustomerRe
                 child.RuleLevelCascadeMode = CascadeMode.Stop;
 
                 child.RuleFor(x => x.Name)
-                    .SetValidator(new NameValidator());
+                    .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names);
 
                 child.RuleFor(x => x.Email)
                     .NotEmpty()
@@ -35,7 +35,7 @@ public class CreateCustomerRequestValidator : AbstractValidator<CreateCustomerRe
                     .WithMessage(Constants.Validation.Customer.EmailTakenMessage);
 
                 child.RuleFor(x => x.Country)
-                    .SetValidator(new CountryValidator());
+                    .SetValidator(_stringValidator, Constants.Validation.RuleSet.Countries);
             });
     }
 

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exadel.ReportHub.Host.Services;
 
 [ExcludeFromCodeCoverage]
+[Route("api/user-assignments")]
 public class UserAssignmentsService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Update)]

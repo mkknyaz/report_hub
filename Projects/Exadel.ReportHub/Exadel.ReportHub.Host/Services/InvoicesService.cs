@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exadel.ReportHub.Host.Services;
 
 [ExcludeFromCodeCoverage]
-[ApiController]
 [Route("api/invoices")]
 public class InvoicesService(ISender sender) : BaseService
 {

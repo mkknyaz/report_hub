@@ -55,10 +55,10 @@ public static class Permissions
         {
             nameof(Customer), new()
             {
-                { Permission.Create, new() { UserRole.Owner, UserRole.ClientAdmin, UserRole.Operator } },
-                { Permission.Read, new() { UserRole.Owner, UserRole.ClientAdmin, UserRole.Operator } },
-                { Permission.Update, new() { UserRole.Owner, UserRole.ClientAdmin } },
-                { Permission.Delete, new() { UserRole.Owner } },
+                { Permission.Create, new() { UserRole.SuperAdmin, UserRole.Owner, UserRole.ClientAdmin, UserRole.Operator } },
+                { Permission.Read, new() { UserRole.SuperAdmin, UserRole.Owner, UserRole.ClientAdmin, UserRole.Operator } },
+                { Permission.Update, new() { UserRole.SuperAdmin, UserRole.Owner, UserRole.ClientAdmin } },
+                { Permission.Delete, new() { UserRole.SuperAdmin, UserRole.Owner } },
             }
         },
         {

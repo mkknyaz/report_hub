@@ -13,7 +13,6 @@ namespace Exadel.ReportHub.Host.Services;
 
 [ExcludeFromCodeCoverage]
 [Route("api/customers")]
-[ApiController]
 public class CustomersService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Create)]

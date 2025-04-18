@@ -1,8 +1,6 @@
-﻿using Exadel.ReportHub.Data.Abstract;
+﻿namespace Exadel.ReportHub.SDK.DTOs.Item;
 
-namespace Exadel.ReportHub.Data.Models;
-
-public class Item : IDocument, ISoftDeletable
+public class ItemDTO
 {
     public Guid Id { get; set; }
 
@@ -14,9 +12,5 @@ public class Item : IDocument, ISoftDeletable
 
     public decimal Price { get; set; }
 
-    public Guid CurrencyId { get; set; }
-
     public string CurrencyCode { get; set; }
-
-    public bool IsDeleted { get; set; }
 }

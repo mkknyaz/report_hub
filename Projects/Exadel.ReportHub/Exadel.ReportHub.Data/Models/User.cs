@@ -1,3 +1,5 @@
+using Exadel.ReportHub.Data.Abstract;
+
 namespace Exadel.ReportHub.Data.Models;
 
 public class User : IDocument

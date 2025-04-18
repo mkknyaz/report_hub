@@ -46,8 +46,7 @@ public class CustomerRepository : BaseRepository, ICustomerRepository
 
     public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var definition = Builders<Customer>.Update.Set(x => x.IsDeleted, true);
-        await UpdateAsync(id, definition, cancellationToken);
+        await SoftDeleteAsync<Customer>(id, cancellationToken);
     }
 
     public async Task UpdateAsync(Customer customer, CancellationToken cancellationToken)

@@ -1,6 +1,4 @@
-﻿using Exadel.ReportHub.Handlers.Validators;
-using Exadel.ReportHub.RA;
-using Exadel.ReportHub.RA.Abstract;
+﻿using Exadel.ReportHub.RA.Abstract;
 using FluentValidation;
 
 namespace Exadel.ReportHub.Handlers.Client.UpdateName;
@@ -8,17 +6,26 @@ namespace Exadel.ReportHub.Handlers.Client.UpdateName;
 public class UpdateClientNameRequestValidator : AbstractValidator<UpdateClientNameRequest>
 {
     private readonly IClientRepository _clientRepository;
+    private readonly IValidator<string> _stringValidator;
 
-    public UpdateClientNameRequestValidator(IClientRepository clientRepository)
+    public UpdateClientNameRequestValidator(IClientRepository clientRepository, IValidator<string> stringValidator)
     {
         _clientRepository = clientRepository;
+        _stringValidator = stringValidator;
         ConfigureRules();
     }
 
     private void ConfigureRules()
     {
         RuleFor(x => x.Name)
-            .NotEmpty()
-            .SetValidator(new ClientNameValidator(_clientRepository));
+            .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names)
+            .MustAsync(NameMustNotExistsAsync)
+            .WithMessage(Constants.Validation.Client.NameTakenMessage);
+    }
+
+    private async Task<bool> NameMustNotExistsAsync(string name, CancellationToken cancellationToken)
+    {
+        var nameExists = await _clientRepository.NameExistsAsync(name, cancellationToken);
+        return !nameExists;
     }
 }

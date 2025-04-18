@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace Exadel.ReportHub.Host.Services;
 
 [ExcludeFromCodeCoverage]
-[ApiController]
 [Route("api/users")]
 public class UsersService(ISender sender) : BaseService
 {

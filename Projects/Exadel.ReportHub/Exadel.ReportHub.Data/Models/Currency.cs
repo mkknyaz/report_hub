@@ -2,7 +2,9 @@
 
 namespace Exadel.ReportHub.Data.Models;
 
-public class Plan : IDocument
+public class Currency : IDocument
 {
     public Guid Id { get; set; }
+
+    public string CurrencyCode { get; set; }
 }

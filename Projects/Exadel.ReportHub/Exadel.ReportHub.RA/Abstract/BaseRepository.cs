@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Exadel.ReportHub.Data.Models;
+using Exadel.ReportHub.Data.Abstract;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA.Abstract;
@@ -57,6 +57,13 @@ public abstract class BaseRepository(MongoDbContext context)
     {
         var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
         await GetCollection<TDocument>().DeleteOneAsync(filter, cancellationToken: cancellationToken);
+    }
+
+    public async Task SoftDeleteAsync<TDocument>(Guid id, CancellationToken cancellationToken)
+        where TDocument : IDocument, ISoftDeletable
+    {
+        var update = Builders<TDocument>.Update.Set(x => x.IsDeleted, true);
+        await UpdateAsync(id, update, cancellationToken: cancellationToken);
     }
 
     public IMongoCollection<TDocument> GetCollection<TDocument>(string collectionName = null)

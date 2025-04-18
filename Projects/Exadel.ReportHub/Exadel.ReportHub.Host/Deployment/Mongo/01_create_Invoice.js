@@ -1,5 +1,5 @@
 ﻿const scriptName = "01_create_Invoice";
-const version = NumberInt(2);
+const version = NumberInt(3);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -42,42 +42,16 @@ const invoiceIds = [
 ]
 
 const itemIds = [
-    UUID("895ddfbd-4c6d-4c32-bd5c-02e516771fe5"),
-    UUID("d28806ac-e997-49cf-a9f6-428b961ed98a"),
-    UUID("fe9035a0-f607-436d-96ca-4f0b7bc6f65a"),
-    UUID("f0a0ac3d-f9e5-4a1d-8938-e47ff2edd4f0"),
-    UUID("43eb3991-f067-4db2-9a1a-0a7c7b9d783e"),
-    UUID("b65afbd7-9986-49ac-81a8-8320dd6444d6"),
-    UUID("56c2eb9e-67b5-45e0-b04c-901365a65194"),
-    UUID("c634052e-f666-4a55-bcc2-840b02d7a6c1"),
-    UUID("b205424a-59b4-4d5f-807f-1e14ff6bf5a7"),
-    UUID("e8d6bbf9-a561-4a07-bd87-1431a91f9451"),
-    UUID("cd583e6b-17aa-4e77-b23a-11184c44d839"),
-    UUID("fe4c5d5f-0114-4e10-bec7-36759a6bd75d"),
-    UUID("63c50adb-d621-4fbd-9014-e39a6b69406f"),
-    UUID("2d4021ca-6b09-4a51-8e22-966c6ac0a834"),
-    UUID("97e3e66d-b28a-45b4-9015-79af9ef51816"),
-    UUID("b886d60b-549a-4bea-9e78-e450e9ded1d5"),
-    UUID("25a5b444-a09c-49c6-8268-8fd3285b2e56"),
-    UUID("b395a542-3b76-4af1-8536-d2982758b984"),
-    UUID("fd58070d-fd4d-4456-ae84-8805920989ff"),
-    UUID("071295d6-47f8-4ea2-8c72-6a2c910acd35")
-]
-
-const itemNames = [
-    "Car",
-    "Development",
-    "Consulting Service",
-    "Wholesale purchase",
-    "Financial service"
-];
-
-const descriptions = [
-    "A high-quality vehicle equipped with modern technology for comfort and safety.",
-    "Custom software development services tailored to meet specific business needs and foster innovation.",
-    "Professional consulting services aimed at strategic growth and effective process optimization.",
-    "Bulk purchasing options offering competitive pricing and reliable supply chain management.",
-    "Comprehensive financial services including investment advisory, capital management, and risk assessment."
+    UUID("8892462c-df8f-4a6f-b5ce-95e89db220bf"),
+    UUID("f50ce8fc-9b5e-47e9-aeb9-7eab03677b8d"),
+    UUID("c96844cf-5c1d-4672-b339-4a3eb6a9db8b"),
+    UUID("76fb1a23-2f77-4c26-bf45-fc655f7432e6"),
+    UUID("f55ce9a9-db00-4634-9759-2f369c4d0df1"),
+    UUID("351e5e82-b200-4e5d-8b1c-9e0d2e52ceaa"),
+    UUID("5c98227f-e9b7-45dd-bfdb-22dddf384598"),
+    UUID("3b9ff6f2-d612-481c-b2a5-17c7c1c1ffb3"),
+    UUID("e2b72b14-f334-4ef9-81b5-a86045e39c12"),
+    UUID("aacf3867-90bf-422c-b271-540f2d7a157a")
 ];
 
 const bankAccountNumbers = [
@@ -96,7 +70,7 @@ const paymentStatuses = [
     "Paid"
 ]
 
-const currencies = ["USD", "EUR", "JPY", "INR", "GBP", "BYN", "PLN"]
+const currencies = ["USD", "EUR", "JPY", "BYN", "PLN"]
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -120,60 +94,25 @@ function generateDueDate(issueDate) {
     return ISODate(new Date(issueDate.getTime() + (getRandomInt(80) + 10) * 86400000).toISOString());
 }
 
-function generateRandomItem(clientId, currency, id) {
-    const index = getRandomInt(itemNames.length);
-    return {
-        _id: id,
-        ClientId: clientId,
-        Name: itemNames[index],
-        Description: descriptions[index],
-        Price: NumberDecimal((Math.random() * 2000 + 100).toFixed(2)),
-        Currency: currency
-    };
-}
-
-function generateItems(clientId, currency, index) {
-    const items = [];
-    var count = 2;
-
-    for (let i = 0; i < count; i++) {
-        let id = itemIds[index * 2 + i]
-        items.push(generateRandomItem(clientId, currency, id));
-    }
-    return items;
-}
-
 const invoices = [];
 const invoiceCount = 10;
 
 for (let i = 0; i < invoiceCount; i++) {
-    const index = getRandomInt(clientIds.length);
-    const newClientId = clientIds[index];
-    const newCustomerId = customerIds[getRandomInt(customerIds.length)];
-    const issueDate = generateIssueDate();
-    const dueDate = generateDueDate(issueDate);
-    const currency = currencies[getRandomInt(currencies.length)];
-    const bankAccountNumber = bankAccountNumbers[index]
-
-    const items = generateItems(newClientId, currency, i);
-
-    let totalAmount = 0;
-    items.forEach(function (item) {
-        totalAmount += parseFloat(item.Price.toString());
-    });
+    var index = NumberInt(i / 2);
+    var issueDate = generateIssueDate();
 
     invoices.push({
         _id: invoiceIds[i],
-        ClientId: newClientId,
-        CustomerId: newCustomerId,
+        ClientId: clientIds[index],
+        CustomerId: customerIds[getRandomInt(customerIds.length)],
         InvoiceNumber: generateInvoiceNumber(i),
         IssueDate: issueDate,
-        DueDate: dueDate,
-        Amount: totalAmount.toFixed(2),
-        Currency: currency,
+        DueDate: generateDueDate(issueDate),
+        Amount: NumberDecimal((Math.random() * 4000 + 100).toFixed(2)),
+        Currency: currencies[index],
         PaymentStatus: paymentStatuses[getRandomInt(paymentStatuses.length)],
-        BankAccountNumber: bankAccountNumber,
-        Items: items
+        BankAccountNumber: bankAccountNumbers[index],
+        ItemIds: [itemIds[index * 2], itemIds[index * 2 + 1]]
     });
 }
 
@@ -185,6 +124,8 @@ const opt = invoices.map(invoice => ({
     }
 }));
 db.Invoice.bulkWrite(opt);
+
+db.Invoice.updateMany({}, { $unset: { Items: 1} });
 
 db.MigrationHistory.insertOne({
     ScriptName: scriptName,

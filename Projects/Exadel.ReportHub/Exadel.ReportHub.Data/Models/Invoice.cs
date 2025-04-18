@@ -1,4 +1,5 @@
-﻿using Exadel.ReportHub.Data.Enums;
+﻿using Exadel.ReportHub.Data.Abstract;
+using Exadel.ReportHub.Data.Enums;
 
 namespace Exadel.ReportHub.Data.Models;
 
@@ -24,5 +25,5 @@ public class Invoice : IDocument
 
     public string BankAccountNumber { get; set; }
 
-    public IList<Item> Items { get; set; }
+    public IList<Guid> ItemIds { get; set; }
 }

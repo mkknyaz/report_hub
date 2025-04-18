@@ -4,34 +4,49 @@ public static class Constants
 {
     public static class Validation
     {
+        public static class RuleSet
+        {
+            public const string Names = nameof(Names);
+            public const string Passwords = nameof(Passwords);
+            public const string Countries = nameof(Countries);
+        }
+
+        public static class Name
+        {
+            public const int MaxLength = 100;
+            public const string ShouldStartWithCapitalMessage = "Name must begin with a capital letter.";
+        }
+
+        public static class Password
+        {
+            public const int MinimumLength = 8;
+            public const string UppercaseMessage = "Password must have at least one uppercase letter.";
+            public const string LowercaseMessage = "Password must have at least one lowercase letter.";
+            public const string DigitMessage = "Password must have at least one digit.";
+            public const string SpecialCharacterMessage = "Password must contain at least one special character.";
+        }
+
+        public static class Country
+        {
+            public const int MaxLength = 56;
+            public const string ShouldStartWithCapitalMessage = "Country must begin with a capital letter.";
+        }
+
         public static class User
         {
-            public const int FullNameMaxLength = 100;
             public const string EmailTakenMessage = "Email is already taken.";
             public const string EmailInvalidMessage = "Email is invalid.";
-
-            public const int PasswordMinimumLength = 8;
-            public const string PasswordUppercaseMessage = "Password must have at least one uppercase letter.";
-            public const string PasswordLowercaseMessage = "Password must have at least one lowercase letter.";
-            public const string PasswordDigitMessage = "Password must have at least one digit.";
-            public const string PasswordSpecialCharacterMessage = "Password must contain at least one special character.";
         }
 
         public static class Customer
         {
-            public const int CountryMaxLength = 56;
-            public const int NameMaxLength = 100;
-            public const string CountryShouldStartWithCapitalMessage = "Country must begin with a capital letter.";
-            public const string NameShouldStartWithCapitalMessage = "Name must begin with a capital letter.";
             public const string EmailTakenMessage = "Email is already taken.";
             public const string EmailInvalidMessage = "Email is invalid.";
         }
 
         public static class Client
         {
-            public const string ShouldStartWithCapitalMessage = "The name must begin with a capital letter.";
             public const string NameTakenMessage = "Name is already taken";
-            public const int ClientMaximumNameLength = 20;
         }
 
         public static class Invoice
@@ -47,6 +62,16 @@ public static class Constants
             public const string BankAccountNumberErrorMessage = "Bank account number must only contain digits and dashes.";
             public const string CustomerDoesntExistsErrorMessage = "Customer does not exist.";
             public const string ClientDoesntExistsErrorMessage = "Client does not exist.";
+        }
+
+        public static class Item
+        {
+            public const int DescriptionMaxLength = 250;
+            public const string DescriptionShouldStartWithCapitalMessage = "Description must begin with a capital letter.";
+            public const string ClientDoesNotExistMessage = "Client does not exist.";
+            public const string CurrencyDoesNotExistMessage = "Currency does not exist.";
+            public const string NegativePriceErrorMessage = "Price must be positive";
+            public const string ClientIdCannotBeChangedMessage = "Client Id cannot be changed.";
         }
 
         public static class UserAssignment

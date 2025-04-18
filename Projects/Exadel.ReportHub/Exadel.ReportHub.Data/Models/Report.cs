@@ -1,4 +1,6 @@
-﻿namespace Exadel.ReportHub.Data.Models;
+﻿using Exadel.ReportHub.Data.Abstract;
+
+namespace Exadel.ReportHub.Data.Models;
 
 public class Report : IDocument
 {
