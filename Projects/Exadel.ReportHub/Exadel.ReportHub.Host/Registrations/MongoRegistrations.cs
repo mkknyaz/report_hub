@@ -29,7 +29,7 @@ public static class MongoRegistrations
         services.AddSingleton<IInvoiceRepository, InvoiceRepository>();
         services.AddSingleton<IItemRepository, ItemRepository>();
         services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
-
+        services.AddSingleton<IPlanRepository, PlanRepository>();
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         return services;
     }

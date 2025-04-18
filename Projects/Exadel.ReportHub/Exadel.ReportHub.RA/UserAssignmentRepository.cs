@@ -41,7 +41,7 @@ public class UserAssignmentRepository : BaseRepository, IUserAssignmentRepositor
         return count > 0;
     }
 
-    public async Task<IEnumerable<UserRole>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<IList<UserRole>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.UserId, userId);
         var field = new ExpressionFieldDefinition<UserAssignment, UserRole>(x => x.Role);
@@ -56,7 +56,7 @@ public class UserAssignmentRepository : BaseRepository, IUserAssignmentRepositor
         await GetCollection<UserAssignment>().UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
 
-    public async Task<IEnumerable<Guid>> GetClientIdsAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<IList<Guid>> GetClientIdsAsync(Guid userId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.UserId, userId);
         var clientIds = await GetCollection<UserAssignment>().Find(filter).Project(x => x.ClientId).ToListAsync(cancellationToken);

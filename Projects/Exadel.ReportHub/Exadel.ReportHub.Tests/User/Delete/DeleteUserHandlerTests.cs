@@ -77,7 +77,7 @@ public class DeleteUserHandlerTests
 
         _userAssignmentRepositoryMock
             .Setup(repo => repo.GetClientIdsAsync(userId, CancellationToken.None))
-            .ReturnsAsync(Enumerable.Empty<Guid>());
+            .ReturnsAsync([]);
 
         var request = new DeleteUserRequest(userId);
 

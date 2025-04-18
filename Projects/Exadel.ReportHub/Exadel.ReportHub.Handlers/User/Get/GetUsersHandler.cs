@@ -7,11 +7,11 @@ using MediatR;
 
 namespace Exadel.ReportHub.Handlers.User.Get;
 
-public record GetUsersRequest(bool? IsActive) : IRequest<ErrorOr<IEnumerable<UserDTO>>>;
+public record GetUsersRequest(bool? IsActive) : IRequest<ErrorOr<IList<UserDTO>>>;
 
-public class GetUsersHandler(IUserRepository userRepository, IMapper mapper) : IRequestHandler<GetUsersRequest, ErrorOr<IEnumerable<UserDTO>>>
+public class GetUsersHandler(IUserRepository userRepository, IMapper mapper) : IRequestHandler<GetUsersRequest, ErrorOr<IList<UserDTO>>>
 {
-    public async Task<ErrorOr<IEnumerable<UserDTO>>> Handle(GetUsersRequest request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<IList<UserDTO>>> Handle(GetUsersRequest request, CancellationToken cancellationToken)
     {
         var users = await userRepository.GetAsync(request.IsActive, cancellationToken);
 

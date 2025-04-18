@@ -1,11 +1,7 @@
-﻿using Exadel.ReportHub.Data.Abstract;
+﻿namespace Exadel.ReportHub.SDK.DTOs.Plan;
 
-namespace Exadel.ReportHub.Data.Models;
-
-public class Plan : IDocument, ISoftDeletable
+public class CreatePlanDTO
 {
-    public Guid Id { get; set; }
-
     public Guid ClientId { get; set; }
 
     public Guid ItemId { get; set; }
@@ -15,6 +11,4 @@ public class Plan : IDocument, ISoftDeletable
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }
-
-    public bool IsDeleted { get; set; }
 }

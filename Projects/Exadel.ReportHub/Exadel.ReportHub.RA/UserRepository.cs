@@ -22,7 +22,7 @@ public class UserRepository : BaseRepository, IUserRepository
         return count > 0;
     }
 
-    public async Task<IEnumerable<User>> GetAsync(bool? isActive, CancellationToken cancellationToken)
+    public async Task<IList<User>> GetAsync(bool? isActive, CancellationToken cancellationToken)
     {
         var filter = isActive.HasValue
             ? _filterBuilder.Eq(x => x.IsActive, isActive.Value)

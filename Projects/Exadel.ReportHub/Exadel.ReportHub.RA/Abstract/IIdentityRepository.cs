@@ -4,7 +4,7 @@ namespace Exadel.ReportHub.RA.Abstract;
 
 public interface IIdentityRepository
 {
-    Task<IEnumerable<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken);
+    Task<IList<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken);
 
     Task<IEnumerable<TDocument>> GetByNamesAsync<TDocument>(IEnumerable<string> names, CancellationToken cancellationToken)
         where TDocument : Resource;

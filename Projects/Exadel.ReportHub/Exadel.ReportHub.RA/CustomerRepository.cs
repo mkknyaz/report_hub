@@ -32,7 +32,7 @@ public class CustomerRepository : BaseRepository, ICustomerRepository
         return await ExistsAsync<Customer>(id, cancellationToken);
     }
 
-    public Task<IEnumerable<Customer>> GetAsync(CancellationToken cancellationToken)
+    public Task<IList<Customer>> GetAsync(CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.IsDeleted, false);
 

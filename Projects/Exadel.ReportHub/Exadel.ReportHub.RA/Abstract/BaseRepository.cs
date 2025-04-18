@@ -7,13 +7,13 @@ namespace Exadel.ReportHub.RA.Abstract;
 [ExcludeFromCodeCoverage]
 public abstract class BaseRepository(MongoDbContext context)
 {
-    public async Task<IEnumerable<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken)
+    public async Task<IList<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken)
     {
         var filter = Builders<TDocument>.Filter.Empty;
         return await GetCollection<TDocument>().Find(filter).ToListAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<TDocument>> GetAsync<TDocument>(FilterDefinition<TDocument> filter, CancellationToken cancellationToken)
+    public async Task<IList<TDocument>> GetAsync<TDocument>(FilterDefinition<TDocument> filter, CancellationToken cancellationToken)
     {
         return await GetCollection<TDocument>().Find(filter).ToListAsync(cancellationToken);
     }
