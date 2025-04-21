@@ -30,15 +30,15 @@ jobs:
     - name: Update Environment variable
       run: |
         IFS=$'\n'
-        for update in $Updates; do
-        key=${line%%:*}
-        val=${line#*:}
+        for udapte in $Updates; do
+        key=${udapte%%:*}
+        val=${udapte#*:}
         curl -X PUT \
               "https://api.render.com/v1/services/$Render_Service_Id/env-vars/$key" \
               -H "Accept: application/json" \
               -H "Authorization: Bearer $Render_Api_Key" \
               -H "Content-Type: application/json" \
-              -d "{"value":"$val"}"
+              -d "{\"value\":\"$val\"}"
           done  
 
     - name: Deploy
