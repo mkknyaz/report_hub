@@ -30,6 +30,8 @@ public static class MongoRegistrations
         services.AddSingleton<IItemRepository, ItemRepository>();
         services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
         services.AddSingleton<IPlanRepository, PlanRepository>();
+        services.AddSingleton<ICountryRepository, CountryRepository>();
+
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         return services;
     }
