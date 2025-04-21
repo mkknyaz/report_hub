@@ -32,7 +32,7 @@ jobs:
         IFS=$'\n'
         for update in $Updates; do
         key=${update%%:*}
-        val=${update#*:}
+        val=${update#*: }
         curl -X PUT \
               "https://api.render.com/v1/services/$Render_Service_Id/env-vars/$key" \
               -H "Accept: application/json" \
