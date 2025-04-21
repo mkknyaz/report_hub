@@ -11,17 +11,17 @@ jobs:
 
     env:
        Mongo_Scripts_Path: Projects/Exadel.ReportHub/Exadel.ReportHub.Host/Deployment/Mongo
-       Render_Deploy_Hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
-       Render_Api_Key: ${{ secrets.RENDER_API_KEY }}
-       Render_Service_Id: ${{ secrets.RENDER_SERVICE_ID }}
+       Render_Deploy_Hook: https://api.render.com/deploy/srv-cvnri3ngi27c73845qag?key=_XXtGWE8ASs
+       Render_Api_Key: rnd_CfZeoLQzhEkjSmrRxeW085bEZYF0
+       Render_Service_Id: srv-cvnri3ngi27c73845qag
        ReportHubService_ClientSecret: ${{ secrets.REPORT_HUB_SERVICE_CLIENT_SECRET }}
        Mongo_Connection_String: ${{secrets.MONGO_CONNECTION_STRING}}
        
        Updates: |
-         Authority: ${{ vars.AUTHORITY }}
-         ConnectionStrings__Mongo: ${{secrets.MONGO_CONNECTION_STRING}}
-         EcbConfig__Host: ${{vars.ECB_CONFIG_HOST}}
-         ReportHubConfig__Host: ${{vars.REPORTHUB_CONFIG_HOST}}
+         Authority: Auth
+         ConnectionStrings__Mongo: String
+         EcbConfig__Host: Host1
+         ReportHubConfig__Host: Host2
          
     steps:
     - name: Checkout
@@ -38,7 +38,7 @@ jobs:
               -H "Accept: application/json" \
               -H "Authorization: Bearer $Render_Api_Key" \
               -H "Content-Type: application/json" \
-              -d "{\"value\":\"$val\"}"
+              -d "{"value":"$val"}"
           done  
 
     - name: Deploy
