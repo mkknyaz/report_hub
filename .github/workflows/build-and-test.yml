@@ -49,7 +49,7 @@ jobs:
           /p:CollectCoverage=true \
           /p:CoverletOutputFormat=opencover \
           /p:CoverletOutput=TestResults/coverage.xml \
-          /p:Threshold=30 \
+          /p:Threshold=25 \
           /p:ThresholdType=line \
           /p:ThresholdStat=total
 

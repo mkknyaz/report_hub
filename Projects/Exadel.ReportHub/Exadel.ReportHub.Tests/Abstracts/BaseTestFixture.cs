@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using AutoMapper;
 using Exadel.ReportHub.Host;
-using Exadel.ReportHub.Host.Mapping.Profiles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Exadel.ReportHub.Tests.Abstracts;

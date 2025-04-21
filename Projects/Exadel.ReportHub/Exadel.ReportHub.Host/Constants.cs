@@ -21,4 +21,15 @@ public static class Constants
     {
         public static readonly Guid GlobalId = new Guid("e47501a8-547b-4dc4-ba97-e65ccfc39477");
     }
+
+    public static class HttpClient
+    {
+        public const string PingClient = "PingClient";
+        public const string ExchangeRateClient = "ExchangeRateClient";
+
+        public static class Path
+        {
+            public static readonly Uri Ping = new Uri("/api/ping", UriKind.Relative);
+        }
+    }
 }

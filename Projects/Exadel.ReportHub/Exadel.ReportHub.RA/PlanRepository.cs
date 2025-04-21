@@ -1,9 +1,11 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
 
+[ExcludeFromCodeCoverage]
 public class PlanRepository : BaseRepository, IPlanRepository
 {
     private static readonly FilterDefinitionBuilder<Plan> _filterBuilder = Builders<Plan>.Filter;

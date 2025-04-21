@@ -11,28 +11,35 @@ jobs:
 
     env:
        Mongo_Scripts_Path: Projects/Exadel.ReportHub/Exadel.ReportHub.Host/Deployment/Mongo
-       Db_Connection_Uri: ${{ vars.DB_CONNECTION_URI }}
-       Db_Name: ${{ vars.DB_NAME }}
-       Db_User_Name: ${{ secrets.DB_USER_NAME }}
-       Db_User_Password: ${{ secrets.DB_USER_PASSWORD }}
        Render_Deploy_Hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
        Render_Api_Key: ${{ secrets.RENDER_API_KEY }}
        Render_Service_Id: ${{ secrets.RENDER_SERVICE_ID }}
        ReportHubService_ClientSecret: ${{ secrets.REPORT_HUB_SERVICE_CLIENT_SECRET }}
-       Authority: ${{ vars.AUTHORITY }}
+       Mongo_Connection_String: ${{secrets.MONGO_CONNECTION_STRING}}
        
+       Updates: |
+         Authority: ${{ vars.AUTHORITY }}
+         ConnectionStrings__Mongo: ${{secrets.MONGO_CONNECTION_STRING}}
+         EcbConfig__Host: ${{vars.ECB_CONFIG_HOST}}
+         ReportHubConfig__Host: ${{vars.REPORTHUB_CONFIG_HOST}}
+         
     steps:
     - name: Checkout
       uses: actions/checkout@v4
         
     - name: Update Environment variable
       run: |
+        IFS=$'\n'
+        for update in $Updates; do
+        key=${line%%:*}
+        val=${line#*:}
         curl -X PUT \
-             https://api.render.com/v1/services/${{ env.Render_Service_Id}}/env-vars/AUTHORITY \
-             -H 'accept: application/json' \
-             -H 'authorization: Bearer ${{ env.Render_Api_Key }}' \
-             -H 'content-type: application/json' \
-             -d '{"value": "${{ env.Authority }}"}'
+              "https://api.render.com/v1/services/$Render_Service_Id/env-vars/$key" \
+              -H "Accept: application/json" \
+              -H "Authorization: Bearer $Render_Api_Key" \
+              -H "Content-Type: application/json" \
+              -d "{\"value\":\"$val\"}"
+          done  
 
     - name: Deploy
       run: curl -X POST "${{ env.Render_Deploy_Hook }}"
@@ -49,6 +56,6 @@ jobs:
       run: |
         for script in "${{ env.Mongo_Scripts_Path }}"/*.js; do
         echo $script
-        mongosh "${{ env.Db_Connection_Uri }}/${{ env.Db_Name }}" --apiVersion 1 -u ${{ env.Db_User_Name }} -p ${{ env.Db_User_Password }} "$script"
+        mongosh "${{ env.Mongo_Connection_String }}" "$script"
         done
     

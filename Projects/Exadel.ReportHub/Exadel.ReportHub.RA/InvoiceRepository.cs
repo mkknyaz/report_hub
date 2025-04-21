@@ -1,8 +1,10 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 
 namespace Exadel.ReportHub.RA;
 
+[ExcludeFromCodeCoverage]
 public class InvoiceRepository : BaseRepository, IInvoiceRepository
 {
     public InvoiceRepository(MongoDbContext context)

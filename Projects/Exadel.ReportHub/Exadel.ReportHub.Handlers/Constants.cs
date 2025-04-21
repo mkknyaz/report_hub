@@ -95,4 +95,13 @@ public static class Constants
             public const string PlanAlreadyExistsForItemAndClient = "Plan already exists for this item and client";
         }
     }
+
+    public static class Error
+    {
+        public static class ExchangeRate
+        {
+            public const string RatesUpdateError = "Rates update Error";
+            public const string EcbReturnsNothing = "ECB returns nothing";
+        }
+    }
 }
