@@ -4,5 +4,5 @@ namespace Exadel.ReportHub.RA.Abstract;
 
 public interface ICountryRepository
 {
-    Task<IEnumerable<Country>> GetAllAsync(CancellationToken cancellationToken);
+    Task<IList<Country>> GetAllAsync(CancellationToken cancellationToken);
 }

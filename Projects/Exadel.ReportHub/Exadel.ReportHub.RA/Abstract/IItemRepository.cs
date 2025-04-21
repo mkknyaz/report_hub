@@ -8,7 +8,7 @@ public interface IItemRepository
 
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
 
-    Task<IEnumerable<Item>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken);
+    Task<IList<Item>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken);
 
     Task<Item> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 

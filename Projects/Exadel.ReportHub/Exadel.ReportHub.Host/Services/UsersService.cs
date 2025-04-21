@@ -6,6 +6,7 @@ using Exadel.ReportHub.Handlers.User.GetById;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.Handlers.User.UpdateName;
 using Exadel.ReportHub.Handlers.User.UpdatePassword;
+using Exadel.ReportHub.Host.Services.Abstract;
 using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ public class UsersService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost]
-    public async Task<IActionResult> AddUser([FromBody] CreateUserDTO createUserDto)
+    public async Task<ActionResult<UserDTO>> AddUser([FromBody] CreateUserDTO createUserDto)
     {
         var result = await sender.Send(new CreateUserRequest(createUserDto));
 
@@ -28,7 +29,7 @@ public class UsersService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetUserById([FromRoute] Guid id)
+    public async Task<ActionResult<UserDTO>> GetUserById([FromRoute] Guid id)
     {
         var result = await sender.Send(new GetUserByIdRequest(id));
 
@@ -37,7 +38,7 @@ public class UsersService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetUsers([FromQuery] bool? isActive)
+    public async Task<ActionResult<IList<UserDTO>>> GetUsers([FromQuery] bool? isActive)
     {
         var result = await sender.Send(new GetUsersRequest(isActive));
 
@@ -46,7 +47,7 @@ public class UsersService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPatch("{id:guid}/activity")]
-    public async Task<IActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
+    public async Task<ActionResult> UpdateUserActivity([FromRoute] Guid id, [FromBody] bool isActive)
     {
         var result = await sender.Send(new UpdateUserActivityRequest(id, isActive));
 
@@ -55,7 +56,7 @@ public class UsersService(ISender sender) : BaseService
 
     [Authorize]
     [HttpPatch("password")]
-    public async Task<IActionResult> UpdateUserPassword([FromBody] string password)
+    public async Task<ActionResult> UpdateUserPassword([FromBody] string password)
     {
         var result = await sender.Send(new UpdateUserPasswordRequest(password));
         return FromResult(result);
@@ -63,7 +64,7 @@ public class UsersService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPatch("{id:guid}/fullname")]
-    public async Task<IActionResult> UpdateUserFullName([FromRoute] Guid id, [FromBody] string fullName)
+    public async Task<ActionResult> UpdateUserFullName([FromRoute] Guid id, [FromBody] string fullName)
     {
         var result = await sender.Send(new UpdateUserNameRequest(id, fullName));
         return FromResult(result);
@@ -71,7 +72,7 @@ public class UsersService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Delete)]
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteUser([FromRoute] Guid id)
+    public async Task<ActionResult> DeleteUser([FromRoute] Guid id)
     {
         var result = await sender.Send(new DeleteUserRequest(id));
         return FromResult(result);

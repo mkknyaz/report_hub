@@ -10,7 +10,7 @@ public class CountryRepository : BaseRepository, ICountryRepository
     {
     }
 
-    public async Task<IEnumerable<Country>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<IList<Country>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await GetAllAsync<Country>(cancellationToken);
     }

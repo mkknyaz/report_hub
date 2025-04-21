@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Handlers.UserAssignment.Upsert;
+using Exadel.ReportHub.Host.Services.Abstract;
 using Exadel.ReportHub.SDK.DTOs.UserAssignment;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ public class UserAssignmentsService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPost]
-    public async Task<IActionResult> UpsertUserAssignment([FromBody] UpsertUserAssignmentDTO upsertUserAssignmentDto)
+    public async Task<ActionResult> UpsertUserAssignment([FromBody] UpsertUserAssignmentDTO upsertUserAssignmentDto)
     {
         var result = await sender.Send(new UpsertUserAssignmentRequest(upsertUserAssignmentDto));
         return FromResult(result);

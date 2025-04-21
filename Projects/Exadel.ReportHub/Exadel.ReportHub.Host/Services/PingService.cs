@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Host.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exadel.ReportHub.Host.Services;
@@ -8,7 +9,7 @@ namespace Exadel.ReportHub.Host.Services;
 public class PingService : BaseService
 {
     [HttpGet]
-    public IActionResult Ping()
+    public ActionResult Ping()
     {
         return Ok();
     }

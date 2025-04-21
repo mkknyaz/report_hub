@@ -5,6 +5,7 @@ using Exadel.ReportHub.Handlers.Item.Delete;
 using Exadel.ReportHub.Handlers.Item.GetByClientId;
 using Exadel.ReportHub.Handlers.Item.GetById;
 using Exadel.ReportHub.Handlers.Item.Update;
+using Exadel.ReportHub.Host.Services.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Item;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +19,7 @@ public class ItemsService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost]
-    public async Task<IActionResult> AddItem([FromBody] CreateUpdateItemDTO createItemDto)
+    public async Task<ActionResult<ItemDTO>> AddItem([FromBody] CreateUpdateItemDTO createItemDto)
     {
         var result = await sender.Send(new CreateItemRequest(createItemDto));
 
@@ -27,7 +28,7 @@ public class ItemsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetItemsByClientId([FromQuery][Required] Guid clientId)
+    public async Task<ActionResult<IList<ItemDTO>>> GetItemsByClientId([FromQuery][Required] Guid clientId)
     {
         var result = await sender.Send(new GetItemsByClientIdRequest(clientId));
 
@@ -36,7 +37,7 @@ public class ItemsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetItemById([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
+    public async Task<ActionResult<ItemDTO>> GetItemById([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
     {
         var result = await sender.Send(new GetItemByIdRequest(id));
 
@@ -45,7 +46,7 @@ public class ItemsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateItem([FromRoute] Guid id, [FromBody] CreateUpdateItemDTO updateItemDTO)
+    public async Task<ActionResult> UpdateItem([FromRoute] Guid id, [FromBody] CreateUpdateItemDTO updateItemDTO)
     {
         var result = await sender.Send(new UpdateItemRequest(id, updateItemDTO));
 
@@ -54,7 +55,7 @@ public class ItemsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Delete)]
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteItem([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
+    public async Task<ActionResult> DeleteItem([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
     {
         var result = await sender.Send(new DeleteItemRequest(id));
 

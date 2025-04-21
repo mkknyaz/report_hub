@@ -3,35 +3,35 @@ using ErrorOr;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Exadel.ReportHub.Host.Services;
+namespace Exadel.ReportHub.Host.Services.Abstract;
 
 [ExcludeFromCodeCoverage]
 [ApiController]
 [Route("api/[controller]")]
 public abstract class BaseService : ControllerBase
 {
-    protected IActionResult FromResult(ErrorOr<Created> result)
+    protected ActionResult FromResult(ErrorOr<Created> result)
     {
         return result.Match(
             _ => Created(),
             errors => GetErrorResult(errors));
     }
 
-    protected IActionResult FromResult(ErrorOr<Updated> result)
+    protected ActionResult FromResult(ErrorOr<Updated> result)
     {
         return result.Match(
             _ => NoContent(),
             errors => GetErrorResult(errors));
     }
 
-    protected IActionResult FromResult(ErrorOr<Deleted> result)
+    protected ActionResult FromResult(ErrorOr<Deleted> result)
     {
         return result.Match(
             _ => NoContent(),
             errors => GetErrorResult(errors));
     }
 
-    protected IActionResult FromResult<TResult>(ErrorOr<TResult> result, int statusCode = StatusCodes.Status200OK)
+    protected ActionResult<TResult> FromResult<TResult>(ErrorOr<TResult> result, int statusCode = StatusCodes.Status200OK)
         where TResult : class
     {
         return result.Match(
@@ -39,7 +39,7 @@ public abstract class BaseService : ControllerBase
             errors => GetErrorResult(errors));
     }
 
-    private IActionResult GetErrorResult(List<Error> errors)
+    private ActionResult GetErrorResult(List<Error> errors)
     {
         var errorResponse = new ErrorResponse
         {

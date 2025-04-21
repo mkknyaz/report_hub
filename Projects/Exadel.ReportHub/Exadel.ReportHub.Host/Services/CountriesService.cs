@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Handlers.Country.GetAll;
+using Exadel.ReportHub.Host.Services.Abstract;
+using Exadel.ReportHub.SDK.DTOs.Country;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +14,7 @@ public class CountriesService(ISender sender) : BaseService
 {
     [Authorize]
     [HttpGet]
-    public async Task<IActionResult> GetAllCountries()
+    public async Task<ActionResult<IList<CountryDTO>>> GetAllCountries()
     {
         var result = await sender.Send(new GetAllCountriesRequest());
 

@@ -25,7 +25,7 @@ public class ItemRepository : BaseRepository, IItemRepository
         return await ExistsAsync<Item>(id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Item>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken)
+    public async Task<IList<Item>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.ClientId, clientId);
         return await GetAsync(filter, cancellationToken);

@@ -4,6 +4,7 @@ using Exadel.ReportHub.Handlers.Client.Delete;
 using Exadel.ReportHub.Handlers.Client.Get;
 using Exadel.ReportHub.Handlers.Client.GetById;
 using Exadel.ReportHub.Handlers.Client.UpdateName;
+using Exadel.ReportHub.Host.Services.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Client;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +18,7 @@ public class ClientsService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost]
-    public async Task<IActionResult> AddClient([FromBody] CreateClientDTO createClientDto)
+    public async Task<ActionResult<ClientDTO>> AddClient([FromBody] CreateClientDTO createClientDto)
     {
         var result = await sender.Send(new CreateClientRequest(createClientDto));
 
@@ -26,7 +27,7 @@ public class ClientsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetClientById([FromRoute] Guid id)
+    public async Task<ActionResult<ClientDTO>> GetClientById([FromRoute] Guid id)
     {
         var result = await sender.Send(new GetClientByIdRequest(id));
 
@@ -35,7 +36,7 @@ public class ClientsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet]
-    public async Task<IActionResult> GetClients()
+    public async Task<ActionResult<IList<ClientDTO>>> GetClients()
     {
         var result = await sender.Send(new GetClientsRequest());
 
@@ -44,7 +45,7 @@ public class ClientsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Update)]
     [HttpPatch("{id:guid}/name")]
-    public async Task<IActionResult> UpdateClientName([FromRoute] Guid id, [FromBody] string name)
+    public async Task<ActionResult> UpdateClientName([FromRoute] Guid id, [FromBody] string name)
     {
         var result = await sender.Send(new UpdateClientNameRequest(id, name));
 
@@ -53,7 +54,7 @@ public class ClientsService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Delete)]
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteClient([FromRoute] Guid id)
+    public async Task<ActionResult> DeleteClient([FromRoute] Guid id)
     {
         var result = await sender.Send(new DeleteClientRequest(id));
 
