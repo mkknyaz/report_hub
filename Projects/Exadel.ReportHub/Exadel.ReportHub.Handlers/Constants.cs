@@ -59,9 +59,10 @@ public static class Constants
             public const string TimeComponentErrorMassage = "Date cannot have a time component.";
             public const int BankAccountNumberMinLength = 8;
             public const int BankAccountNumberMaxLength = 28;
-            public const string BankAccountNumberErrorMessage = "Bank account number must only contain digits and dashes.";
+            public const string BankAccountNumberErrorMessage = "Bank account number must start with two uppercase letters followed by digits.";
             public const string CustomerDoesntExistsErrorMessage = "Customer does not exist.";
             public const string ClientDoesntExistsErrorMessage = "Client does not exist.";
+            public const string InvoiceNumberExistsMessage = "Invoice number already exists.";
         }
 
         public static class Item

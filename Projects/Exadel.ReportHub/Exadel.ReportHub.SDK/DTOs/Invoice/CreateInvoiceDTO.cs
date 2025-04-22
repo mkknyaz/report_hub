@@ -2,7 +2,7 @@
 
 namespace Exadel.ReportHub.SDK.DTOs.Invoice;
 
-public class CreateInvoiceDTO
+public class CreateInvoiceDTO : UpdateInvoiceDTO
 {
     public Guid ClientId { get; set; }
 
@@ -10,17 +10,9 @@ public class CreateInvoiceDTO
 
     public string InvoiceNumber { get; set; }
 
-    public DateTime IssueDate { get; set; }
-
-    public DateTime DueDate { get; set; }
-
     public decimal Amount { get; set; }
 
     public string Currency { get; set; }
-
-    public PaymentStatus PaymentStatus { get; set; }
-
-    public string BankAccountNumber { get; set; }
 
     public IList<Guid> ItemIds { get; set; }
 }

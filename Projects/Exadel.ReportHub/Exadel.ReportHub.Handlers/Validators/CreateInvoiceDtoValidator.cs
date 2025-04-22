@@ -4,21 +4,28 @@ using FluentValidation;
 
 namespace Exadel.ReportHub.Handlers.Validators;
 
-public class InvoiceValidator : AbstractValidator<CreateInvoiceDTO>
+public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
 {
     private readonly ICustomerRepository _customerRepository;
     private readonly IClientRepository _clientRepository;
+    private readonly IInvoiceRepository _invoiceRepository;
+    private readonly IValidator<UpdateInvoiceDTO> _updateInvoiceValidator;
 
-    public InvoiceValidator(ICustomerRepository customerRepository, IClientRepository clientRepository)
+    public CreateInvoiceDtoValidator(ICustomerRepository customerRepository, IClientRepository clientRepository,
+        IInvoiceRepository invoiceRepository, IValidator<UpdateInvoiceDTO> updateinvoiceValidator)
     {
+        _updateInvoiceValidator = updateinvoiceValidator;
         _customerRepository = customerRepository;
         _clientRepository = clientRepository;
+        _invoiceRepository = invoiceRepository;
         ConfigureRules();
     }
 
     private void ConfigureRules()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
+        RuleFor(x => x)
+            .SetValidator(_updateInvoiceValidator);
 
         RuleFor(x => x.ClientId)
             .NotEmpty()
@@ -34,33 +41,12 @@ public class InvoiceValidator : AbstractValidator<CreateInvoiceDTO>
             .NotEmpty()
             .MaximumLength(Constants.Validation.Invoice.InvoiceMaximumNumberLength)
             .Matches(@"^INV\d+$")
-            .WithMessage(Constants.Validation.Invoice.InvoiceNumberErrorMessage);
-
-        RuleFor(x => x.IssueDate)
-            .NotEmpty()
-            .LessThan(DateTime.UtcNow)
-            .WithMessage(Constants.Validation.Invoice.IssueDateErrorMessage)
-            .ChildRules(time =>
-            {
-                RuleFor(x => x.IssueDate.TimeOfDay)
-                .Equal(TimeSpan.Zero)
-                .WithMessage(Constants.Validation.Invoice.TimeComponentErrorMassage);
-            });
-
-        RuleFor(x => x.DueDate)
-            .NotEmpty()
-            .GreaterThan(x => x.IssueDate)
-            .WithMessage(Constants.Validation.Invoice.DueDateErrorMessage)
-            .ChildRules(time =>
-            {
-                time.RuleFor(x => x.TimeOfDay)
-                .Equal(TimeSpan.Zero)
-                .WithMessage(Constants.Validation.Invoice.TimeComponentErrorMassage);
-            });
+            .WithMessage(Constants.Validation.Invoice.InvoiceNumberErrorMessage)
+            .MustAsync(InvoiceNumberMustNotExistAsync)
+            .WithMessage(Constants.Validation.Invoice.InvoiceNumberExistsMessage);
 
         RuleFor(x => x.Amount)
             .GreaterThan(0);
-
         RuleFor(x => x.Currency)
             .NotEmpty()
             .Length(Constants.Validation.Invoice.CurrencyCodeLength)
@@ -68,16 +54,13 @@ public class InvoiceValidator : AbstractValidator<CreateInvoiceDTO>
             .Matches(@"^[A-Z]+$")
             .WithMessage($"Currency code must be exactly {Constants.Validation.Invoice.CurrencyCodeLength} uppercase letters.");
 
-        RuleFor(x => x.PaymentStatus)
-            .IsInEnum();
-
-        RuleFor(x => x.BankAccountNumber)
-           .NotEmpty()
-           .Length(Constants.Validation.Invoice.BankAccountNumberMinLength, Constants.Validation.Invoice.BankAccountNumberMaxLength)
-           .Matches(@"^[0-9\-]+$")
-           .WithMessage(Constants.Validation.Invoice.BankAccountNumberErrorMessage);
-
         RuleFor(x => x.ItemIds)
             .NotEmpty();
+    }
+
+    private async Task<bool> InvoiceNumberMustNotExistAsync(string invoiceNumber, CancellationToken cancellationToken)
+    {
+        var isExists = await _invoiceRepository.ExistsAsync(invoiceNumber, cancellationToken);
+        return !isExists;
     }
 }
