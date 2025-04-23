@@ -105,4 +105,17 @@ public static class Constants
             public const string EcbReturnsNothing = "ECB returns nothing";
         }
     }
+
+    public static class File
+    {
+        public static class Extension
+        {
+            public const string Pdf = ".pdf";
+        }
+
+        public static class Name
+        {
+            public const string Invoice = "Invoice_";
+        }
+    }
 }

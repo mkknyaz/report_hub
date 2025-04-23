@@ -5,7 +5,7 @@ namespace Exadel.ReportHub.Host.Registrations;
 
 public static class JobRegistrations
 {
-    public static void AddJobs(this IServiceCollection services)
+    public static IServiceCollection AddJobs(this IServiceCollection services)
     {
         var assembly = typeof(PingJob).Assembly;
 
@@ -15,5 +15,7 @@ public static class JobRegistrations
         {
             services.AddSingleton(typeof(IJob), type);
         }
+
+        return services;
     }
 }

@@ -5,7 +5,7 @@ namespace Exadel.ReportHub.Host.Registrations;
 
 public static class IdentityServerRegistrations
 {
-    public static void AddIdentity(this IServiceCollection services)
+    public static IServiceCollection AddIdentity(this IServiceCollection services)
     {
         services.AddIdentityServer()
             .AddClientStore<IdentityClientStore>()
@@ -13,5 +13,7 @@ public static class IdentityServerRegistrations
             .AddResourceOwnerValidator<ResourceOwnerPasswordValidator>()
             .AddProfileService<ProfileService>()
             .AddDeveloperSigningCredential(false);
+
+        return services;
     }
 }

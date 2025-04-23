@@ -8,7 +8,7 @@ namespace Exadel.ReportHub.Host.Registrations;
 
 public static class ExchangeRateRegistrations
 {
-    public static void AddExchangeRate(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddExchangeRate(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<EcbConfig>(configuration.GetSection(nameof(EcbConfig)));
 
@@ -20,5 +20,7 @@ public static class ExchangeRateRegistrations
         });
         services.AddSingleton<IExchangeRateProvider, ExchangeRateProvider>();
         services.AddSingleton<IExchangeRateService, ExchangeRateService>();
+
+        return services;
     }
 }

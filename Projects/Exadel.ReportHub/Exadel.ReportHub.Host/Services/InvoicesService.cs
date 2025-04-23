@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Handlers.Invoice.Create;
 using Exadel.ReportHub.Handlers.Invoice.Delete;
+using Exadel.ReportHub.Handlers.Invoice.ExportPdf;
 using Exadel.ReportHub.Handlers.Invoice.GetByClientId;
 using Exadel.ReportHub.Handlers.Invoice.GetById;
 using Exadel.ReportHub.Handlers.Invoice.Import;
@@ -24,7 +25,6 @@ public class InvoicesService(ISender sender) : BaseService
     public async Task<ActionResult<ImportResultDTO>> ImportInvoicesAsync([FromForm] ImportDTO importDto)
     {
         var result = await sender.Send(new ImportInvoicesRequest(importDto));
-
         return FromResult(result);
     }
 
@@ -65,6 +65,14 @@ public class InvoicesService(ISender sender) : BaseService
     public async Task<ActionResult> UpdateInvoice([FromRoute] Guid id, [FromBody] UpdateInvoiceDTO invoiceDto)
     {
         var result = await sender.Send(new UpdateInvoiceRequest(id, invoiceDto));
+        return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.Read)]
+    [HttpGet("pdf/export")]
+    public async Task<ActionResult<ExportResult>> ExportInvoiceAsync(Guid invoiceId, Guid clientId)
+    {
+        var result = await sender.Send(new ExportPdfInvoiceRequest(invoiceId));
         return FromResult(result);
     }
 }

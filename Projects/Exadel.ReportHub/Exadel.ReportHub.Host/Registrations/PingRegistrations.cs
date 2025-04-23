@@ -5,7 +5,7 @@ namespace Exadel.ReportHub.Host.Registrations;
 
 public static class PingRegistrations
 {
-    public static void AddPing(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPing(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<ReportHubConfig>(configuration.GetSection(nameof(ReportHubConfig)));
 
@@ -15,5 +15,7 @@ public static class PingRegistrations
             client.BaseAddress = value.Host;
             client.Timeout = value.ConnectionTimeout;
         });
+
+        return services;
     }
 }

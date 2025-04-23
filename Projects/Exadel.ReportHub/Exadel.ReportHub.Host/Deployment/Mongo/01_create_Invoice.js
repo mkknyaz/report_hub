@@ -1,5 +1,5 @@
 ﻿const scriptName = "01_create_Invoice";
-const version = NumberInt(4);
+const version = NumberInt(5);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -54,6 +54,32 @@ const itemIds = [
     UUID("aacf3867-90bf-422c-b271-540f2d7a157a")
 ];
 
+const currencyIds = [
+    UUID("c1ce0c2a-6701-4d66-95d3-812fa9b2ca08"),
+    UUID("04d123f0-dc7e-4b92-829c-dffd1ef0b89a"),
+    UUID("45d6d081-e362-4a9d-996f-c144d944635d"),
+    UUID("fd76eaab-194a-4e44-a4f8-3eed74c729c8"),
+    UUID("f3cc7604-0d40-446e-86fe-e55b103d35b5"),
+    UUID("c3a29e5d-8421-4b78-9b88-abb692709441"),
+    UUID("3169e5d6-6346-45ca-91d8-dd74d4b545ca"),
+    UUID("23cc2b9f-55cc-47f9-b7bd-29e818517ccc"),
+    UUID("e162e4d0-a79a-41fd-a3eb-d96edcc9d2d0"),
+    UUID("ba73c11e-9709-4aa7-882c-9cbd423ed145")
+];
+
+const currencyCodes = [
+    "USD",
+    "EUR",
+    "JPY",
+    "BGN",
+    "PLN",
+    "CZK",
+    "DKK",
+    "GBP",
+    "HUF",
+    "RON"
+]
+
 const bankAccountNumbers = [
     "PL359459402653871205990733",
     "DE197389122734561028993857",
@@ -69,8 +95,6 @@ const paymentStatuses = [
     "PartiallyPaid",
     "Paid"
 ]
-
-const currencies = ["USD", "EUR", "JPY", "BYN", "PLN"]
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -109,7 +133,8 @@ for (let i = 0; i < invoiceCount; i++) {
         IssueDate: issueDate,
         DueDate: generateDueDate(issueDate),
         Amount: NumberDecimal((Math.random() * 4000 + 100).toFixed(2)),
-        Currency: currencies[index],
+        CurrencyId: currencyIds[index],
+        CurrencyCode: currencyCodes[index],
         PaymentStatus: paymentStatuses[getRandomInt(paymentStatuses.length)],
         BankAccountNumber: bankAccountNumbers[index],
         ItemIds: [itemIds[index * 2], itemIds[index * 2 + 1]],

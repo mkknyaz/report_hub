@@ -7,7 +7,7 @@ namespace Exadel.ReportHub.Host.Registrations;
 
 public static class HangfireRegistrations
 {
-    public static void AddHangfire(this IServiceCollection services)
+    public static IServiceCollection AddHangfire(this IServiceCollection services)
     {
         services.AddHangfire(config =>
             config
@@ -16,5 +16,7 @@ public static class HangfireRegistrations
                 .UseMemoryStorage());
 
         services.AddHangfireServer();
+
+        return services;
     }
 }

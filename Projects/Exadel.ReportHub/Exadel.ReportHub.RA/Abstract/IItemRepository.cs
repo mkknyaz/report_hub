@@ -12,6 +12,8 @@ public interface IItemRepository
 
     Task<Item> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
+    Task<IList<Item>> GetByIdsAsync(IList<Guid> ids, CancellationToken cancellationToken);
+
     Task<Guid?> GetClientIdAsync(Guid id, CancellationToken cancellationToken);
 
     Task UpdateAsync(Item item, CancellationToken cancellationToken);

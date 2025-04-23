@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using ErrorOr;
 using Exadel.ReportHub.Host.Infrastructure.Models;
+using Exadel.ReportHub.SDK.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Exadel.ReportHub.Host.Services.Abstract;
@@ -35,7 +36,20 @@ public abstract class BaseService : ControllerBase
         where TResult : class
     {
         return result.Match(
-            value => StatusCode(statusCode, value),
+            value =>
+            {
+                if (value is IFileResult file)
+                {
+                    return new FileStreamResult(
+                        file.Stream,
+                        file.ContentType)
+                    {
+                        FileDownloadName = file.FileName
+                    };
+                }
+
+                return StatusCode(statusCode, value);
+            },
             errors => GetErrorResult(errors));
     }
 

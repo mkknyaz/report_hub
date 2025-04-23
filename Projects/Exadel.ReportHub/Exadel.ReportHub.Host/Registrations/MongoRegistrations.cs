@@ -34,6 +34,7 @@ public static class MongoRegistrations
         services.AddSingleton<ICountryRepository, CountryRepository>();
 
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
         return services;
     }
 }

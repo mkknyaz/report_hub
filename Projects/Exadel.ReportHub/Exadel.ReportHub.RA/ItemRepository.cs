@@ -36,6 +36,12 @@ public class ItemRepository : BaseRepository, IItemRepository
         return await GetByIdAsync<Item>(id, cancellationToken);
     }
 
+    public async Task<IList<Item>> GetByIdsAsync(IList<Guid> ids, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.In(x => x.Id, ids);
+        return await GetAsync(filter, cancellationToken);
+    }
+
     public async Task<Guid?> GetClientIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.Id, id);

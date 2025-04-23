@@ -45,15 +45,6 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
             .MustAsync(InvoiceNumberMustNotExistAsync)
             .WithMessage(Constants.Validation.Invoice.InvoiceNumberExistsMessage);
 
-        RuleFor(x => x.Amount)
-            .GreaterThan(0);
-        RuleFor(x => x.Currency)
-            .NotEmpty()
-            .Length(Constants.Validation.Invoice.CurrencyCodeLength)
-            .WithMessage($"Currency must be exactly {Constants.Validation.Invoice.CurrencyCodeLength} characters long.")
-            .Matches(@"^[A-Z]+$")
-            .WithMessage($"Currency code must be exactly {Constants.Validation.Invoice.CurrencyCodeLength} uppercase letters.");
-
         RuleFor(x => x.ItemIds)
             .NotEmpty();
     }

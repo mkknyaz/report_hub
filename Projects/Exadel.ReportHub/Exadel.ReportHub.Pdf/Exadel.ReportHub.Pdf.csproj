@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
-    <PackageReference Include="ErrorOr" Version="2.0.1" />
-    <PackageReference Include="FluentValidation" Version="11.11.0" />
-    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Aspose.PDF" Version="25.4.0" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.7.0.110445">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -22,11 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Exadel.ReportHub.Common\Exadel.ReportHub.Common.csproj" />
-    <ProjectReference Include="..\Exadel.ReportHub.Csv\Exadel.ReportHub.Csv.csproj" />
-    <ProjectReference Include="..\Exadel.ReportHub.ExchangeRate\Exadel.ReportHub.Ecb.csproj" />
-    <ProjectReference Include="..\Exadel.ReportHub.Pdf\Exadel.ReportHub.Pdf.csproj" />
-    <ProjectReference Include="..\Exadel.ReportHub.RA\Exadel.ReportHub.RA.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.SDK\Exadel.ReportHub.SDK.csproj" />
   </ItemGroup>
 

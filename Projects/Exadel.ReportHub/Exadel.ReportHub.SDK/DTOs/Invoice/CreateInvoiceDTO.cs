@@ -10,9 +10,5 @@ public class CreateInvoiceDTO : UpdateInvoiceDTO
 
     public string InvoiceNumber { get; set; }
 
-    public decimal Amount { get; set; }
-
-    public string Currency { get; set; }
-
     public IList<Guid> ItemIds { get; set; }
 }

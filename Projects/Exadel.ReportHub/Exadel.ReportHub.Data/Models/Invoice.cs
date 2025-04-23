@@ -19,7 +19,9 @@ public class Invoice : IDocument, ISoftDeletable
 
     public decimal Amount { get; set; }
 
-    public string Currency { get; set; }
+    public Guid CurrencyId { get; set; }
+
+    public string CurrencyCode { get; set; }
 
     public PaymentStatus PaymentStatus { get; set; }
 
