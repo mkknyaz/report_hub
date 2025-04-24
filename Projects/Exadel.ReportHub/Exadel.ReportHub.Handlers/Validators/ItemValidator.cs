@@ -25,12 +25,12 @@ public class ItemValidator : AbstractValidator<CreateUpdateItemDTO>
             RuleFor(x => x.ClientId)
                 .NotEmpty()
                 .MustAsync(_clientRepository.ExistsAsync)
-                .WithMessage(Constants.Validation.Item.ClientDoesNotExistMessage);
+                .WithMessage(Constants.Validation.Client.DoesNotExist);
 
             RuleFor(x => x.CurrencyId)
                 .NotEmpty()
                 .MustAsync(_currencyRepository.ExistsAsync)
-                .WithMessage(Constants.Validation.Item.CurrencyDoesNotExistMessage);
+                .WithMessage(Constants.Validation.Currency.DoesNotExist);
 
             RuleFor(x => x.Name)
                 .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names);
@@ -39,11 +39,11 @@ public class ItemValidator : AbstractValidator<CreateUpdateItemDTO>
                 .NotEmpty()
                 .MaximumLength(Constants.Validation.Item.DescriptionMaxLength)
                 .Matches("^[A-Z]")
-                .WithMessage(Constants.Validation.Item.DescriptionShouldStartWithCapitalMessage);
+                .WithMessage(Constants.Validation.Item.DescriptionShouldStartWithCapital);
 
             RuleFor(x => x.Price)
                 .NotEmpty()
                 .GreaterThan(0)
-                .WithMessage(Constants.Validation.Item.NegativePriceErrorMessage);
+                .WithMessage(Constants.Validation.Item.PriceMustBePositive);
     }
 }

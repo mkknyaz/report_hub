@@ -27,17 +27,17 @@ public class CreatePlanRequestValidator : AbstractValidator<CreatePlanRequest>
 
                 child.RuleFor(x => x)
                     .MustAsync(IsUniquePlanAsync)
-                    .WithMessage(Constants.Validation.Plan.PlanAlreadyExistsForItemAndClient);
+                    .WithMessage(Constants.Validation.Plan.AlreadyExistsForItemAndClient);
 
                 child.RuleFor(x => x.ItemId)
                     .NotEmpty()
                     .MustAsync(_itemRepository.ExistsAsync)
-                    .WithMessage(Constants.Validation.Plan.ItemDoesNotExistMessage);
+                    .WithMessage(Constants.Validation.Item.DoesNotExist);
 
                 child.RuleFor(x => x.ClientId)
                     .NotEmpty()
                     .MustAsync(_clientRepository.ExistsAsync)
-                    .WithMessage(Constants.Validation.Plan.ClientDoesNotExistMessage);
+                    .WithMessage(Constants.Validation.Client.DoesNotExist);
 
                 child.RuleFor(x => x.Amount)
                     .GreaterThan(0);
@@ -45,12 +45,12 @@ public class CreatePlanRequestValidator : AbstractValidator<CreatePlanRequest>
                 child.RuleFor(x => x.StartDate)
                     .NotEmpty()
                     .LessThan(x => x.EndDate)
-                    .WithMessage(Constants.Validation.Plan.PlanStartDateErrorMessage);
+                    .WithMessage(Constants.Validation.Plan.InvalidStartDate);
 
                 child.RuleFor(x => x.EndDate)
                     .NotEmpty()
                     .GreaterThan(DateTime.UtcNow)
-                    .WithMessage(Constants.Validation.Plan.PlandEndDateInThePastErrorMessage);
+                    .WithMessage(Constants.Validation.Plan.EndDateInPast);
             });
     }
 

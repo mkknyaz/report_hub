@@ -20,7 +20,7 @@ public class UpdateClientNameRequestValidator : AbstractValidator<UpdateClientNa
         RuleFor(x => x.Name)
             .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names)
             .MustAsync(NameMustNotExistsAsync)
-            .WithMessage(Constants.Validation.Client.NameTakenMessage);
+            .WithMessage(Constants.Validation.Name.IsTaken);
     }
 
     private async Task<bool> NameMustNotExistsAsync(string name, CancellationToken cancellationToken)

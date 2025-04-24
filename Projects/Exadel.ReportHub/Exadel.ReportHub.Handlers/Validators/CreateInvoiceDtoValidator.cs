@@ -32,27 +32,27 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
         RuleFor(x => x.ClientId)
             .NotEmpty()
             .MustAsync(_clientRepository.ExistsAsync)
-            .WithMessage(Constants.Validation.Invoice.ClientDoesntExistsErrorMessage);
+            .WithMessage(Constants.Validation.Client.DoesNotExist);
 
         RuleFor(x => x.CustomerId)
             .NotEmpty()
             .MustAsync(_customerRepository.ExistsAsync)
-            .WithMessage(Constants.Validation.Invoice.CustomerDoesntExistsErrorMessage);
+            .WithMessage(Constants.Validation.Customer.DoesNotExist);
 
         RuleFor(x => x.InvoiceNumber)
             .NotEmpty()
-            .MaximumLength(Constants.Validation.Invoice.InvoiceMaximumNumberLength)
+            .MaximumLength(Constants.Validation.Invoice.InvoiceNumberMaxLength)
             .Matches(@"^INV\d+$")
-            .WithMessage(Constants.Validation.Invoice.InvoiceNumberErrorMessage)
+            .WithMessage(Constants.Validation.Invoice.InvalidInvoiceNumberFormat)
             .MustAsync(InvoiceNumberMustNotExistAsync)
-            .WithMessage(Constants.Validation.Invoice.InvoiceNumberExistsMessage);
+            .WithMessage(Constants.Validation.Invoice.DuplicateInvoice);
 
         RuleFor(x => x.ItemIds)
             .NotEmpty()
             .Must(x => x.Count == x.Distinct().Count())
-            .WithMessage(Constants.Validation.Invoice.ItemsDuplicateErrorMessage)
+            .WithMessage(Constants.Validation.Invoice.DuplicateItem)
             .MustAsync(_itemRepository.AllExistAsync)
-            .WithMessage(Constants.Validation.Invoice.ItemDoesNotExistsErrorMessage);
+            .WithMessage(Constants.Validation.Item.DoesNotExist);
     }
 
     private async Task<bool> InvoiceNumberMustNotExistAsync(string invoiceNumber, CancellationToken cancellationToken)

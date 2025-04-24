@@ -22,12 +22,12 @@ public class UpdatePlanRequestValidator : AbstractValidator<UpdatePlanRequest>
                 child.RuleFor(x => x.StartDate)
                     .NotEmpty()
                     .LessThan(x => x.EndDate)
-                    .WithMessage(Constants.Validation.Plan.PlanStartDateErrorMessage);
+                    .WithMessage(Constants.Validation.Plan.InvalidStartDate);
 
                 child.RuleFor(x => x.EndDate)
                     .NotEmpty()
                     .GreaterThan(DateTime.UtcNow)
-                    .WithMessage(Constants.Validation.Plan.PlandEndDateInThePastErrorMessage);
+                    .WithMessage(Constants.Validation.Plan.EndDateInPast);
             });
     }
 }

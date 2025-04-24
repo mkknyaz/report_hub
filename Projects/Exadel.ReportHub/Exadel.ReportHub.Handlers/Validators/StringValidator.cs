@@ -19,7 +19,7 @@ public class StringValidator : AbstractValidator<string>
                 .NotEmpty()
                 .MaximumLength(Constants.Validation.Name.MaxLength)
                 .Matches("^[A-Z]")
-                .WithMessage(Constants.Validation.Name.ShouldStartWithCapitalMessage)
+                .WithMessage(Constants.Validation.Name.MustStartWithCapital)
                 .WithName(nameof(Constants.Validation.Name));
         });
 
@@ -31,13 +31,13 @@ public class StringValidator : AbstractValidator<string>
                 .NotEmpty()
                 .MinimumLength(Constants.Validation.Password.MinimumLength)
                 .Matches("[A-Z]")
-                .WithMessage(Constants.Validation.Password.UppercaseMessage)
+                .WithMessage(Constants.Validation.Password.RequireUppercase)
                 .Matches("[a-z]")
-                .WithMessage(Constants.Validation.Password.LowercaseMessage)
+                .WithMessage(Constants.Validation.Password.RequireLowercase)
                 .Matches("[0-9]")
-                .WithMessage(Constants.Validation.Password.DigitMessage)
+                .WithMessage(Constants.Validation.Password.RequireDigit)
                 .Matches("[^a-zA-Z0-9]")
-                .WithMessage(Constants.Validation.Password.SpecialCharacterMessage)
+                .WithMessage(Constants.Validation.Password.RequireSpecialCharacter)
                 .WithName(nameof(Constants.Validation.Password));
         });
 
@@ -49,7 +49,7 @@ public class StringValidator : AbstractValidator<string>
                 .NotEmpty()
                 .MaximumLength(Constants.Validation.Country.MaxLength)
                 .Matches("^[A-Z]")
-                .WithMessage(Constants.Validation.Country.ShouldStartWithCapitalMessage)
+                .WithMessage(Constants.Validation.Country.MustStartWithCapital)
                 .WithName(nameof(Constants.Validation.Country));
         });
     }

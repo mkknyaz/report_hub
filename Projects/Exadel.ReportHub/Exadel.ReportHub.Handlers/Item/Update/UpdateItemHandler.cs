@@ -20,7 +20,7 @@ public class UpdateItemHandler(IItemRepository itemRepository, ICurrencyReposito
 
         if (itemClientId != request.UpdateItemDTO.ClientId)
         {
-            return Error.Validation(description: Constants.Validation.Item.ClientIdCannotBeChangedMessage);
+            return Error.Validation(description: Constants.Validation.Item.ClientIdImmutable);
         }
 
         var item = mapper.Map<Data.Models.Item>(request.UpdateItemDTO);

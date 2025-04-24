@@ -29,10 +29,10 @@ public partial class StringValidatorTests
 
         [Test]
         [TestCase("Test1!")]
-        [TestCase("test1234!", Constants.Validation.Password.UppercaseMessage)]
-        [TestCase("TEST1234!", Constants.Validation.Password.LowercaseMessage)]
-        [TestCase("Testtest!", Constants.Validation.Password.DigitMessage)]
-        [TestCase("Test12345", Constants.Validation.Password.SpecialCharacterMessage)]
+        [TestCase("test1234!", Constants.Validation.Password.RequireUppercase)]
+        [TestCase("TEST1234!", Constants.Validation.Password.RequireLowercase)]
+        [TestCase("Testtest!", Constants.Validation.Password.RequireDigit)]
+        [TestCase("Test12345", Constants.Validation.Password.RequireSpecialCharacter)]
         public async Task ValidateAsync_PasswordIsInvalid_ErrorReturned(string password, string expectedMessage = null)
         {
             if (expectedMessage == null)

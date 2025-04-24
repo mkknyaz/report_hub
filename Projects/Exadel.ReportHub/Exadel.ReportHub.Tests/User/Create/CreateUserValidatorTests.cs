@@ -23,7 +23,7 @@ public class CreateUserValidatorTests
         {
             stringValidator.RuleFor(x => x)
                 .Matches("[^a-zA-Z0-9]")
-                .WithMessage(Constants.Validation.Password.SpecialCharacterMessage);
+                .WithMessage(Constants.Validation.Password.RequireSpecialCharacter);
         });
         stringValidator.RuleSet(Constants.Validation.RuleSet.Names, () =>
         {
@@ -85,7 +85,7 @@ public class CreateUserValidatorTests
         var createUserRequest = new CreateUserRequest(new CreateUserDTO { FullName = "Test User", Email = "invalid-email", Password = "Testpassword123!" });
         var result = await _validator.TestValidateAsync(createUserRequest);
         result.ShouldHaveValidationErrorFor(x => x.CreateUserDto.Email)
-            .WithErrorMessage(Constants.Validation.User.EmailInvalidMessage);
+            .WithErrorMessage(Constants.Validation.Email.IsInvalid);
         Assert.That(result.Errors.Count, Is.EqualTo(1));
     }
 
@@ -99,7 +99,7 @@ public class CreateUserValidatorTests
 
         var result = await _validator.TestValidateAsync(createUserRequest);
         result.ShouldHaveValidationErrorFor(x => x.CreateUserDto.Email)
-            .WithErrorMessage(Constants.Validation.User.EmailTakenMessage);
+            .WithErrorMessage(Constants.Validation.Email.IsTaken);
         Assert.That(result.Errors.Count, Is.EqualTo(1));
     }
 
@@ -109,7 +109,7 @@ public class CreateUserValidatorTests
         var createUserRequest = new CreateUserRequest(new CreateUserDTO { FullName = "Test", Email = "testemail@gmail.com", Password = "Password1" });
         var result = await _validator.TestValidateAsync(createUserRequest);
         result.ShouldHaveAnyValidationError()
-            .WithErrorMessage(Constants.Validation.Password.SpecialCharacterMessage);
+            .WithErrorMessage(Constants.Validation.Password.RequireSpecialCharacter);
         Assert.That(result.Errors.Count, Is.EqualTo(1));
     }
 }

@@ -20,12 +20,12 @@ public class ImportInvoicesRequestValidator : AbstractValidator<ImportInvoicesRe
                 {
                     file.RuleFor(x => x.Length)
                         .GreaterThan(0)
-                        .WithMessage(Constants.Validation.Import.UploadedFileLengthError);
+                        .WithMessage(Constants.Validation.Import.EmptyFileUpload);
 
                     file.RuleFor(x => x.FileName)
                         .NotEmpty()
                         .Must(fileName => string.Equals(Path.GetExtension(fileName), ".csv", StringComparison.OrdinalIgnoreCase))
-                        .WithMessage(Constants.Validation.Import.FileExtentionError);
+                        .WithMessage(Constants.Validation.Import.InvalidFileExtention);
                 });
     }
 }
