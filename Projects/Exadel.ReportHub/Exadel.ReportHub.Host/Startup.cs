@@ -24,7 +24,6 @@ public class Startup(IConfiguration configuration)
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
-
         services.AddSwaggerGen(c =>
         {
             const string apiVersion = "v1";
@@ -69,6 +68,7 @@ public class Startup(IConfiguration configuration)
                     new[] { Constants.Authorization.ScopeName }
                 }
             });
+            c.EnableAnnotations();
         });
 
         services.AddAuthentication(options =>
