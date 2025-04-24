@@ -15,9 +15,9 @@ public class CustomerRepository : BaseRepository, ICustomerRepository
     {
     }
 
-    public async Task AddAsync(Customer customer, CancellationToken cancellationToken)
+    public Task AddAsync(Customer customer, CancellationToken cancellationToken)
     {
-        await AddAsync<Customer>(customer, cancellationToken);
+        return AddAsync<Customer>(customer, cancellationToken);
     }
 
     public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken)
@@ -27,21 +27,26 @@ public class CustomerRepository : BaseRepository, ICustomerRepository
         return count > 0;
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await ExistsAsync<Customer>(id, cancellationToken);
+        return ExistsAsync<Customer>(id, cancellationToken);
     }
 
     public Task<IList<Customer>> GetAsync(CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.IsDeleted, false);
-
         return GetAsync(filter, cancellationToken);
     }
 
-    public Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return GetByIdAsync<Customer>(id, cancellationToken);
+        return await GetByIdAsync<Customer>(id, cancellationToken);
+    }
+
+    public async Task<IList<Customer>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.In(x => x.Id, ids);
+        return await GetAsync(filter, cancellationToken);
     }
 
     public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)

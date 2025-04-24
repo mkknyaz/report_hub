@@ -15,37 +15,36 @@ public class ClientRepository : BaseRepository, IClientRepository
     {
     }
 
-    public async Task AddAsync(Client client, CancellationToken cancellationToken)
+    public Task AddAsync(Client client, CancellationToken cancellationToken)
     {
-        await base.AddAsync(client, cancellationToken);
+        return base.AddAsync(client, cancellationToken);
     }
 
-    public async Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await GetByIdAsync<Client>(id, cancellationToken);
+        return GetByIdAsync<Client>(id, cancellationToken);
     }
 
-    public async Task<IList<Client>> GetAsync(CancellationToken cancellationToken)
+    public Task<IList<Client>> GetAsync(CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.IsDeleted, false);
-
-        return await GetAsync(filter, cancellationToken);
+        return GetAsync(filter, cancellationToken);
     }
 
-    public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
+    public Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        await SoftDeleteAsync<Client>(id, cancellationToken);
+        return SoftDeleteAsync<Client>(id, cancellationToken);
     }
 
-    public async Task UpdateNameAsync(Guid id, string name, CancellationToken cancellationToken)
+    public Task UpdateNameAsync(Guid id, string name, CancellationToken cancellationToken)
     {
         var update = Builders<Client>.Update.Set(x => x.Name, name);
-        await UpdateAsync(id, update, cancellationToken);
+        return UpdateAsync(id, update, cancellationToken);
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await ExistsAsync<Client>(id, cancellationToken);
+        return ExistsAsync<Client>(id, cancellationToken);
     }
 
     public async Task<bool> NameExistsAsync(string name, CancellationToken cancellationToken)

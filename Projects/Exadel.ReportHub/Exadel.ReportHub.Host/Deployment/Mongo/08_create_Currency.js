@@ -1,5 +1,5 @@
 ﻿const scriptName = "08_create_Currency";
-const version = NumberInt(1);
+const version = NumberInt(2);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -27,11 +27,15 @@ const currencies = [
     },
     {
         _id: UUID("fd76eaab-194a-4e44-a4f8-3eed74c729c8"),
-        CurrencyCode: "BYN"
+        CurrencyCode: "BGN"
     },
     {
         _id: UUID("f3cc7604-0d40-446e-86fe-e55b103d35b5"),
         CurrencyCode: "PLN"
+    },
+    {
+        _id: UUID("c3a29e5d-8421-4b78-9b88-abb692709441"),
+        CurrencyCode: "CZK"
     }
 ];
 

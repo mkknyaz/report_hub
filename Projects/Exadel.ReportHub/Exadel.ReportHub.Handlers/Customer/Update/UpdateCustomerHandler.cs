@@ -8,7 +8,7 @@ namespace Exadel.ReportHub.Handlers.Customer.Update;
 
 public record UpdateCustomerRequest(Guid Id, UpdateCustomerDTO UpdateCustomerDto) : IRequest<ErrorOr<Updated>>;
 
-public class UpdateCustomerHandler(ICustomerRepository customerRepository, IMapper mapper) : IRequestHandler<UpdateCustomerRequest, ErrorOr<Updated>>
+public class UpdateCustomerHandler(ICustomerRepository customerRepository, ICountryRepository countryRepository, IMapper mapper) : IRequestHandler<UpdateCustomerRequest, ErrorOr<Updated>>
 {
     public async Task<ErrorOr<Updated>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
@@ -19,7 +19,13 @@ public class UpdateCustomerHandler(ICustomerRepository customerRepository, IMapp
         }
 
         var customer = mapper.Map<Data.Models.Customer>(request.UpdateCustomerDto);
+        var country = await countryRepository.GetByIdAsync(request.UpdateCustomerDto.CountryId, cancellationToken);
+
         customer.Id = request.Id;
+        customer.Country = country.Name;
+        customer.CurrencyId = country.CurrencyId;
+        customer.CurrencyCode = country.CurrencyCode;
+
         await customerRepository.UpdateAsync(customer, cancellationToken);
         return Result.Updated;
     }

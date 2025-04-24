@@ -1,8 +1,10 @@
-﻿using Exadel.ReportHub.Identity;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Identity;
 using Exadel.ReportHub.Identity.Stores;
 
 namespace Exadel.ReportHub.Host.Registrations;
 
+[ExcludeFromCodeCoverage]
 public static class IdentityServerRegistrations
 {
     public static IServiceCollection AddIdentity(this IServiceCollection services)

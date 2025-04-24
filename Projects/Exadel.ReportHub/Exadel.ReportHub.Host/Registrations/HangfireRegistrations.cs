@@ -1,10 +1,10 @@
-﻿using Exadel.ReportHub.Host.Services;
-using Exadel.ReportHub.SDK.Abstract;
+﻿using System.Diagnostics.CodeAnalysis;
 using Hangfire;
 using Hangfire.MemoryStorage;
 
 namespace Exadel.ReportHub.Host.Registrations;
 
+[ExcludeFromCodeCoverage]
 public static class HangfireRegistrations
 {
     public static IServiceCollection AddHangfire(this IServiceCollection services)

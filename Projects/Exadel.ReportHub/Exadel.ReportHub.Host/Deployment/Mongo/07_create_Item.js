@@ -1,5 +1,5 @@
 ﻿const scriptName = "07_create_Item";
-const version = NumberInt(1);
+const version = NumberInt(2);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -49,16 +49,32 @@ const clientIds = [
     UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7")
 ]
 
-const currencyIds = [
-    UUID("c1ce0c2a-6701-4d66-95d3-812fa9b2ca08"),
-    UUID("04d123f0-dc7e-4b92-829c-dffd1ef0b89a"),
-    UUID("45d6d081-e362-4a9d-996f-c144d944635d"),
-    UUID("fd76eaab-194a-4e44-a4f8-3eed74c729c8"),
-    UUID("f3cc7604-0d40-446e-86fe-e55b103d35b5")
+const currencies = [
+    {
+        _id: UUID("c1ce0c2a-6701-4d66-95d3-812fa9b2ca08"),
+        CurrencyCode: "USD"
+    },
+    {
+        _id: UUID("04d123f0-dc7e-4b92-829c-dffd1ef0b89a"),
+        CurrencyCode: "EUR"
+    },
+    {
+        _id: UUID("45d6d081-e362-4a9d-996f-c144d944635d"),
+        CurrencyCode: "JPY"
+    },
+    {
+        _id: UUID("fd76eaab-194a-4e44-a4f8-3eed74c729c8"),
+        CurrencyCode: "BGN"
+    },
+    {
+        _id: UUID("f3cc7604-0d40-446e-86fe-e55b103d35b5"),
+        CurrencyCode: "PLN"
+    },
+    {
+        _id: UUID("c3a29e5d-8421-4b78-9b88-abb692709441"),
+        CurrencyCode: "CZK"
+    }
 ];
-
-
-const currencyCodes = ["USD", "EUR", "JPY", "BYN", "PLN"]
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -70,6 +86,7 @@ const itemCount = 10;
 for (let i = 0; i < itemCount; i++) {
     var index = NumberInt(i / 2);
     var nameIndex = getRandomInt(names.length);
+    var currency = currencies[getRandomInt(currencies.length)]
 
     items.push({
         _id: itemIds[i],
@@ -77,8 +94,8 @@ for (let i = 0; i < itemCount; i++) {
         Name: names[nameIndex],
         Description: descriptions[nameIndex],
         Price: NumberDecimal((Math.random() * 2000 + 100).toFixed(2)),
-        CurrencyId: currencyIds[index],
-        CurrencyCode: currencyCodes[index],
+        CurrencyId: currency._id,
+        CurrencyCode: currency.CurrencyCode,
         IsDeleted: false
     });
 }

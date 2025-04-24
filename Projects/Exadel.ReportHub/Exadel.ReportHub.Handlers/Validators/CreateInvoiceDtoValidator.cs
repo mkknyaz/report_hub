@@ -6,18 +6,20 @@ namespace Exadel.ReportHub.Handlers.Validators;
 
 public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
 {
-    private readonly ICustomerRepository _customerRepository;
-    private readonly IClientRepository _clientRepository;
     private readonly IInvoiceRepository _invoiceRepository;
+    private readonly IClientRepository _clientRepository;
+    private readonly ICustomerRepository _customerRepository;
+    private readonly IItemRepository _itemRepository;
     private readonly IValidator<UpdateInvoiceDTO> _updateInvoiceValidator;
 
-    public CreateInvoiceDtoValidator(ICustomerRepository customerRepository, IClientRepository clientRepository,
-        IInvoiceRepository invoiceRepository, IValidator<UpdateInvoiceDTO> updateinvoiceValidator)
+    public CreateInvoiceDtoValidator(IInvoiceRepository invoiceRepository, IClientRepository clientRepository, ICustomerRepository customerRepository,
+        IItemRepository itemRepository, IValidator<UpdateInvoiceDTO> updateinvoiceValidator)
     {
-        _updateInvoiceValidator = updateinvoiceValidator;
-        _customerRepository = customerRepository;
-        _clientRepository = clientRepository;
         _invoiceRepository = invoiceRepository;
+        _clientRepository = clientRepository;
+        _customerRepository = customerRepository;
+        _itemRepository = itemRepository;
+        _updateInvoiceValidator = updateinvoiceValidator;
         ConfigureRules();
     }
 
@@ -46,7 +48,11 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
             .WithMessage(Constants.Validation.Invoice.InvoiceNumberExistsMessage);
 
         RuleFor(x => x.ItemIds)
-            .NotEmpty();
+            .NotEmpty()
+            .Must(x => x.Count == x.Distinct().Count())
+            .WithMessage(Constants.Validation.Invoice.ItemsDuplicateErrorMessage)
+            .MustAsync(_itemRepository.AllExistAsync)
+            .WithMessage(Constants.Validation.Invoice.ItemDoesNotExistsErrorMessage);
     }
 
     private async Task<bool> InvoiceNumberMustNotExistAsync(string invoiceNumber, CancellationToken cancellationToken)

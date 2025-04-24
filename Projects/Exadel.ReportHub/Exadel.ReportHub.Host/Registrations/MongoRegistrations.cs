@@ -1,4 +1,5 @@
-﻿using Exadel.ReportHub.RA;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.RA;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -7,6 +8,7 @@ using MongoDB.Bson.Serialization.Serializers;
 
 namespace Exadel.ReportHub.Host.Registrations;
 
+[ExcludeFromCodeCoverage]
 public static class MongoRegistrations
 {
     public static IServiceCollection AddMongo(this IServiceCollection services)

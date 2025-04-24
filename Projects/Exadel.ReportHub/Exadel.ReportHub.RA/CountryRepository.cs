@@ -10,8 +10,18 @@ public class CountryRepository : BaseRepository, ICountryRepository
     {
     }
 
-    public async Task<IList<Country>> GetAllAsync(CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await GetAllAsync<Country>(cancellationToken);
+        return ExistsAsync<Country>(id, cancellationToken);
+    }
+
+    public Task<IList<Country>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return GetAllAsync<Country>(cancellationToken);
+    }
+
+    public Task<Country> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return GetByIdAsync<Country>(id, cancellationToken);
     }
 }

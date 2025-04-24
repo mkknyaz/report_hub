@@ -10,6 +10,8 @@ public interface ICustomerRepository
 
     Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
+    Task<IList<Customer>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken);
+
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
 
     Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken);

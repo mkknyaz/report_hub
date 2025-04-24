@@ -18,6 +18,8 @@ public class InvoiceDTO
 
     public decimal Amount { get; set; }
 
+    public Guid CurrencyId { get; set; }
+
     public string CurrencyCode { get; set; }
 
     public PaymentStatus PaymentStatus { get; set; }

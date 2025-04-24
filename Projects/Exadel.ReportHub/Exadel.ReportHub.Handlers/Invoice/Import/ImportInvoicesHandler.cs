@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using ErrorOr;
+﻿using ErrorOr;
 using Exadel.ReportHub.Csv.Abstract;
-using Exadel.ReportHub.Handlers.Validators;
+using Exadel.ReportHub.Handlers.Managers;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Import;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
@@ -15,7 +14,7 @@ public record ImportInvoicesRequest(ImportDTO ImportDTO) : IRequest<ErrorOr<Impo
 public class ImportInvoicesHandler(
     ICsvProcessor csvProcessor,
     IInvoiceRepository invoiceRepository,
-    IMapper mapper,
+    IInvoiceManager invoiceManager,
     IValidator<CreateInvoiceDTO> invoiceValidator) : IRequestHandler<ImportInvoicesRequest, ErrorOr<ImportResultDTO>>
 {
     public async Task<ErrorOr<ImportResultDTO>> Handle(ImportInvoicesRequest request, CancellationToken cancellationToken)
@@ -31,16 +30,17 @@ public class ImportInvoicesHandler(
             .OrderBy(x => x.RowIndex)
             .ToList();
 
-        if(validationErrors.Count > 0)
+        if (validationErrors.Count > 0)
         {
             return validationErrors
                 .Select(m => Error.Validation(description: $"Row {m.RowIndex + 1}: {m.Error}"))
                 .ToList();
         }
 
-        var invoices = mapper.Map<IList<Data.Models.Invoice>>(invoiceDtos);
+        var invoices = await invoiceManager.GenerateInvoicesAsync(invoiceDtos, cancellationToken);
+
         await invoiceRepository.AddManyAsync(invoices, cancellationToken);
 
-        return new ImportResultDTO { ImportedCount = invoices.Count() };
+        return new ImportResultDTO { ImportedCount = invoices.Count };
     }
 }

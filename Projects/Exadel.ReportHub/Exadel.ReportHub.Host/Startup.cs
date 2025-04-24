@@ -97,7 +97,8 @@ public class Startup(IConfiguration configuration)
             .AddPing(configuration)
             .AddScheduler()
             .AddJobs()
-            .AddHangfire();
+            .AddHangfire()
+            .AddManagers();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMapper mapper)

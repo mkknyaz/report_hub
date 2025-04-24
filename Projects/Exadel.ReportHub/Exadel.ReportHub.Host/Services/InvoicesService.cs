@@ -22,7 +22,7 @@ public class InvoicesService(ISender sender) : BaseService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost("import")]
-    public async Task<ActionResult<ImportResultDTO>> ImportInvoicesAsync([FromForm] ImportDTO importDto)
+    public async Task<ActionResult<ImportResultDTO>> ImportInvoicesAsync([FromForm] ImportDTO importDto, [FromQuery][Required] Guid clientId)
     {
         var result = await sender.Send(new ImportInvoicesRequest(importDto));
         return FromResult(result);

@@ -1,29 +1,21 @@
-﻿using FluentValidation;
+﻿using Exadel.ReportHub.SDK.DTOs.Customer;
+using FluentValidation;
 
 namespace Exadel.ReportHub.Handlers.Customer.Update;
 
 public class UpdateCustomerValidator : AbstractValidator<UpdateCustomerRequest>
 {
-    private readonly IValidator<string> _stringValidator;
+    private readonly IValidator<UpdateCustomerDTO> _updateCustomerValidator;
 
-    public UpdateCustomerValidator(IValidator<string> stringValidator)
+    public UpdateCustomerValidator(IValidator<UpdateCustomerDTO> updateCustomerValidator)
     {
-        _stringValidator = stringValidator;
+        _updateCustomerValidator = updateCustomerValidator;
         ConfigureRules();
     }
 
     public void ConfigureRules()
     {
         RuleFor(x => x.UpdateCustomerDto)
-           .ChildRules(child =>
-           {
-               child.RuleLevelCascadeMode = CascadeMode.Stop;
-
-               child.RuleFor(x => x.Name)
-                   .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names);
-
-               child.RuleFor(x => x.Country)
-                   .SetValidator(_stringValidator, Constants.Validation.RuleSet.Countries);
-           });
+           .SetValidator(_updateCustomerValidator);
     }
 }

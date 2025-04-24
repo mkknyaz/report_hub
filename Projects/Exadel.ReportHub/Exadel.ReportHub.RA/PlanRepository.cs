@@ -15,14 +15,14 @@ public class PlanRepository : BaseRepository, IPlanRepository
     {
     }
 
-    public async Task AddAsync(Plan plan, CancellationToken cancellationToken)
+    public Task AddAsync(Plan plan, CancellationToken cancellationToken)
     {
-        await AddAsync<Plan>(plan, cancellationToken);
+        return AddAsync<Plan>(plan, cancellationToken);
     }
 
-    public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
+    public Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        await SoftDeleteAsync<Plan>(id, cancellationToken);
+        return SoftDeleteAsync<Plan>(id, cancellationToken);
     }
 
     public Task<IList<Plan>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken)
@@ -38,13 +38,13 @@ public class PlanRepository : BaseRepository, IPlanRepository
         return GetByIdAsync<Plan>(id, cancellationToken);
     }
 
-    public async Task UpdateDateAsync(Guid id, Plan plan, CancellationToken cancellationToken)
+    public Task UpdateDateAsync(Guid id, Plan plan, CancellationToken cancellationToken)
     {
         var update = Builders<Plan>.Update
             .Set(x => x.StartDate, plan.StartDate)
             .Set(x => x.EndDate, plan.EndDate)
             .Set(x => x.Amount, plan.Amount);
-        await UpdateAsync(id, update, cancellationToken);
+        return UpdateAsync(id, update, cancellationToken);
     }
 
     public async Task<bool> ExistsAsync(Guid itemId, Guid clientId, CancellationToken cancellationToken)

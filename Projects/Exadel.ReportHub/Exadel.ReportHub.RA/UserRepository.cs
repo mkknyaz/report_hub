@@ -22,19 +22,19 @@ public class UserRepository : BaseRepository, IUserRepository
         return count > 0;
     }
 
-    public async Task<IList<User>> GetAsync(bool? isActive, CancellationToken cancellationToken)
+    public Task<IList<User>> GetAsync(bool? isActive, CancellationToken cancellationToken)
     {
         var filter = isActive.HasValue
             ? _filterBuilder.Eq(x => x.IsActive, isActive.Value)
             : _filterBuilder.Empty;
 
-        return await GetAsync(filter, cancellationToken);
+        return GetAsync(filter, cancellationToken);
     }
 
-    public async Task UpdateActivityAsync(Guid id, bool isActive, CancellationToken cancellationToken)
+    public Task UpdateActivityAsync(Guid id, bool isActive, CancellationToken cancellationToken)
     {
         var update = Builders<User>.Update.Set(x => x.IsActive, isActive);
-        await UpdateAsync(id, update, cancellationToken);
+        return UpdateAsync(id, update, cancellationToken);
     }
 
     public async Task<bool> IsActiveAsync(Guid id, CancellationToken cancellationToken)
@@ -44,19 +44,19 @@ public class UserRepository : BaseRepository, IUserRepository
         return isActive;
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await ExistsAsync<User>(id, cancellationToken);
+        return ExistsAsync<User>(id, cancellationToken);
     }
 
-    public async Task AddAsync(User user, CancellationToken cancellationToken)
+    public Task AddAsync(User user, CancellationToken cancellationToken)
     {
-        await base.AddAsync(user, cancellationToken);
+        return base.AddAsync(user, cancellationToken);
     }
 
-    public async Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public Task<User> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await GetByIdAsync<User>(id, cancellationToken);
+        return GetByIdAsync<User>(id, cancellationToken);
     }
 
     public async Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken)
@@ -65,22 +65,22 @@ public class UserRepository : BaseRepository, IUserRepository
         return await GetCollection<User>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 
-    public async Task UpdatePasswordAsync(Guid id, string passwordHash, string passwordSalt, CancellationToken cancellationToken)
+    public Task UpdatePasswordAsync(Guid id, string passwordHash, string passwordSalt, CancellationToken cancellationToken)
     {
         var update = Builders<User>.Update
             .Set(x => x.PasswordHash, passwordHash)
             .Set(x => x.PasswordSalt, passwordSalt);
-        await UpdateAsync(id, update, cancellationToken);
+        return UpdateAsync(id, update, cancellationToken);
     }
 
-    public async Task UpdateNameAsync(Guid id, string fullName, CancellationToken cancellationToken)
+    public Task UpdateNameAsync(Guid id, string fullName, CancellationToken cancellationToken)
     {
         var update = Builders<User>.Update.Set(x => x.FullName, fullName);
-        await UpdateAsync(id, update, cancellationToken);
+        return UpdateAsync(id, update, cancellationToken);
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        await DeleteAsync<User>(id, cancellationToken);
+        return DeleteAsync<User>(id, cancellationToken);
     }
 }

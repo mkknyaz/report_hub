@@ -1,11 +1,16 @@
-﻿using Exadel.ReportHub.Ecb;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Ecb;
+using Exadel.ReportHub.Ecb.Abstract;
+using Exadel.ReportHub.Ecb.Helpers;
 using Exadel.ReportHub.Host.Configs;
 using Exadel.ReportHub.Host.Services;
+using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.Abstract;
 using Microsoft.Extensions.Options;
 
 namespace Exadel.ReportHub.Host.Registrations;
 
+[ExcludeFromCodeCoverage]
 public static class ExchangeRateRegistrations
 {
     public static IServiceCollection AddExchangeRate(this IServiceCollection services, IConfiguration configuration)
@@ -18,8 +23,16 @@ public static class ExchangeRateRegistrations
             client.BaseAddress = value.Host;
             client.Timeout = value.ConnectionTimeout;
         });
-        services.AddSingleton<IExchangeRateProvider, ExchangeRateProvider>();
+        services.AddSingleton<ExchangeRateClient>();
+        services.AddSingleton<IExchangeRateClient, ExchangeRateProvider>(provider =>
+        {
+            var exchangeRateRepository = provider.GetRequiredService<IExchangeRateRepository>();
+            var exchangeRateService = provider.GetRequiredService<ExchangeRateClient>();
+
+            return new ExchangeRateProvider(exchangeRateRepository, exchangeRateService);
+        });
         services.AddSingleton<IExchangeRateService, ExchangeRateService>();
+        services.AddSingleton<ICurrencyConverter, CurrencyConverter>();
 
         return services;
     }

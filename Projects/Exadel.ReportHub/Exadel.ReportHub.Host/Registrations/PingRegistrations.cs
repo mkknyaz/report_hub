@@ -1,8 +1,10 @@
-﻿using Exadel.ReportHub.Host.Configs;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Host.Configs;
 using Microsoft.Extensions.Options;
 
 namespace Exadel.ReportHub.Host.Registrations;
 
+[ExcludeFromCodeCoverage]
 public static class PingRegistrations
 {
     public static IServiceCollection AddPing(this IServiceCollection services, IConfiguration configuration)

@@ -15,9 +15,9 @@ public class CurrencyRepository : BaseRepository, ICurrencyRepository
     {
     }
 
-    public async Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await ExistsAsync<Currency>(id, cancellationToken);
+        return ExistsAsync<Currency>(id, cancellationToken);
     }
 
     public async Task<string> GetCodeByIdAsync(Guid id, CancellationToken cancellationToken)

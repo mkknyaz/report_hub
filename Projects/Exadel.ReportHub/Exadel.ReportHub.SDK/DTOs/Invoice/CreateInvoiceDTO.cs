@@ -1,6 +1,4 @@
-﻿using Exadel.ReportHub.SDK.Enums;
-
-namespace Exadel.ReportHub.SDK.DTOs.Invoice;
+﻿namespace Exadel.ReportHub.SDK.DTOs.Invoice;
 
 public class CreateInvoiceDTO : UpdateInvoiceDTO
 {
