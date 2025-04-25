@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Claims;
 using Exadel.ReportHub.Common.Exceptions;
 using Exadel.ReportHub.Common.Providers;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +10,7 @@ public class UserProvider(IHttpContextAccessor httpContextAccessor) : IUserProvi
     public Guid GetUserId()
     {
         var user = httpContextAccessor.HttpContext?.User;
-        var userClaim = user?.FindFirst("sub")?.Value;
+        var userClaim = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userClaim))
         {

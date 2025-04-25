@@ -20,6 +20,7 @@ public static class RepositoryRegistrations
         services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
         services.AddSingleton<IPlanRepository, PlanRepository>();
         services.AddSingleton<ICountryRepository, CountryRepository>();
+        services.AddSingleton<IAuditReportRepository, AuditReportRepository>();
 
         return services;
     }

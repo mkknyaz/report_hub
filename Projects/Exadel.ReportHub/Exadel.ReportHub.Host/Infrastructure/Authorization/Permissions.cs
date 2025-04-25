@@ -80,7 +80,7 @@ public static class Permissions
             }
         },
         {
-            Constants.Authorization.Resource.Logs, new()
+            Constants.Authorization.Resource.AuditReports, new()
             {
                 { Permission.Read, new() { UserRole.SuperAdmin, UserRole.Owner, UserRole.ClientAdmin, UserRole.Operator } },
             }

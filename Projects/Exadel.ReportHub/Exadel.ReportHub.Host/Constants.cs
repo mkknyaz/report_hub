@@ -29,7 +29,7 @@ public static class Constants
             public const string Customers = nameof(Customers);
             public const string Plans = nameof(Plans);
             public const string Reports = nameof(Reports);
-            public const string Logs = nameof(Logs);
+            public const string AuditReports = nameof(AuditReports);
         }
     }
 
