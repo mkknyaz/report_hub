@@ -42,7 +42,7 @@ public class ExportPdfInvoiceHandler(
             Amount = invoice.Amount,
             CurrencyCode = invoice.CurrencyCode,
             PaymentStatus = (SDK.Enums.PaymentStatus)invoice.PaymentStatus,
-            BankAccountNumber = invoice.BankAccountNumber,
+            ClientBankAccountNumber = invoice.ClientBankAccountNumber,
             Items = mapper.Map<IList<ItemDTO>>(itemsTask.Result)
         };
         var stream = await pdfInvoiceGenerator.GenerateAsync(invoiceModel, cancellationToken);

@@ -16,6 +16,8 @@ public class InvoiceDTO
 
     public DateTime DueDate { get; set; }
 
+    public string ClientBankAccountNumber { get; set; }
+
     public decimal Amount { get; set; }
 
     public Guid CurrencyId { get; set; }
@@ -23,8 +25,6 @@ public class InvoiceDTO
     public string CurrencyCode { get; set; }
 
     public PaymentStatus PaymentStatus { get; set; }
-
-    public string BankAccountNumber { get; set; }
 
     public IList<Guid> ItemIds { get; set; }
 }

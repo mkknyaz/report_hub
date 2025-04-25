@@ -7,8 +7,4 @@ public class UpdateInvoiceDTO
     public DateTime IssueDate { get; set; }
 
     public DateTime DueDate { get; set; }
-
-    public PaymentStatus PaymentStatus { get; set; }
-
-    public string BankAccountNumber { get; set; }
 }

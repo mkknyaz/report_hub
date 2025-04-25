@@ -6,6 +6,7 @@ using Exadel.ReportHub.SDK.DTOs.Invoice;
 namespace Exadel.ReportHub.Handlers.Managers;
 
 public class InvoiceManager(
+    IClientRepository clientRepository,
     ICustomerRepository customerRepository,
     IItemRepository itemRepository,
     ICurrencyConverter currencyConverter,
@@ -24,11 +25,13 @@ public class InvoiceManager(
 
         var customersTask = customerRepository.GetByIdsAsync(invoices.Select(x => x.CustomerId).Distinct(), cancellationToken);
         var itemsTask = itemRepository.GetByIdsAsync(invoices.SelectMany(x => x.ItemIds).Distinct(), cancellationToken);
+        var clientTask = clientRepository.GetByIdsAsync(invoices.Select(x => x.ClientId).Distinct(), cancellationToken);
 
-        await Task.WhenAll(customersTask, itemsTask);
+        await Task.WhenAll(customersTask, itemsTask, clientTask);
 
         var customers = customersTask.Result.ToDictionary(x => x.Id);
         var items = itemsTask.Result.ToDictionary(x => x.Id);
+        var clients = clientTask.Result.ToDictionary(x => x.Id);
 
         foreach (var invoice in invoices)
         {
@@ -40,6 +43,7 @@ public class InvoiceManager(
             invoice.Amount = (await Task.WhenAll(conversionTasks)).Sum();
             invoice.CurrencyId = customers[invoice.CustomerId].CurrencyId;
             invoice.CurrencyCode = currencyCode;
+            invoice.ClientBankAccountNumber = clients[invoice.ClientId].BankAccountNumber;
         }
 
         return invoices;

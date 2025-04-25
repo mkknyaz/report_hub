@@ -17,6 +17,7 @@ public class InvoiceManagerTests : BaseTestFixture
     private Mock<ICustomerRepository> _customerRepositoryMock;
     private Mock<IItemRepository> _itemRepositoryMock;
     private Mock<ICurrencyConverter> _currencyConverterMock;
+    private Mock<IClientRepository> _clientRepositoryMock;
 
     private InvoiceManager _invoiceManager;
 
@@ -26,8 +27,9 @@ public class InvoiceManagerTests : BaseTestFixture
         _customerRepositoryMock = new Mock<ICustomerRepository>();
         _itemRepositoryMock = new Mock<IItemRepository>();
         _currencyConverterMock = new Mock<ICurrencyConverter>();
-
+        _clientRepositoryMock = new Mock<IClientRepository>();
         _invoiceManager = new InvoiceManager(
+            _clientRepositoryMock.Object,
             _customerRepositoryMock.Object,
             _itemRepositoryMock.Object,
             _currencyConverterMock.Object,
@@ -38,16 +40,19 @@ public class InvoiceManagerTests : BaseTestFixture
     public async Task GenerateInvoiceAsync_ReturnsInvoice()
     {
         // Arrange
-        var invoiceDto = Fixture.Create<CreateInvoiceDTO>();
         var customer = Fixture.Build<Customer>()
-            .With(x => x.Id, invoiceDto.CustomerId)
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
             .Create();
-        var items = invoiceDto.ItemIds.Select(id =>
-            Fixture.Build<Item>()
-            .With(x => x.Id, id)
+        var client = Fixture.Create<Client>();
+        var items = Fixture.Build<Item>()
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
-            .Create()).ToList();
+            .CreateMany(3).ToList();
+        var itemIds = items.Select(x => x.Id).ToList();
+        var invoiceDto = Fixture.Build<CreateInvoiceDTO>()
+            .With(x => x.CustomerId, customer.Id)
+            .With(x => x.ItemIds, itemIds)
+            .With(x => x.ClientId, client.Id)
+            .Create();
         var amount = items.Sum(x => x.Price);
 
         _customerRepositoryMock
@@ -63,6 +68,10 @@ public class InvoiceManagerTests : BaseTestFixture
                 Constants.Currency.DefaultCurrencyCode, CancellationToken.None))
             .ReturnsAsync(amount);
 
+        _clientRepositoryMock
+            .Setup(x => x.GetByIdsAsync(new[] { client.Id }, CancellationToken.None))
+            .ReturnsAsync(new List<Client> { client });
+
         // Act
         var result = await _invoiceManager.GenerateInvoiceAsync(invoiceDto, CancellationToken.None);
 
@@ -73,10 +82,11 @@ public class InvoiceManagerTests : BaseTestFixture
         Assert.That(result.InvoiceNumber, Is.EqualTo(invoiceDto.InvoiceNumber));
         Assert.That(result.IssueDate, Is.EqualTo(invoiceDto.IssueDate));
         Assert.That(result.DueDate, Is.EqualTo(invoiceDto.DueDate));
+        Assert.That(result.ClientBankAccountNumber, Is.EqualTo(client.BankAccountNumber));
         Assert.That(result.Amount, Is.EqualTo(amount));
         Assert.That(result.CurrencyId, Is.EqualTo(customer.CurrencyId));
         Assert.That(result.CurrencyCode, Is.EqualTo(customer.CurrencyCode));
-        Assert.That(result.PaymentStatus, Is.EqualTo((PaymentStatus)invoiceDto.PaymentStatus));
+        Assert.That(result.PaymentStatus, Is.EqualTo(PaymentStatus.Unpaid));
         Assert.That(result.ItemIds, Is.EqualTo(invoiceDto.ItemIds));
     }
 
@@ -87,7 +97,8 @@ public class InvoiceManagerTests : BaseTestFixture
         var customers = Fixture.Build<Customer>()
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
             .CreateMany(1).ToList();
-        var custimerId = customers[0].Id;
+        var customerId = customers[0].Id;
+        var client = Fixture.Create<Client>();
         var items = Fixture.Build<Item>()
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
             .CreateMany(3).ToList();
@@ -95,11 +106,12 @@ public class InvoiceManagerTests : BaseTestFixture
         var invoiceDtos = Fixture.Build<CreateInvoiceDTO>()
             .With(x => x.CustomerId, customers[0].Id)
             .With(x => x.ItemIds, itemIds)
+            .With(x => x.ClientId, client.Id)
             .CreateMany(2).ToList();
         var amount = items.Sum(x => x.Price);
 
         _customerRepositoryMock
-            .Setup(x => x.GetByIdsAsync(new[] { custimerId }, CancellationToken.None))
+            .Setup(x => x.GetByIdsAsync(new[] { customerId }, CancellationToken.None))
             .ReturnsAsync(customers);
 
         _itemRepositoryMock
@@ -111,6 +123,10 @@ public class InvoiceManagerTests : BaseTestFixture
                 Constants.Currency.DefaultCurrencyCode, CancellationToken.None))
             .ReturnsAsync(amount);
 
+        _clientRepositoryMock
+            .Setup(x => x.GetByIdsAsync(new[] { client.Id }, CancellationToken.None))
+            .ReturnsAsync(new List<Client> { client });
+
         // Act
         var result = await _invoiceManager.GenerateInvoicesAsync(invoiceDtos, CancellationToken.None);
 
@@ -118,26 +134,28 @@ public class InvoiceManagerTests : BaseTestFixture
         Assert.That(result, Is.Not.Empty);
         Assert.That(result.Count, Is.EqualTo(invoiceDtos.Count));
 
-        Assert.That(result[0].ClientId, Is.EqualTo(invoiceDtos[0].ClientId));
-        Assert.That(result[0].CustomerId, Is.EqualTo(custimerId));
+        Assert.That(result[0].ClientId, Is.EqualTo(client.Id));
+        Assert.That(result[0].CustomerId, Is.EqualTo(customerId));
         Assert.That(result[0].InvoiceNumber, Is.EqualTo(invoiceDtos[0].InvoiceNumber));
         Assert.That(result[0].IssueDate, Is.EqualTo(invoiceDtos[0].IssueDate));
         Assert.That(result[0].DueDate, Is.EqualTo(invoiceDtos[0].DueDate));
+        Assert.That(result[0].ClientBankAccountNumber, Is.EqualTo(client.BankAccountNumber));
         Assert.That(result[0].Amount, Is.EqualTo(amount));
         Assert.That(result[0].CurrencyId, Is.EqualTo(customers[0].CurrencyId));
         Assert.That(result[0].CurrencyCode, Is.EqualTo(customers[0].CurrencyCode));
-        Assert.That(result[0].PaymentStatus, Is.EqualTo((PaymentStatus)invoiceDtos[0].PaymentStatus));
+        Assert.That(result[0].PaymentStatus, Is.EqualTo(PaymentStatus.Unpaid));
         Assert.That(result[0].ItemIds, Is.EqualTo(itemIds));
 
-        Assert.That(result[1].ClientId, Is.EqualTo(invoiceDtos[1].ClientId));
-        Assert.That(result[1].CustomerId, Is.EqualTo(custimerId));
+        Assert.That(result[1].ClientId, Is.EqualTo(client.Id));
+        Assert.That(result[1].CustomerId, Is.EqualTo(customerId));
         Assert.That(result[1].InvoiceNumber, Is.EqualTo(invoiceDtos[1].InvoiceNumber));
         Assert.That(result[1].IssueDate, Is.EqualTo(invoiceDtos[1].IssueDate));
         Assert.That(result[1].DueDate, Is.EqualTo(invoiceDtos[1].DueDate));
+        Assert.That(result[1].ClientBankAccountNumber, Is.EqualTo(client.BankAccountNumber));
         Assert.That(result[1].Amount, Is.EqualTo(amount));
         Assert.That(result[1].CurrencyId, Is.EqualTo(customers[0].CurrencyId));
         Assert.That(result[1].CurrencyCode, Is.EqualTo(customers[0].CurrencyCode));
-        Assert.That(result[1].PaymentStatus, Is.EqualTo((PaymentStatus)invoiceDtos[1].PaymentStatus));
+        Assert.That(result[1].PaymentStatus, Is.EqualTo(PaymentStatus.Unpaid));
         Assert.That(result[1].ItemIds, Is.EqualTo(itemIds));
     }
 }

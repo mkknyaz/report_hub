@@ -21,7 +21,7 @@ public class InvoiceModel
 
     public PaymentStatus PaymentStatus { get; set; }
 
-    public string BankAccountNumber { get; set; }
+    public string ClientBankAccountNumber { get; set; }
 
     public IList<ItemDTO> Items { get; set; }
 }

@@ -32,15 +32,6 @@ public class UpdateInvoiceDtoValidator : AbstractValidator<UpdateInvoiceDTO>
               child.RuleFor(x => x.DueDate.TimeOfDay)
                   .Equal(TimeSpan.Zero)
                   .WithMessage(Constants.Validation.Invoice.TimeComponentNotAllowed);
-
-              child.RuleFor(x => x.PaymentStatus)
-                  .IsInEnum();
-
-              child.RuleFor(x => x.BankAccountNumber)
-                  .NotEmpty()
-                  .Length(Constants.Validation.Invoice.BankAccountNumberMinLength, Constants.Validation.Invoice.BankAccountNumberMaxLength)
-                  .Matches(@"^[A-Z]{2}\d+$")
-                  .WithMessage(Constants.Validation.Invoice.InvalidBankAccountFormat);
           });
     }
 }

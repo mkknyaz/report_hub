@@ -12,5 +12,7 @@ public class ClientDTO
 
     public string Name { get; set; }
 
+    public string BankAccountNumber { get; set; }
+
     public IList<Guid> CustomerIds { get; set; }
 }

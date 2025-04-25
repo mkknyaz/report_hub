@@ -22,6 +22,13 @@ public static class Constants
             public const string DoesNotExist = "Client does not exist.";
         }
 
+        public static class BankAccountNumber
+        {
+            public const int MinLength = 8;
+            public const int MaxLength = 28;
+            public const string InvalidFormat = "Bank account number must start with two uppercase letters followed by digits.";
+        }
+
         public static class Customer
         {
             public const string DoesNotExist = "Customer does not exist.";
@@ -45,6 +52,7 @@ public static class Constants
 
         public static class Name
         {
+            public const string AlreadyTaken = "Name is already taken";
             public const int MaxLength = 100;
             public const string MustStartWithCapital = "Name must begin with a capital letter.";
             public const string IsTaken = "Name is already taken";
@@ -73,9 +81,6 @@ public static class Constants
             public const string IssueDateInFuture = "Issue date cannot be in the future.";
             public const string DueDateBeforeIssueDate = "Due date must be greater than issue date.";
             public const string TimeComponentNotAllowed = "Date cannot have a time component.";
-            public const int BankAccountNumberMinLength = 8;
-            public const int BankAccountNumberMaxLength = 28;
-            public const string InvalidBankAccountFormat = "Bank account number must start with two uppercase letters followed by digits.";
             public const string DuplicateInvoice = "Invoice number already exists.";
             public const string DuplicateItem = "Items must not be duplicated.";
         }

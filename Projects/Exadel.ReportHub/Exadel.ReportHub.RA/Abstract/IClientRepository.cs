@@ -8,6 +8,8 @@ public interface IClientRepository
 
     Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
+    Task<IList<Client>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken);
+
     Task<IList<Client>> GetAsync(CancellationToken cancellationToken);
 
     Task UpdateNameAsync(Guid id, string name, CancellationToken cancellationToken);

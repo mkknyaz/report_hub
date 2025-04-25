@@ -93,7 +93,7 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
                         x.CurrencyId == invoices[0].CurrencyId &&
                         x.CurrencyCode == invoices[0].CurrencyCode &&
                         (int)x.PaymentStatus == (int)invoices[0].PaymentStatus &&
-                        x.BankAccountNumber == invoices[0].BankAccountNumber) &&
+                        x.ClientBankAccountNumber == invoices[0].ClientBankAccountNumber) &&
 
                         inv.Any(x =>
                         x.ClientId == invoices[1].ClientId &&
@@ -105,7 +105,7 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
                         x.CurrencyId == invoices[1].CurrencyId &&
                         x.CurrencyCode == invoices[1].CurrencyCode &&
                         (int)x.PaymentStatus == (int)invoices[1].PaymentStatus &&
-                        x.BankAccountNumber == invoices[1].BankAccountNumber)),
+                        x.ClientBankAccountNumber == invoices[1].ClientBankAccountNumber)),
                     CancellationToken.None),
                 Times.Once);
     }

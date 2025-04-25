@@ -16,7 +16,7 @@ public static class Constants
             public const string DueDate = "Due Date";
             public const string ClientName = "Client Name";
             public const string CustomerName = "Customer Name";
-            public const string BankAccountNumber = "Bank Account Number";
+            public const string ClientBankAccountNumber = "Client Bank Account Number";
             public const string Total = "Total";
         }
 

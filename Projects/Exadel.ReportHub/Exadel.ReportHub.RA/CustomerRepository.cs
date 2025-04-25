@@ -43,10 +43,9 @@ public class CustomerRepository : BaseRepository, ICustomerRepository
         return await GetByIdAsync<Customer>(id, cancellationToken);
     }
 
-    public async Task<IList<Customer>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    public Task<IList<Customer>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.In(x => x.Id, ids);
-        return await GetAsync(filter, cancellationToken);
+        return GetByIdsAsync<Customer>(ids, cancellationToken);
     }
 
     public async Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)

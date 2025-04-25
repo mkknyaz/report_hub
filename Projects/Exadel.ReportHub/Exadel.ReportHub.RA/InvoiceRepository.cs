@@ -61,7 +61,7 @@ public class InvoiceRepository : BaseRepository, IInvoiceRepository
             .Set(x => x.Amount, invoice.Amount)
             .Set(x => x.IssueDate, invoice.IssueDate)
             .Set(x => x.DueDate, invoice.DueDate)
-            .Set(x => x.BankAccountNumber, invoice.BankAccountNumber)
+            .Set(x => x.ClientBankAccountNumber, invoice.ClientBankAccountNumber)
             .Set(x => x.PaymentStatus, invoice.PaymentStatus);
         return UpdateAsync(invoice.Id, definition, cancellationToken);
     }

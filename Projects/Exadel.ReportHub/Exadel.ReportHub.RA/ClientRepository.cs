@@ -25,6 +25,11 @@ public class ClientRepository : BaseRepository, IClientRepository
         return GetByIdAsync<Client>(id, cancellationToken);
     }
 
+    public Task<IList<Client>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    {
+        return GetByIdsAsync<Client>(ids, cancellationToken);
+    }
+
     public Task<IList<Client>> GetAsync(CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.IsDeleted, false);

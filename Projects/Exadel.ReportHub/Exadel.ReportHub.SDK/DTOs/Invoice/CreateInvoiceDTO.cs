@@ -8,5 +8,7 @@ public class CreateInvoiceDTO : UpdateInvoiceDTO
 
     public string InvoiceNumber { get; set; }
 
+    public string ClientBankAccountNumber { get; set; }
+
     public IList<Guid> ItemIds { get; set; }
 }

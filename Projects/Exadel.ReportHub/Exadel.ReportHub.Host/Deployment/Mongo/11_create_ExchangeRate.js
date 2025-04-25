@@ -1,4 +1,4 @@
-﻿const scriptName = "10_create_ExchangeRate";
+﻿const scriptName = "11_create_ExchangeRate";
 const version = NumberInt(1);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {

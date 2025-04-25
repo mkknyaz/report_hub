@@ -13,6 +13,8 @@ public class InvoiceProfile : Profile
             .ForMember(x => x.Amount, opt => opt.Ignore())
             .ForMember(x => x.CurrencyId, opt => opt.Ignore())
             .ForMember(x => x.CurrencyCode, opt => opt.Ignore())
+            .ForMember(x => x.ClientBankAccountNumber, opt => opt.Ignore())
+            .ForMember(x => x.PaymentStatus, opt => opt.Ignore())
             .ForMember(x => x.IsDeleted, opt => opt.Ignore());
 
         CreateMap<Invoice, InvoiceDTO>();
@@ -25,6 +27,8 @@ public class InvoiceProfile : Profile
             .ForMember(x => x.Amount, opt => opt.Ignore())
             .ForMember(x => x.CurrencyId, opt => opt.Ignore())
             .ForMember(x => x.CurrencyCode, opt => opt.Ignore())
+            .ForMember(x => x.ClientBankAccountNumber, opt => opt.Ignore())
+            .ForMember(x => x.PaymentStatus, opt => opt.Ignore())
             .ForMember(x => x.ItemIds, opt => opt.Ignore())
             .ForMember(x => x.IsDeleted, opt => opt.Ignore());
     }
