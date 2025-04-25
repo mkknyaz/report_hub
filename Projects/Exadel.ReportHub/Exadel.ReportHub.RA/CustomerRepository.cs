@@ -43,6 +43,12 @@ public class CustomerRepository : BaseRepository, ICustomerRepository
         return await GetByIdAsync<Customer>(id, cancellationToken);
     }
 
+    public async Task<Guid> GetClientIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.Id, id);
+        return await GetCollection<Customer>().Find(filter).Project(x => x.ClientId).SingleOrDefaultAsync(cancellationToken);
+    }
+
     public Task<IList<Customer>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
     {
         return GetByIdsAsync<Customer>(ids, cancellationToken);

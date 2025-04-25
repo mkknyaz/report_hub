@@ -1,5 +1,5 @@
 ﻿const scriptName = "01_create_Invoice";
-const version = NumberInt(4);
+const version = NumberInt(6);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -12,21 +12,28 @@ db.createCollection("Invoice", {
     }
 });
 
-const clientIds = [
-    UUID("ea94747b-3d45-46d6-8775-bf27eb5da02b"),
-    UUID("866eb606-d074-4237-bcf2-aa7798002f7f"),
-    UUID("5cb0b8ed-45f4-4432-9ff7-3a9f896362f9"),
-    UUID("15de1dcc-98c2-4463-85ed-b36a6a31445a"),
-    UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7")
-]
-
-const customerIds = [
-    UUID("f89e1e75-d61c-4c51-b0be-c285500988cf"),
-    UUID("e1509ec2-2b05-406f-befa-149f051586a9"),
-    UUID("6d024627-568b-4d57-b477-2274c9d807b9"),
-    UUID("ba045076-4837-47ab-80d5-546192851bab"),
-    UUID("ba18cc29-c7ff-48c4-9b7b-456bcef231d0")
-]
+const customerClientIds = [
+    {
+        Customer: UUID("f89e1e75-d61c-4c51-b0be-c285500988cf"),
+        Client: UUID("ea94747b-3d45-46d6-8775-bf27eb5da02b")
+    },
+    {
+        Customer: UUID("e1509ec2-2b05-406f-befa-149f051586a9"),
+        Client: UUID("866eb606-d074-4237-bcf2-aa7798002f7f")
+    },
+    {
+        Customer: UUID("6d024627-568b-4d57-b477-2274c9d807b9"),
+        Client: UUID("5cb0b8ed-45f4-4432-9ff7-3a9f896362f9")
+    },
+    {
+        Customer: UUID("ba045076-4837-47ab-80d5-546192851bab"),
+        Client: UUID("15de1dcc-98c2-4463-85ed-b36a6a31445a")
+    },
+    {
+        Customer: UUID("ba18cc29-c7ff-48c4-9b7b-456bcef231d0"),
+        Client: UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7")
+    }
+];
 
 const invoiceIds = [
     UUID("d312a57c-5ada-408b-918a-8a39bd90213f"),
@@ -124,8 +131,8 @@ for (let i = 0; i < invoiceCount; i++) {
 
     invoices.push({
         _id: invoiceIds[i],
-        ClientId: clientIds[index],
-        CustomerId: customerIds[getRandomInt(customerIds.length)],
+        ClientId: customerClientIds[index].Client,
+        CustomerId: customerClientIds[index].Customer,
         InvoiceNumber: generateInvoiceNumber(i),
         IssueDate: issueDate,
         DueDate: generateDueDate(issueDate),
@@ -147,8 +154,6 @@ const opt = invoices.map(invoice => ({
     }
 }));
 db.Invoice.bulkWrite(opt);
-
-db.Invoice.updateMany({}, { $unset: { Items: 1} });
 
 db.MigrationHistory.insertOne({
     ScriptName: scriptName,

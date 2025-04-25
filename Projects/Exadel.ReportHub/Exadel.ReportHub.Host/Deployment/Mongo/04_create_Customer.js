@@ -1,5 +1,5 @@
 ﻿const scriptName = "04_create_Customer";
-const version = NumberInt(3);
+const version = NumberInt(4);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -12,18 +12,48 @@ db.createCollection("Customer", {
     }
 });
 
-const customerIds = [
-    UUID("f89e1e75-d61c-4c51-b0be-c285500988cf"),
-    UUID("e1509ec2-2b05-406f-befa-149f051586a9"),
-    UUID("6d024627-568b-4d57-b477-2274c9d807b9"),
-    UUID("ba045076-4837-47ab-80d5-546192851bab"),
-    UUID("ba18cc29-c7ff-48c4-9b7b-456bcef231d0"),
-    UUID("1fddb42d-0436-4123-9448-2821ed38c158"),
-    UUID("30f41dcc-fbde-4321-b929-dd332ec27f8d"),
-    UUID("ac0fe3cf-9ba1-4bd7-a22c-554972b44ed0"),
-    UUID("5223d592-7e90-46b6-939d-9f715d4b5058"),
-    UUID("43867fc9-ab6e-43ae-8c2c-97f2575969df")
-];
+const customerClientIds = [
+    {
+        Customer: UUID("f89e1e75-d61c-4c51-b0be-c285500988cf"),
+        Client: UUID("ea94747b-3d45-46d6-8775-bf27eb5da02b")
+    },
+    {
+        Customer: UUID("e1509ec2-2b05-406f-befa-149f051586a9"),
+        Client: UUID("866eb606-d074-4237-bcf2-aa7798002f7f")
+    },
+    {
+        Customer: UUID("6d024627-568b-4d57-b477-2274c9d807b9"),
+        Client: UUID("5cb0b8ed-45f4-4432-9ff7-3a9f896362f9")
+    },
+    {
+        Customer: UUID("ba045076-4837-47ab-80d5-546192851bab"),
+        Client: UUID("15de1dcc-98c2-4463-85ed-b36a6a31445a")
+    },
+    {
+        Customer: UUID("ba18cc29-c7ff-48c4-9b7b-456bcef231d0"),
+        Client: UUID("e1e39dd5-1ec0-4f9a-b765-d6dc25f0d9a7")
+    },
+    {
+        Customer: UUID("1fddb42d-0436-4123-9448-2821ed38c158"),
+        Client: UUID("d728b231-0b5d-4c90-a2d4-675cbcb64ff2")
+    },
+    {
+        Customer: UUID("30f41dcc-fbde-4321-b929-dd332ec27f8d"),
+        Client: UUID("4e1f0ed6-0915-48cd-9bf0-eb804e7a919e")
+    },
+    {
+        Customer: UUID("ac0fe3cf-9ba1-4bd7-a22c-554972b44ed0"),
+        Client: UUID("b40ef306-6ac2-4fa8-b703-df291799feef")
+    },
+    {
+        Customer: UUID("5223d592-7e90-46b6-939d-9f715d4b5058"),
+        Client: UUID("00c1df50-320e-447b-8b94-7b2fab0fcf58")
+    },
+    {
+        Customer: UUID("43867fc9-ab6e-43ae-8c2c-97f2575969df"),
+        Client: UUID("31e52122-ea93-448a-8827-fb5f079cbd1a")
+    }
+]; 
 
 const customerNames = [
     "Hudson Kim",
@@ -112,13 +142,14 @@ for (let i = 0; i < customerCount; i++) {
     const country = countries[getRandomInt(countries.length)];
 
     customers.push({
-        _id: customerIds[i],
+        _id: customerClientIds[i].Customer,
+        ClientId: customerClientIds[i].Client,
+        Name: customerNames[i],
+        Email: customerNames[i].replace(/\s/g, '').toLowerCase() + "@test.com",
         CountryId: country._id,
         Country: country.Name,
         CurrencyId: country.CurrencyId,
         CurrencyCode: country.CurrencyCode,
-        Email: customerNames[i].replace(/\s/g, '').toLowerCase() + "@test.com",
-        Name: customerNames[i],
         IsDeleted: false
     });
 }

@@ -32,6 +32,7 @@ public static class Constants
         public static class Customer
         {
             public const string DoesNotExist = "Customer does not exist.";
+            public const string WrongClient = "Wrong Client is provided for Customer.";
         }
 
         public static class User

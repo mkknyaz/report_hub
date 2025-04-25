@@ -21,6 +21,7 @@ public class CustomerProfile : Profile
             .ForMember(x => x.Country, opt => opt.Ignore())
             .ForMember(x => x.CurrencyId, opt => opt.Ignore())
             .ForMember(x => x.CurrencyCode, opt => opt.Ignore())
+            .ForMember(x => x.ClientId, opt => opt.Ignore())
             .ForMember(x => x.IsDeleted, opt => opt.Ignore());
     }
 }

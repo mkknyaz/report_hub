@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using ErrorOr;
-using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Client;
-using Exadel.ReportHub.SDK.DTOs.User;
 using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Client.Create;

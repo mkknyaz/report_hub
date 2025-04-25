@@ -14,5 +14,7 @@ public class CustomerDTO
 
     public Guid CurrencyId { get; set; }
 
+    public Guid ClientId { get; set; }
+
     public string CurrencyCode { get; set; }
 }
