@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using Duende.IdentityServer.Extensions;
+using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Host.Infrastructure.Authorization;
 using Exadel.ReportHub.Host.Services;
 using Exadel.ReportHub.RA.Abstract;
@@ -32,13 +33,13 @@ public class PermissionHandler(
             return;
         }
 
-        if(!httpContextAccessor.HttpContext.Request.RouteValues.TryGetValue("controller", out var serviceName))
+        if (!httpContextAccessor.HttpContext.Request.RouteValues.TryGetValue("controller", out var serviceName))
         {
             return;
         }
 
         var allowedRoles = Permissions.GetAllowedRoles(
-            serviceName.ToString().Replace("sService", string.Empty, StringComparison.Ordinal), requirement.Permission);
+            serviceName.ToString().Replace("Service", string.Empty, StringComparison.Ordinal), requirement.Permission);
         var matchingRoles = allowedRoles.Where(r => context.User.IsInRole(r.ToString())).ToList();
 
         if (matchingRoles.Count == 0)
@@ -47,24 +48,33 @@ public class PermissionHandler(
         }
 
         var userId = Guid.Parse(userIdClaim.Value);
-        var clientIds = new List<Guid> { Constants.Client.GlobalId };
-        var requestClientId = await GetClientIdFromRequestAsync(httpContextAccessor.HttpContext.Request, logger);
+        var clientIds = new List<Guid>();
 
-        if (requestClientId.HasValue)
+        if (matchingRoles.Contains(UserRole.SuperAdmin))
         {
-            clientIds.Add(requestClientId.Value);
+            clientIds.Add(Handlers.Constants.ClientData.GlobalId);
         }
 
-        if (await userAssignmentRepository.ExistAnyAsync(userId, clientIds, matchingRoles, CancellationToken.None))
+        if (matchingRoles.Any(x => !x.Equals(UserRole.SuperAdmin)))
+        {
+            var requestClientId = await GetClientIdFromRequestAsync(httpContextAccessor.HttpContext.Request, serviceName.ToString());
+
+            if (requestClientId.HasValue)
+            {
+                clientIds.Add(requestClientId.Value);
+            }
+        }
+
+        if (clientIds.Count > 0 &&
+            await userAssignmentRepository.ExistAnyAsync(userId, clientIds, matchingRoles, CancellationToken.None))
         {
             context.Succeed(requirement);
         }
     }
 
-    private async Task<Guid?> GetClientIdFromRequestAsync(HttpRequest request, ILogger logger)
+    private async Task<Guid?> GetClientIdFromRequestAsync(HttpRequest request, string serviceName)
     {
-        if (request.RouteValues.TryGetValue("controller", out var serviceName) &&
-            serviceName.ToString().Equals(typeof(ClientsService).Name, StringComparison.Ordinal) &&
+        if (serviceName.Equals(nameof(ClientsService), StringComparison.Ordinal) &&
             request.RouteValues.TryGetValue("id", out var routeClientIdObj) &&
             Guid.TryParse(routeClientIdObj.ToString(), out var routeClientId))
         {

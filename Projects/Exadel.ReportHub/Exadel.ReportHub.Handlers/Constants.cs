@@ -32,6 +32,12 @@ public static class Constants
             public const string DoesNotExist = "User does not exist.";
         }
 
+        public static class UserAssignment
+        {
+            public const string GlobalRoleAssignment = "Global roles must be assigned to the Global Client";
+            public const string ClientRoleAssignment = "Client roles cannot be assigned to the Global Client";
+        }
+
         public static class Currency
         {
             public const string DoesNotExist = "Currency does not exist.";
@@ -85,7 +91,7 @@ public static class Constants
 
         public static class Import
         {
-            public const string InvalidFileExtention = "The file must be in CSV format (.csv extension).";
+            public const string InvalidFileExtension = "The file must be in CSV format (.csv extension).";
             public const string EmptyFileUpload = "Uploaded file must not be empty.";
         }
 
@@ -95,6 +101,11 @@ public static class Constants
             public const string EndDateInPast = "End date must be in the future";
             public const string AlreadyExistsForItemAndClient = "Plan already exists for this item and client";
         }
+    }
+
+    public static class ClientData
+    {
+        public static readonly Guid GlobalId = Guid.Parse("e47501a8-547b-4dc4-ba97-e65ccfc39477");
     }
 
     public static class File

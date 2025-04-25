@@ -25,7 +25,7 @@ public class ImportInvoicesRequestValidator : AbstractValidator<ImportInvoicesRe
                     file.RuleFor(x => x.FileName)
                         .NotEmpty()
                         .Must(fileName => string.Equals(Path.GetExtension(fileName), ".csv", StringComparison.OrdinalIgnoreCase))
-                        .WithMessage(Constants.Validation.Import.InvalidFileExtention);
+                        .WithMessage(Constants.Validation.Import.InvalidFileExtension);
                 });
     }
 }

@@ -29,6 +29,8 @@ public static class AuthorizationRegistrations
                 policy.Requirements.Add(new PermissionRequirement(Permission.Update)));
             options.AddPolicy(Constants.Authorization.Policy.Delete, policy =>
                 policy.Requirements.Add(new PermissionRequirement(Permission.Delete)));
+            options.AddPolicy(Constants.Authorization.Policy.Export, policy =>
+                policy.Requirements.Add(new PermissionRequirement(Permission.Export)));
         });
     }
 

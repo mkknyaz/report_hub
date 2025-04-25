@@ -5,5 +5,6 @@ public enum Permission
     Create,
     Read,
     Update,
-    Delete
+    Delete,
+    Export
 }

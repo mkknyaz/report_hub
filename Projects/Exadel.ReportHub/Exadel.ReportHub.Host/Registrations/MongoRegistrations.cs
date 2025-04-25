@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.RA;
-using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
@@ -22,18 +21,6 @@ public static class MongoRegistrations
         {
             new IgnoreExtraElementsConvention(true)
         }, _ => true);
-
-        services.AddSingleton<IUserRepository, UserRepository>();
-        services.AddSingleton<IUserAssignmentRepository, UserAssignmentRepository>();
-        services.AddSingleton<IIdentityRepository, IdentityRepository>();
-        services.AddSingleton<IClientRepository, ClientRepository>();
-        services.AddSingleton<ICustomerRepository, CustomerRepository>();
-        services.AddSingleton<IInvoiceRepository, InvoiceRepository>();
-        services.AddSingleton<IExchangeRateRepository, ExchangeRateRepository>();
-        services.AddSingleton<IItemRepository, ItemRepository>();
-        services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
-        services.AddSingleton<IPlanRepository, PlanRepository>();
-        services.AddSingleton<ICountryRepository, CountryRepository>();
 
         BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
 

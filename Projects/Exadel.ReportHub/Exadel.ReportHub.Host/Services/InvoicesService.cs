@@ -107,7 +107,7 @@ public class InvoicesService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Policy = Constants.Authorization.Policy.Read)]
+    [Authorize(Policy = Constants.Authorization.Policy.Export)]
     [HttpGet("pdf/export")]
     [SwaggerOperation(Summary = "Export invoice as PDF", Description = "Generates and exports a PDF version of the invoice using the provided invoice id")]
     [SwaggerResponse(StatusCodes.Status200OK, "Invoices were exported successfully")]

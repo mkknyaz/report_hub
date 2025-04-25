@@ -88,6 +88,7 @@ public class Startup(IConfiguration configuration)
         services
             .AddIdentity()
             .AddMongo()
+            .AddRepositories()
             .AddMediatR()
             .AddAutoMapper(typeof(Startup))
             .AddHttpContextAccessor()
