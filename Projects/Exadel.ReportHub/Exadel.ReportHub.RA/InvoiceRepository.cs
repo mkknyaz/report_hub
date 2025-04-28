@@ -58,11 +58,8 @@ public class InvoiceRepository : BaseRepository, IInvoiceRepository
     public Task UpdateAsync(Invoice invoice, CancellationToken cancellationToken)
     {
         var definition = Builders<Invoice>.Update
-            .Set(x => x.Amount, invoice.Amount)
             .Set(x => x.IssueDate, invoice.IssueDate)
-            .Set(x => x.DueDate, invoice.DueDate)
-            .Set(x => x.ClientBankAccountNumber, invoice.ClientBankAccountNumber)
-            .Set(x => x.PaymentStatus, invoice.PaymentStatus);
+            .Set(x => x.DueDate, invoice.DueDate);
         return UpdateAsync(invoice.Id, definition, cancellationToken);
     }
 }
