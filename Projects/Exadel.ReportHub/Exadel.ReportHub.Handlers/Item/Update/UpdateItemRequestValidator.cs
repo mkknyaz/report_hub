@@ -17,7 +17,10 @@ public class UpdateItemRequestValidator : AbstractValidator<UpdateItemRequest>
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(x => x.UpdateItemDTO)
+        RuleFor(x => x.Id)
+            .NotEmpty();
+
+        RuleFor(x => x.UpdateItemDto)
             .SetValidator(_itemValidator);
     }
 }

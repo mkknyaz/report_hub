@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Item.Update;
 
-public record UpdateItemRequest(Guid Id, CreateUpdateItemDTO UpdateItemDTO) : IRequest<ErrorOr<Updated>>;
+public record UpdateItemRequest(Guid Id, CreateUpdateItemDTO UpdateItemDto) : IRequest<ErrorOr<Updated>>;
 
 public class UpdateItemHandler(IItemRepository itemRepository, ICurrencyRepository currencyRepository, IMapper mapper) : IRequestHandler<UpdateItemRequest, ErrorOr<Updated>>
 {
@@ -18,14 +18,14 @@ public class UpdateItemHandler(IItemRepository itemRepository, ICurrencyReposito
             return Error.NotFound();
         }
 
-        if (itemClientId != request.UpdateItemDTO.ClientId)
+        if (itemClientId != request.UpdateItemDto.ClientId)
         {
             return Error.Validation(description: Constants.Validation.Item.ClientIdImmutable);
         }
 
-        var item = mapper.Map<Data.Models.Item>(request.UpdateItemDTO);
+        var item = mapper.Map<Data.Models.Item>(request.UpdateItemDto);
         item.Id = request.Id;
-        item.CurrencyCode = await currencyRepository.GetCodeByIdAsync(request.UpdateItemDTO.CurrencyId, cancellationToken);
+        item.CurrencyCode = await currencyRepository.GetCodeByIdAsync(request.UpdateItemDto.CurrencyId, cancellationToken);
 
         await itemRepository.UpdateAsync(item, cancellationToken);
         return Result.Updated;

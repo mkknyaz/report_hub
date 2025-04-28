@@ -44,7 +44,7 @@ public class InvoiceManagerTests : BaseTestFixture
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
             .Create();
         var client = Fixture.Create<Client>();
-        var items = Fixture.Build<Item>()
+        var items = Fixture.Build<Data.Models.Item>()
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
             .CreateMany(3).ToList();
         var itemIds = items.Select(x => x.Id).ToList();
@@ -99,7 +99,7 @@ public class InvoiceManagerTests : BaseTestFixture
             .CreateMany(1).ToList();
         var customerId = customers[0].Id;
         var client = Fixture.Create<Client>();
-        var items = Fixture.Build<Item>()
+        var items = Fixture.Build<Data.Models.Item>()
             .With(x => x.CurrencyCode, Constants.Currency.DefaultCurrencyCode)
             .CreateMany(3).ToList();
         var itemIds = items.Select(x => x.Id).ToList();

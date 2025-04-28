@@ -12,5 +12,7 @@ public class ItemDTO
 
     public decimal Price { get; set; }
 
+    public Guid CurrencyId { get; set; }
+
     public string CurrencyCode { get; set; }
 }
