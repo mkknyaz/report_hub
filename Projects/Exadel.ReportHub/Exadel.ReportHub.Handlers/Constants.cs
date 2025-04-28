@@ -120,10 +120,5 @@ public static class Constants
         {
             public const string Pdf = ".pdf";
         }
-
-        public static class Name
-        {
-            public const string Invoice = "Invoice_";
-        }
     }
 }

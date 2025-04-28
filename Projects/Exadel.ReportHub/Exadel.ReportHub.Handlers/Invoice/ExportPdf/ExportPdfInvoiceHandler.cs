@@ -1,6 +1,8 @@
 ﻿using System.Net.Mime;
 using AutoMapper;
 using ErrorOr;
+using Exadel.ReportHub.Common.Providers;
+using Exadel.ReportHub.Handlers.Notifications.Invoice.Export;
 using Exadel.ReportHub.Pdf.Abstract;
 using Exadel.ReportHub.Pdf.Models;
 using Exadel.ReportHub.RA.Abstract;
@@ -14,45 +16,52 @@ public record ExportPdfInvoiceRequest(Guid InvoiceId) : IRequest<ErrorOr<ExportR
 public class ExportPdfInvoiceHandler(
     IPdfInvoiceGenerator pdfInvoiceGenerator,
     IInvoiceRepository invoiceRepository,
-    IItemRepository itemRepostitory,
-    IClientRepository clientRepostitory,
+    IItemRepository itemRepository,
+    IClientRepository clientRepository,
     ICustomerRepository customerRepository,
+    IUserProvider userProvider,
+    IPublisher publisher,
     IMapper mapper) : IRequestHandler<ExportPdfInvoiceRequest, ErrorOr<ExportResult>>
 {
     public async Task<ErrorOr<ExportResult>> Handle(ExportPdfInvoiceRequest request, CancellationToken cancellationToken)
     {
-        var invoice = await invoiceRepository.GetByIdAsync(request.InvoiceId, cancellationToken);
-        if (invoice is null)
+        var userId = userProvider.GetUserId();
+        var isSuccess = false;
+
+        try
         {
-            return Error.NotFound();
+            var invoice = await invoiceRepository.GetByIdAsync(request.InvoiceId, cancellationToken);
+            if (invoice is null)
+            {
+                return Error.NotFound();
+            }
+
+            var itemsTask = itemRepository.GetByIdsAsync(invoice.ItemIds, cancellationToken);
+            var clientTask = clientRepository.GetByIdAsync(invoice.ClientId, cancellationToken);
+            var customerTask = customerRepository.GetByIdAsync(invoice.CustomerId, cancellationToken);
+            await Task.WhenAll(itemsTask, clientTask, customerTask);
+
+            var invoiceModel = mapper.Map<InvoiceModel>(invoice);
+            invoiceModel.ClientName = clientTask.Result.Name;
+            invoiceModel.CustomerName = customerTask.Result.Name;
+            invoiceModel.Items = mapper.Map<IList<ItemDTO>>(itemsTask.Result);
+
+            var stream = await pdfInvoiceGenerator.GenerateAsync(invoiceModel, cancellationToken);
+
+            var exportDto = new ExportResult
+            {
+                Stream = stream,
+                FileName = $"{invoice.InvoiceNumber}{Constants.File.Extension.Pdf}",
+                ContentType = MediaTypeNames.Application.Pdf
+            };
+            isSuccess = true;
+
+            return exportDto;
         }
-
-        var itemsTask = itemRepostitory.GetByIdsAsync(invoice.ItemIds, cancellationToken);
-        var clientTask = clientRepostitory.GetByIdAsync(invoice.ClientId, cancellationToken);
-        var customerTask = customerRepository.GetByIdAsync(invoice.CustomerId, cancellationToken);
-        await Task.WhenAll(itemsTask, clientTask, customerTask);
-
-        var invoiceModel = new InvoiceModel
+        finally
         {
-            ClientName = clientTask.Result.Name,
-            CustomerName = customerTask.Result.Name,
-            InvoiceNumber = invoice.InvoiceNumber,
-            IssueDate = invoice.IssueDate,
-            DueDate = invoice.DueDate,
-            Amount = invoice.Amount,
-            CurrencyCode = invoice.CurrencyCode,
-            PaymentStatus = (SDK.Enums.PaymentStatus)invoice.PaymentStatus,
-            ClientBankAccountNumber = invoice.ClientBankAccountNumber,
-            Items = mapper.Map<IList<ItemDTO>>(itemsTask.Result)
-        };
-        var stream = await pdfInvoiceGenerator.GenerateAsync(invoiceModel, cancellationToken);
-
-        var exportDto = new ExportResult
-        {
-            Stream = stream,
-            FileName = $"{Constants.File.Name.Invoice}{invoice.InvoiceNumber}{Constants.File.Extension.Pdf}",
-            ContentType = MediaTypeNames.Application.Pdf
-        };
-        return exportDto;
+            var notification = new InvoiceExportedNotification(userId, request.InvoiceId, DateTime.UtcNow, isSuccess);
+            await publisher.Publish(notification, cancellationToken);
+        }
     }
 }

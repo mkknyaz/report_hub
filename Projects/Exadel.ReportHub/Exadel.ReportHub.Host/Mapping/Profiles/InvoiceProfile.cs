@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Exadel.ReportHub.Data.Models;
+using Exadel.ReportHub.Pdf.Models;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
 
 namespace Exadel.ReportHub.Host.Mapping.Profiles;
@@ -31,5 +32,10 @@ public class InvoiceProfile : Profile
             .ForMember(x => x.PaymentStatus, opt => opt.Ignore())
             .ForMember(x => x.ItemIds, opt => opt.Ignore())
             .ForMember(x => x.IsDeleted, opt => opt.Ignore());
+
+        CreateMap<Invoice, InvoiceModel>()
+            .ForMember(x => x.ClientName, opt => opt.Ignore())
+            .ForMember(x => x.CustomerName, opt => opt.Ignore())
+            .ForMember(x => x.Items, opt => opt.Ignore());
     }
 }
