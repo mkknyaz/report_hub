@@ -21,7 +21,11 @@ public class AuditReportRepository : BaseRepository, IAuditReportRepository
     public async Task<IList<AuditReport>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.UserId, userId);
-        return await GetAsync(filter, cancellationToken);
+        var desc = await GetCollection<AuditReport>()
+            .Find(filter)
+            .SortByDescending(x => x.TimeStamp)
+            .ToListAsync(cancellationToken);
+        return desc;
     }
 
     public async Task AddAsync(AuditReport auditReport, CancellationToken cancellationToken)
