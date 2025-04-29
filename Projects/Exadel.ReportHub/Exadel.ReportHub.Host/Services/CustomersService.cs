@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Handlers.Customer.Create;
 using Exadel.ReportHub.Handlers.Customer.Delete;
 using Exadel.ReportHub.Handlers.Customer.Get;
@@ -35,14 +36,14 @@ public class CustomersService(ISender sender) : BaseService
 
     [Authorize(Policy = Constants.Authorization.Policy.Read)]
     [HttpGet]
-    [SwaggerOperation(Summary = "Get all customers", Description = "Returns a list of all available customers.")]
+    [SwaggerOperation(Summary = "Get customers by client id", Description = "Returns a list of all available customers.")]
     [SwaggerResponse(StatusCodes.Status200OK, "Customers were retrieved successfully", typeof(ActionResult<IList<CustomerDTO>>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required")]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User doesnt have permission to access a Customers")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<IList<CustomerDTO>>> GetCustomers()
+    public async Task<ActionResult<IList<CustomerDTO>>> GetCustomersByClient([FromQuery][Required] Guid clientId)
     {
-        var result = await sender.Send(new GetCustomersRequest());
+        var result = await sender.Send(new GetCustomersRequest(clientId));
         return FromResult(result);
     }
 
@@ -54,9 +55,9 @@ public class CustomersService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User doesnt have permission to access a Customer")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Customer was not found", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult<CustomerDTO>> GetCustomerById([FromRoute] Guid id)
+    public async Task<ActionResult<CustomerDTO>> GetCustomerById([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
     {
-        var result = await sender.Send(new GetCustomerByIdRequest(id));
+        var result = await sender.Send(new GetCustomerByIdRequest(id, clientId));
         return FromResult(result);
     }
 
@@ -69,9 +70,9 @@ public class CustomersService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User doesnt have permission to update a Customer")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Customer was not found", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult> UpdateCustomer([FromRoute] Guid id, [FromBody] UpdateCustomerDTO updateCustomerDTO)
+    public async Task<ActionResult> UpdateCustomer([FromRoute] Guid id, [FromQuery][Required] Guid clientId, [FromBody] UpdateCustomerDTO updateCustomerDTO)
     {
-        var result = await sender.Send(new UpdateCustomerRequest(id, updateCustomerDTO));
+        var result = await sender.Send(new UpdateCustomerRequest(id, clientId, updateCustomerDTO));
         return FromResult(result);
     }
 
@@ -83,9 +84,9 @@ public class CustomersService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User doesnt have permission to delete a Customer")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Customer was not found", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult> DeleteCustomer([FromRoute] Guid id)
+    public async Task<ActionResult> DeleteCustomer([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
     {
-        var result = await sender.Send(new DeleteCustomerRequest(id));
+        var result = await sender.Send(new DeleteCustomerRequest(id, clientId));
         return FromResult(result);
     }
 }

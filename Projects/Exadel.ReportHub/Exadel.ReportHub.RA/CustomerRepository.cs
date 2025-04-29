@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Duende.IdentityServer.Models;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Driver;
@@ -22,14 +23,21 @@ public class CustomerRepository(MongoDbContext context) : BaseRepository(context
         return count > 0;
     }
 
-    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsAsync(Guid id, Guid clientId, CancellationToken cancellationToken)
     {
-        return ExistsAsync<Customer>(id, cancellationToken);
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.Id, id),
+            _filterBuilder.Eq(x => x.ClientId, clientId),
+            _filterBuilder.Eq(x => x.IsDeleted, false));
+        var count = await GetCollection<Customer>().CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+        return count > 0;
     }
 
-    public Task<IList<Customer>> GetAsync(CancellationToken cancellationToken)
+    public Task<IList<Customer>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.Eq(x => x.IsDeleted, false);
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.ClientId, clientId),
+            _filterBuilder.Eq(x => x.IsDeleted, false));
         return GetAsync(filter, cancellationToken);
     }
 
@@ -58,7 +66,10 @@ public class CustomerRepository(MongoDbContext context) : BaseRepository(context
     {
         var definition = Builders<Customer>.Update
             .Set(x => x.Name, customer.Name)
-            .Set(x => x.Country, customer.Country);
+            .Set(x => x.CountryId, customer.CountryId)
+            .Set(x => x.Country, customer.Country)
+            .Set(x => x.CurrencyId, customer.CurrencyId)
+            .Set(x => x.CurrencyCode, customer.CurrencyCode);
 
         await UpdateAsync<Customer>(customer.Id, definition, cancellationToken);
     }

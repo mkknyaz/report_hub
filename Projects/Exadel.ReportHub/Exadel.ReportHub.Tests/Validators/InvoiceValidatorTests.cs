@@ -199,7 +199,7 @@ public class InvoiceValidatorTests : BaseTestFixture
         var invoice = GetValidInvoice();
         var customerId = Guid.NewGuid();
         invoice.CustomerId = customerId;
-        _customerRepositoryMock.Setup(x => x.ExistsAsync(customerId, CancellationToken.None))
+        _customerRepositoryMock.Setup(x => x.ExistsAsync(customerId, invoice.ClientId, CancellationToken.None))
             .ReturnsAsync(false);
 
         // Act
@@ -333,7 +333,7 @@ public class InvoiceValidatorTests : BaseTestFixture
 
         _clientRepositoryMock.Setup(x => x.ExistsAsync(clientId, CancellationToken.None))
             .ReturnsAsync(true);
-        _customerRepositoryMock.Setup(x => x.ExistsAsync(customerId, CancellationToken.None))
+        _customerRepositoryMock.Setup(x => x.ExistsAsync(customerId, clientId, CancellationToken.None))
             .ReturnsAsync(true);
         _customerRepositoryMock.Setup(x => x.GetClientIdAsync(customerId, CancellationToken.None))
             .ReturnsAsync(clientId);

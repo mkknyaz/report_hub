@@ -13,13 +13,13 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
     private readonly IValidator<UpdateInvoiceDTO> _updateInvoiceValidator;
 
     public CreateInvoiceDtoValidator(IInvoiceRepository invoiceRepository, IClientRepository clientRepository, ICustomerRepository customerRepository,
-        IItemRepository itemRepository, IValidator<UpdateInvoiceDTO> updateinvoiceValidator)
+        IItemRepository itemRepository, IValidator<UpdateInvoiceDTO> updateInvoiceValidator)
     {
         _invoiceRepository = invoiceRepository;
         _clientRepository = clientRepository;
         _customerRepository = customerRepository;
         _itemRepository = itemRepository;
-        _updateInvoiceValidator = updateinvoiceValidator;
+        _updateInvoiceValidator = updateInvoiceValidator;
         ConfigureRules();
     }
 
@@ -38,7 +38,7 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
 
         RuleFor(x => x.CustomerId)
             .NotEmpty()
-            .MustAsync(_customerRepository.ExistsAsync)
+            .MustAsync(async (dto, customerId, cancellationToken) => await _customerRepository.ExistsAsync(customerId, dto.ClientId, cancellationToken))
             .WithMessage(Constants.Validation.Customer.DoesNotExist);
 
         RuleFor(x => x.InvoiceNumber)
@@ -55,9 +55,5 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
             .WithMessage(Constants.Validation.Invoice.DuplicateItem)
             .MustAsync(_itemRepository.AllExistAsync)
             .WithMessage(Constants.Validation.Item.DoesNotExist);
-
-        RuleFor(x => x.ClientId)
-            .MustAsync(async (dto, clientId, cancellationToken) => clientId == await _customerRepository.GetClientIdAsync(dto.CustomerId, cancellationToken))
-            .WithMessage(Constants.Validation.Customer.WrongClient);
     }
 }
