@@ -16,6 +16,7 @@ jobs:
        Render_Service_Id: ${{ secrets.RENDER_SERVICE_ID }}
        ReportHubService_ClientSecret: ${{ secrets.REPORT_HUB_SERVICE_CLIENT_SECRET }}
        Mongo_Connection_String: ${{secrets.MONGO_CONNECTION_STRING}}
+       TZ: "UTC"
        
        Updates: |
          Authority: ${{ vars.AUTHORITY }}

@@ -7,14 +7,9 @@ using MongoDB.Driver;
 namespace Exadel.ReportHub.RA;
 
 [ExcludeFromCodeCoverage]
-public class UserAssignmentRepository : BaseRepository, IUserAssignmentRepository
+public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(context), IUserAssignmentRepository
 {
     private static readonly FilterDefinitionBuilder<UserAssignment> _filterBuilder = Builders<UserAssignment>.Filter;
-
-    public UserAssignmentRepository(MongoDbContext context)
-        : base(context)
-    {
-    }
 
     public async Task UpsertAsync(UserAssignment userAssignment, CancellationToken cancellationToken)
     {

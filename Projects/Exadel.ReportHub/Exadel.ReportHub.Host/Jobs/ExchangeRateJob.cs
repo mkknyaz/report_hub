@@ -11,7 +11,7 @@ public class ExchangeRateJob : IJob
         RecurringJob.AddOrUpdate<ExchangeRateService>(
             recurringJobId: "ExchangeRateUpdater",
             methodCall: s => s.UpdateExchangeRatesAsync(),
-            cronExpression: "2 16 * * 1-5",
+            cronExpression: $"2 {Exadel.ReportHub.Ecb.Constants.UpdateHour} * * 1-5",
             options: new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc });
     }
 }

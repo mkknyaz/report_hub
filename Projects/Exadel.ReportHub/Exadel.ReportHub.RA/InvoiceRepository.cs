@@ -6,14 +6,9 @@ using MongoDB.Driver;
 namespace Exadel.ReportHub.RA;
 
 [ExcludeFromCodeCoverage]
-public class InvoiceRepository : BaseRepository, IInvoiceRepository
+public class InvoiceRepository(MongoDbContext context) : BaseRepository(context), IInvoiceRepository
 {
     private static readonly FilterDefinitionBuilder<Invoice> _filterBuilder = Builders<Invoice>.Filter;
-
-    public InvoiceRepository(MongoDbContext context)
-        : base(context)
-    {
-    }
 
     public Task AddAsync(Invoice invoice, CancellationToken cancellationToken)
     {

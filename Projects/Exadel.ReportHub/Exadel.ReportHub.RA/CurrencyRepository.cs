@@ -6,14 +6,9 @@ using MongoDB.Driver;
 namespace Exadel.ReportHub.RA;
 
 [ExcludeFromCodeCoverage]
-public class CurrencyRepository : BaseRepository, ICurrencyRepository
+public class CurrencyRepository(MongoDbContext context) : BaseRepository(context), ICurrencyRepository
 {
     private static readonly FilterDefinitionBuilder<Currency> _filterBuilder = Builders<Currency>.Filter;
-
-    public CurrencyRepository(MongoDbContext context)
-        : base(context)
-    {
-    }
 
     public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {

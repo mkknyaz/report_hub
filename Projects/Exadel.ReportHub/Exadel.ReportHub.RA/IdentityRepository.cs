@@ -6,13 +6,8 @@ using MongoDB.Driver;
 namespace Exadel.ReportHub.RA;
 
 [ExcludeFromCodeCoverage]
-public class IdentityRepository : BaseRepository, IIdentityRepository
+public class IdentityRepository(MongoDbContext context) : BaseRepository(context), IIdentityRepository
 {
-    public IdentityRepository(MongoDbContext context)
-        : base(context)
-    {
-    }
-
     public async Task<IList<TDocument>> GetByNamesAsync<TDocument>(IEnumerable<string> names, CancellationToken cancellationToken)
         where TDocument : Resource
     {

@@ -6,14 +6,9 @@ using MongoDB.Driver;
 namespace Exadel.ReportHub.RA;
 
 [ExcludeFromCodeCoverage]
-public class ExchangeRateRepository : BaseRepository, IExchangeRateRepository
+public class ExchangeRateRepository(MongoDbContext context) : BaseRepository(context), IExchangeRateRepository
 {
     private static readonly FilterDefinitionBuilder<ExchangeRate> _filterBuilder = Builders<ExchangeRate>.Filter;
-
-    public ExchangeRateRepository(MongoDbContext context)
-        : base(context)
-    {
-    }
 
     public Task AddManyAsync(IEnumerable<ExchangeRate> exchangeRates, CancellationToken cancellationToken)
     {

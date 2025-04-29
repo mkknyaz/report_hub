@@ -4,6 +4,8 @@ public static class Constants
 {
     public const string ClientName = "ExchangeRateClient";
 
+    public const int UpdateHour = 14;
+
     public static class Currency
     {
         public const string DefaultCurrencyCode = "EUR";

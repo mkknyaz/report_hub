@@ -3,13 +3,8 @@ using Exadel.ReportHub.RA.Abstract;
 
 namespace Exadel.ReportHub.RA;
 
-public class CountryRepository : BaseRepository, ICountryRepository
+public class CountryRepository(MongoDbContext context) : BaseRepository(context), ICountryRepository
 {
-    public CountryRepository(MongoDbContext context)
-        : base(context)
-    {
-    }
-
     public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
     {
         return ExistsAsync<Country>(id, cancellationToken);
