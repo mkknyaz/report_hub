@@ -16,16 +16,16 @@ public class PdfInvoiceGenerator : IPdfInvoiceGenerator
         var page = doc.Pages.Add();
         page.PageInfo.Margin = new MarginInfo(Constants.MarginInfo.Page.Left, Constants.MarginInfo.Page.Bottom, Constants.MarginInfo.Page.Right, Constants.MarginInfo.Page.Top);
 
-        var title = new TextFragment($"{Constants.Text.Label.Invoice}: {invoice.PaymentStatus}")
+        var title = new TextFragment($"{Constants.Text.Label.Invoice}: {invoice.InvoiceNumber}")
         {
             TextState = { FontSize = Constants.Text.TextStyle.FontSizeTitle, FontStyle = FontStyles.Bold },
             HorizontalAlignment = HorizontalAlignment.Center
         };
         page.Paragraphs.Add(title);
 
-        page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.InvoiceNumber}: {invoice.InvoiceNumber}"));
         page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.IssueDate}: {invoice.IssueDate:yyyy-MM-dd}"));
         page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.DueDate}: {invoice.DueDate:yyyy-MM-dd}"));
+        page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.PaymentStatus}: {invoice.PaymentStatus}"));
         page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.ClientName}: {invoice.ClientName}"));
         page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.CustomerName}: {invoice.CustomerName}"));
         page.Paragraphs.Add(new TextFragment($"{Constants.Text.Label.ClientBankAccountNumber}: {invoice.ClientBankAccountNumber}"));
