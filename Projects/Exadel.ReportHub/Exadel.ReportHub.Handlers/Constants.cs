@@ -17,12 +17,6 @@ public static class Constants
             public const string IsInvalid = "Email is invalid.";
         }
 
-        public static class Date
-        {
-            public const string InvalidStartDate = "Start date must be less than end date";
-            public const string EndDateInPast = "End date must be in the future";
-        }
-
         public static class Client
         {
             public const string DoesNotExist = "Client does not exist.";
@@ -111,6 +105,14 @@ public static class Constants
         public static class Plan
         {
             public const string AlreadyExistsForItemAndClient = "Plan already exists for this item and client";
+        }
+
+        public static class Date
+        {
+            public const string InvalidStartDate = "Start date must be less than end date";
+            public const string EndDateNotInPast = "End date must be less than/or equals to today's date";
+            public const string EndDateInPast = "End date must be in the future";
+            public const string EmptyStartDate = "Start date is required";
         }
     }
 

@@ -1,32 +1,36 @@
-﻿using FluentValidation;
+﻿using Exadel.ReportHub.SDK.DTOs.Invoice;
+using FluentValidation;
 
-namespace Exadel.ReportHub.Handlers.Invoice.GetTotalRevenue;
+namespace Exadel.ReportHub.Handlers.Validators;
 
-public class GetInvoicesTotalRevenueRequestValidator : AbstractValidator<GetInvoicesTotalRevenueRequest>
+public class InvoiceRevenueFilterDtoValidator : AbstractValidator<InvoiceRevenueFilterDTO>
 {
-    public GetInvoicesTotalRevenueRequestValidator()
+    public InvoiceRevenueFilterDtoValidator()
     {
         ConfigureRules();
     }
 
     private void ConfigureRules()
     {
-        RuleFor(x => x.InvoiceDateFilterDto)
+        RuleFor(x => x)
             .ChildRules(child =>
             {
                 RuleLevelCascadeMode = CascadeMode.Stop;
 
                 child.RuleFor(x => x.StartDate)
                     .NotEmpty()
-                    .LessThan(x => x.EndDate)
+                    .WithMessage(Constants.Validation.Date.EmptyStartDate)
+                    .LessThanOrEqualTo(x => x.EndDate)
                     .WithMessage(Constants.Validation.Date.InvalidStartDate);
+
+                child.RuleFor(x => x.EndDate)
+                    .NotEmpty()
+                    .LessThanOrEqualTo(DateTime.UtcNow)
+                    .WithMessage(Constants.Validation.Date.EndDateNotInPast);
 
                 child.RuleFor(x => x.StartDate.TimeOfDay)
                     .Equal(TimeSpan.Zero)
                     .WithMessage(Constants.Validation.Invoice.TimeComponentNotAllowed);
-
-                child.RuleFor(x => x.EndDate)
-                    .NotEmpty();
 
                 child.RuleFor(x => x.EndDate.TimeOfDay)
                     .Equal(TimeSpan.Zero)

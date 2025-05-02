@@ -1,6 +1,6 @@
 ﻿namespace Exadel.ReportHub.SDK.DTOs.Invoice;
 
-public class InvoiceIssueDateFilterDTO
+public class InvoiceRevenueFilterDTO
 {
     public DateTime StartDate { get; set; }
 
