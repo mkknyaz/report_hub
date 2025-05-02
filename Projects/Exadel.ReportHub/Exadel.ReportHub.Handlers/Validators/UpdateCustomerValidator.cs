@@ -16,7 +16,7 @@ public class UpdateCustomerValidator : AbstractValidator<UpdateCustomerDTO>
         ConfigureRules();
     }
 
-    public void ConfigureRules()
+    private void ConfigureRules()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 

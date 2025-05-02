@@ -18,7 +18,7 @@ public class CreateCustomerValidator : AbstractValidator<CreateCustomerDTO>
         ConfigureRules();
     }
 
-    public void ConfigureRules()
+    private void ConfigureRules()
     {
         RuleFor(x => x)
            .SetValidator(_updateCustomerValidator);

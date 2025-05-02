@@ -89,9 +89,9 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
                         x.InvoiceNumber == invoices[0].InvoiceNumber &&
                         x.IssueDate == invoices[0].IssueDate &&
                         x.DueDate == invoices[0].DueDate &&
-                        x.Amount == invoices[0].Amount &&
-                        x.CurrencyId == invoices[0].CurrencyId &&
-                        x.CurrencyCode == invoices[0].CurrencyCode &&
+                        x.CustomerCurrencyAmount == invoices[0].CustomerCurrencyAmount &&
+                        x.CustomerCurrencyId == invoices[0].CustomerCurrencyId &&
+                        x.CustomerCurrencyCode == invoices[0].CustomerCurrencyCode &&
                         (int)x.PaymentStatus == (int)invoices[0].PaymentStatus &&
                         x.ClientBankAccountNumber == invoices[0].ClientBankAccountNumber) &&
 
@@ -101,9 +101,9 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
                         x.InvoiceNumber == invoices[1].InvoiceNumber &&
                         x.IssueDate == invoices[1].IssueDate &&
                         x.DueDate == invoices[1].DueDate &&
-                        x.Amount == invoices[1].Amount &&
-                        x.CurrencyId == invoices[1].CurrencyId &&
-                        x.CurrencyCode == invoices[1].CurrencyCode &&
+                        x.CustomerCurrencyAmount == invoices[1].CustomerCurrencyAmount &&
+                        x.CustomerCurrencyId == invoices[1].CustomerCurrencyId &&
+                        x.CustomerCurrencyCode == invoices[1].CustomerCurrencyCode &&
                         (int)x.PaymentStatus == (int)invoices[1].PaymentStatus &&
                         x.ClientBankAccountNumber == invoices[1].ClientBankAccountNumber)),
                     CancellationToken.None),

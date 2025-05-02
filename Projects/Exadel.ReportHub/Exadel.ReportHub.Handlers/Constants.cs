@@ -17,6 +17,12 @@ public static class Constants
             public const string IsInvalid = "Email is invalid.";
         }
 
+        public static class Date
+        {
+            public const string InvalidStartDate = "Start date must be less than end date";
+            public const string EndDateInPast = "End date must be in the future";
+        }
+
         public static class Client
         {
             public const string DoesNotExist = "Client does not exist.";
@@ -27,6 +33,7 @@ public static class Constants
             public const int MinLength = 8;
             public const int MaxLength = 28;
             public const string InvalidFormat = "Bank account number must start with two uppercase letters followed by digits.";
+            public const string InvalidCountryCode = "Provided country code is invalid.";
         }
 
         public static class Customer
@@ -103,8 +110,6 @@ public static class Constants
 
         public static class Plan
         {
-            public const string InvalidStartDate = "Start date must be less than end date";
-            public const string EndDateInPast = "End date must be in the future";
             public const string AlreadyExistsForItemAndClient = "Plan already exists for this item and client";
         }
     }

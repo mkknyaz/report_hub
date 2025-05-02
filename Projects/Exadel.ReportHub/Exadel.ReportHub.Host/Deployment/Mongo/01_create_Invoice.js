@@ -1,5 +1,5 @@
 ﻿const scriptName = "01_create_Invoice";
-const version = NumberInt(6);
+const version = NumberInt(7);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -114,12 +114,18 @@ function generateInvoiceNumber(index) {
     return "INV" + year + getRandomInt(30) + ("0000000" + (index + 1)).slice(-7);
 }
 
+function truncateToOnlyDate(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
 function generateIssueDate() {
-    return ISODate(randomDate(new Date("2010-01-01T00:00:00Z"), new Date()).toISOString());
+    const rawDate = randomDate(new Date("2010-01-01T00:00:00Z"), new Date());
+    return ISODate(truncateToOnlyDate(rawDate).toISOString());
 }
 
 function generateDueDate(issueDate) {
-    return ISODate(new Date(issueDate.getTime() + (getRandomInt(80) + 10) * 86400000).toISOString());
+    const rawDate = new Date(issueDate.getTime() + (getRandomInt(80) + 10) * 86400000);
+    return ISODate(truncateToOnlyDate(rawDate).toISOString());
 }
 
 const invoices = [];

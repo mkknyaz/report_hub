@@ -1,4 +1,4 @@
-﻿const scriptName = "14_update_Client_CreateClientIdIndex";
+﻿const scriptName = "18_update_Invoice_CreateIssueDateClientIdIndex";
 const version = NumberInt(1);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
@@ -6,8 +6,8 @@ if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     quit();
 }
 
-db.customers.createIndex(
-    { ClientId: 1 },
+db.Invoice.createIndex(
+    { ClientId: 1, IssueDate: 1 },
     { partialFilterExpression: { IsDeleted: false } }
 );
 
@@ -17,4 +17,4 @@ db.MigrationHistory.insertOne({
     ScriptRunTime: new Date()
 });
 
-print("Index created successfully!");
+print("index on IssueDate and ClientId created successfully!");

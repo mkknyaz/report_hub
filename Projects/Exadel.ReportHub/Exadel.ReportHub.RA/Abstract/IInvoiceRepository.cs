@@ -19,4 +19,6 @@ public interface IInvoiceRepository
     Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken);
 
     Task UpdateAsync(Invoice invoice, CancellationToken cancellationToken);
+
+    Task<(string CurrencyCode, decimal Total)> SumOfClientAmountAsync(Guid clientId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken);
 }

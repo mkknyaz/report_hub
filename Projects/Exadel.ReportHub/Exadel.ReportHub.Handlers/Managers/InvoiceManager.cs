@@ -40,10 +40,22 @@ public class InvoiceManager(
                 .Select(group => currencyConverter.ConvertAsync(group.Sum(x => x.Price), group.Key, currencyCode, invoice.IssueDate, cancellationToken));
 
             invoice.Id = Guid.NewGuid();
-            invoice.Amount = (await Task.WhenAll(conversionTasks)).Sum();
-            invoice.CurrencyId = customers[invoice.CustomerId].CurrencyId;
-            invoice.CurrencyCode = currencyCode;
+            invoice.CustomerCurrencyAmount = (await Task.WhenAll(conversionTasks)).Sum();
+            invoice.CustomerCurrencyId = customers[invoice.CustomerId].CurrencyId;
+            invoice.CustomerCurrencyCode = currencyCode;
             invoice.ClientBankAccountNumber = clients[invoice.ClientId].BankAccountNumber;
+
+            var clientCurrencyCode = clients[invoice.ClientId].CurrencyCode;
+
+            invoice.ClientCurrencyAmount = await currencyConverter.ConvertAsync(
+                invoice.CustomerCurrencyAmount,
+                invoice.CustomerCurrencyCode,
+                clients[invoice.ClientId].CurrencyCode,
+                invoice.IssueDate,
+                cancellationToken);
+
+            invoice.ClientCurrencyCode = clientCurrencyCode;
+            invoice.ClientCurrencyId = clients[invoice.ClientId].CurrencyId;
         }
 
         return invoices;

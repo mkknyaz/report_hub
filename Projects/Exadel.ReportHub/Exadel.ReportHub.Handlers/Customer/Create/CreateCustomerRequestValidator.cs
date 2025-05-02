@@ -14,7 +14,7 @@ public class CreateCustomerRequestValidator : AbstractValidator<CreateCustomerRe
         ConfigureRules();
     }
 
-    public void ConfigureRules()
+    private void ConfigureRules()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 

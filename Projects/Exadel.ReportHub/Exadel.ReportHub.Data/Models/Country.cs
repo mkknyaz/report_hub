@@ -11,4 +11,6 @@ public class Country : IDocument
     public Guid CurrencyId { get; set; }
 
     public string CurrencyCode { get; set; }
+
+    public string CountryCode { get; set; }
 }

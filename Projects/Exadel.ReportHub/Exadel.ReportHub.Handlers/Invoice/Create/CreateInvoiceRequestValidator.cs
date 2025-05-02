@@ -13,7 +13,7 @@ public class CreateInvoiceRequestValidator : AbstractValidator<CreateInvoiceRequ
         ConfigureRules();
     }
 
-    public void ConfigureRules()
+    private void ConfigureRules()
     {
         RuleFor(x => x.CreateInvoiceDto)
             .SetValidator(_invoiceValidator);

@@ -18,7 +18,7 @@ public class CreatePlanRequestValidator : AbstractValidator<CreatePlanRequest>
         ConfigureRules();
     }
 
-    public void ConfigureRules()
+    private void ConfigureRules()
     {
         RuleFor(x => x.CreatePlanDto)
             .ChildRules(child =>
@@ -45,12 +45,12 @@ public class CreatePlanRequestValidator : AbstractValidator<CreatePlanRequest>
                 child.RuleFor(x => x.StartDate)
                     .NotEmpty()
                     .LessThan(x => x.EndDate)
-                    .WithMessage(Constants.Validation.Plan.InvalidStartDate);
+                    .WithMessage(Constants.Validation.Date.InvalidStartDate);
 
                 child.RuleFor(x => x.EndDate)
                     .NotEmpty()
                     .GreaterThan(DateTime.UtcNow)
-                    .WithMessage(Constants.Validation.Plan.EndDateInPast);
+                    .WithMessage(Constants.Validation.Date.EndDateInPast);
             });
     }
 

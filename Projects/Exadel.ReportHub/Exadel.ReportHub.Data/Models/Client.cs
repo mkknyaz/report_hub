@@ -10,5 +10,13 @@ public class Client : IDocument, ISoftDeletable
 
     public string BankAccountNumber { get; set; }
 
+    public Guid CountryId { get; set; }
+
+    public string Country { get; set; }
+
+    public Guid CurrencyId { get; set; }
+
+    public string CurrencyCode { get; set; }
+
     public bool IsDeleted { get; set; }
 }
