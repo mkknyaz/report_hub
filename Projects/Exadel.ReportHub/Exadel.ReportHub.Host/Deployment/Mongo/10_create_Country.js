@@ -1,5 +1,5 @@
 ﻿const scriptName = "10_create_Country";
-const version = NumberInt(2);
+const version = NumberInt(3);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
     print(`${scriptName} v${version} is already applied`);
@@ -54,12 +54,6 @@ countries = [
         "Name": "Japan",
         "CurrencyId": UUID("45d6d081-e362-4a9d-996f-c144d944635d"),
         "CurrencyCode": "JPY"
-    },
-    {
-        _id: UUID("a03c1599-6a10-4ac4-b87c-b3585a81b2f6"),
-        Name: "Japan",
-        CurrencyId: UUID("45d6d081-e362-4a9d-996f-c144d944635d"),
-        CurrencyCode: "JPY"
     },
     {
         _id: UUID("d42db77e-0c68-4053-8c67-69c5f1441c3f"),
