@@ -1,45 +1,35 @@
-﻿using Exadel.ReportHub.Ecb.Abstract;
+﻿using Exadel.ReportHub.Data.Models;
+using Exadel.ReportHub.Ecb.Abstract;
+using Exadel.ReportHub.Ecb.Extensions;
 using Exadel.ReportHub.RA.Abstract;
-using MongoDB.Driver;
 
 namespace Exadel.ReportHub.Ecb;
 
-public class ExchangeRateProvider(IExchangeRateRepository exhangeRateRepository, IExchangeRateClient exchangeRateClient) : IExchangeRateClient
+public class ExchangeRateProvider(IExchangeRateRepository exhangeRateRepository, IExchangeRateClient exchangeRateClient) : IExchangeRateProvider
 {
-    public async Task<Data.Models.ExchangeRate> GetByCurrencyAsync(string currency, CancellationToken cancellationToken)
+    public async Task<ExchangeRate> GetByCurrencyForWeekAsync(string currency, DateTime weekEndDate, CancellationToken cancellationToken)
     {
-        var exchangeRate = await exhangeRateRepository.GetByCurrencyAsync(currency, cancellationToken);
+        var exchangeRate = await exhangeRateRepository.GetByCurrencyAsync(currency, weekEndDate, cancellationToken);
 
         if (exchangeRate != null)
         {
             return exchangeRate;
         }
 
-        var exchangeRates = await GetRatesAsync(cancellationToken);
-        return exchangeRates.SingleOrDefault(x => x.Currency.Equals(currency, StringComparison.Ordinal));
-    }
-
-    public async Task<IList<Data.Models.ExchangeRate>> GetDailyRatesAsync(CancellationToken cancellationToken)
-    {
-        var exchangeRates = await exhangeRateRepository.GetAllAsync(cancellationToken);
-
-        if (exchangeRates.Any())
+        for (int i = 0; i < Constants.WeeksLimit; i++)
         {
-            return exchangeRates;
+            var weekStartDate = weekEndDate.GetWeekPeriodStart();
+            var exchangeRates = await exchangeRateClient.GetByCurrencyInPeriodAsync(currency, weekStartDate, weekEndDate, cancellationToken);
+
+            if (exchangeRates.Any())
+            {
+                await exhangeRateRepository.UpsertManyAsync(exchangeRates, cancellationToken);
+                return exchangeRates.MaxBy(x => x.RateDate);
+            }
+
+            weekEndDate = weekStartDate.AddDays(-1);
         }
 
-        return await GetRatesAsync(cancellationToken);
-    }
-
-    private async Task<IList<Data.Models.ExchangeRate>> GetRatesAsync(CancellationToken cancellationToken)
-    {
-        var exchangeRates = await exchangeRateClient.GetDailyRatesAsync(cancellationToken);
-
-        if (exchangeRates.Any())
-        {
-            await exhangeRateRepository.AddManyAsync(exchangeRates, cancellationToken);
-        }
-
-        return exchangeRates;
+        return null;
     }
 }

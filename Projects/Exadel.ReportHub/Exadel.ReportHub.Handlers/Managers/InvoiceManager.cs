@@ -37,7 +37,7 @@ public class InvoiceManager(
         {
             var currencyCode = customers[invoice.CustomerId].CurrencyCode;
             var conversionTasks = invoice.ItemIds.Select(id => items[id]).GroupBy(x => x.CurrencyCode)
-                .Select(group => currencyConverter.ConvertAsync(group.Sum(x => x.Price), group.Key, currencyCode, cancellationToken));
+                .Select(group => currencyConverter.ConvertAsync(group.Sum(x => x.Price), group.Key, currencyCode, invoice.IssueDate, cancellationToken));
 
             invoice.Id = Guid.NewGuid();
             invoice.Amount = (await Task.WhenAll(conversionTasks)).Sum();

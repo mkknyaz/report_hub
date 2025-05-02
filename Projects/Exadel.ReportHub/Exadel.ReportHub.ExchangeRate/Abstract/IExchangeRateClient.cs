@@ -4,7 +4,5 @@ namespace Exadel.ReportHub.Ecb.Abstract;
 
 public interface IExchangeRateClient
 {
-    Task<IList<ExchangeRate>> GetDailyRatesAsync(CancellationToken cancellationToken);
-
-    Task<ExchangeRate> GetByCurrencyAsync(string currency, CancellationToken cancellationToken);
+    Task<IList<ExchangeRate>> GetByCurrencyInPeriodAsync(string currency, DateTime startDate, DateTime endDate, CancellationToken cancellationToken);
 }

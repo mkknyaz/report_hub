@@ -2,5 +2,5 @@
 
 public interface ICurrencyConverter
 {
-    Task<decimal> ConvertAsync(decimal amount, string fromCurrency, string toCurrency, CancellationToken cancellationToken);
+    Task<decimal> ConvertAsync(decimal amount, string fromCurrency, string toCurrency, DateTime date, CancellationToken cancellationToken);
 }
