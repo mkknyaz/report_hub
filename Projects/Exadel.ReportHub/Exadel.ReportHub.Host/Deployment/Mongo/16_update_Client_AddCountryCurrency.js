@@ -1,4 +1,4 @@
-﻿const scriptName = "15_update_Client_AddCountryCurrency";
+﻿const scriptName = "16_update_Client_AddCountryCurrency";
 const version = NumberInt(1);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {

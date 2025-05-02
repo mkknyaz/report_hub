@@ -1,4 +1,4 @@
-﻿const scriptName = "16_update_Country_AddCountryCode";
+﻿const scriptName = "15_update_Country_AddCountryCode";
 const version = NumberInt(1);
 
 if (db.MigrationHistory.findOne({ ScriptName: scriptName, Version: version })) {
