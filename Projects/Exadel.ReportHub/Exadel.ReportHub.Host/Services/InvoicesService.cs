@@ -110,16 +110,16 @@ public class InvoicesService(ISender sender) : BaseService
     }
 
     [Authorize(Policy = Constants.Authorization.Policy.Export)]
-    [HttpGet("pdf/export")]
+    [HttpGet("{id:guid}/export")]
     [SwaggerOperation(Summary = "Export invoice as PDF", Description = "Generates and exports a PDF version of the invoice using the provided invoice id")]
     [SwaggerResponse(StatusCodes.Status200OK, "Invoices were exported successfully")]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to access this invoice")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Invoice was not found for the specified id", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult<ExportResult>> ExportInvoiceAsync(Guid invoiceId, Guid clientId)
+    public async Task<ActionResult<ExportResult>> ExportInvoiceAsync(Guid id, Guid clientId)
     {
-        var result = await sender.Send(new ExportPdfInvoiceRequest(invoiceId));
+        var result = await sender.Send(new ExportPdfInvoiceRequest(id));
         return FromResult(result);
     }
 
