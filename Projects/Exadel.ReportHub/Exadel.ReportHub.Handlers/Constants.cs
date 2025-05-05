@@ -114,6 +114,11 @@ public static class Constants
             public const string EndDateInPast = "End date must be in the future";
             public const string EmptyStartDate = "Start date is required";
         }
+
+        public static class Pagination
+        {
+            public const int MaxValue = 100;
+        }
     }
 
     public static class ClientData

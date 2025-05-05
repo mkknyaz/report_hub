@@ -18,12 +18,14 @@ public class AuditReportRepository : BaseRepository, IAuditReportRepository
         return await GetByIdAsync<AuditReport>(id, cancellationToken);
     }
 
-    public async Task<IList<AuditReport>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<IList<AuditReport>> GetByUserIdAsync(Guid userId, int skip, int top, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.UserId, userId);
         var desc = await GetCollection<AuditReport>()
             .Find(filter)
             .SortByDescending(x => x.TimeStamp)
+            .Skip(skip)
+            .Limit(top)
             .ToListAsync(cancellationToken);
         return desc;
     }
@@ -31,5 +33,11 @@ public class AuditReportRepository : BaseRepository, IAuditReportRepository
     public async Task AddAsync(AuditReport auditReport, CancellationToken cancellationToken)
     {
         await base.AddAsync(auditReport, cancellationToken);
+    }
+
+    public async Task<long> GetCountAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.UserId, userId);
+        return await GetCollection<AuditReport>().CountDocumentsAsync(filter, cancellationToken: cancellationToken);
     }
 }

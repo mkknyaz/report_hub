@@ -8,5 +8,7 @@ public interface IAuditReportRepository
 
     Task<AuditReport> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
-    Task<IList<AuditReport>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+    Task<IList<AuditReport>> GetByUserIdAsync(Guid userId, int skip, int top, CancellationToken cancellationToken);
+
+    Task<long> GetCountAsync(Guid userId, CancellationToken cancellationToken);
 }
