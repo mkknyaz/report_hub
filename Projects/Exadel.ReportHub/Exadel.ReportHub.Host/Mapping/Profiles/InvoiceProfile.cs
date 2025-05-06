@@ -45,5 +45,9 @@ public class InvoiceProfile : Profile
             .ForMember(x => x.Items, opt => opt.Ignore())
             .ForMember(x => x.Amount, opt => opt.MapFrom(scr => scr.CustomerCurrencyAmount))
             .ForMember(x => x.CurrencyCode, opt => opt.MapFrom(scr => scr.CustomerCurrencyCode));
+
+        CreateMap<OverdueCount, OverdueInvoicesResultDTO>();
+
+        CreateMap<TotalRevenue, TotalInvoicesRevenueDTO>();
     }
 }

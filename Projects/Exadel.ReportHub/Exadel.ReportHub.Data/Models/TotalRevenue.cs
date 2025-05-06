@@ -1,6 +1,6 @@
-﻿namespace Exadel.ReportHub.SDK.DTOs.Invoice;
+﻿namespace Exadel.ReportHub.Data.Models;
 
-public class TotalInvoicesRevenueDTO
+public class TotalRevenue
 {
     public decimal TotalAmount { get; set; }
 

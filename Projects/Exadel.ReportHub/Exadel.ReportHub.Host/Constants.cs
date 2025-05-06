@@ -43,4 +43,13 @@ public static class Constants
             public static readonly Uri Ping = new Uri("/api/ping", UriKind.Relative);
         }
     }
+
+    public static class Job
+    {
+        public static class Id
+        {
+            public const string OverduePaymentStatusUpdater = nameof(OverduePaymentStatusUpdater);
+            public const string Ping = nameof(Ping);
+        }
+    }
 }

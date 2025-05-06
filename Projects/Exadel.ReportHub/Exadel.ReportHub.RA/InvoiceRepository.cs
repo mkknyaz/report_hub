@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
@@ -20,9 +22,13 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         return base.AddManyAsync(invoices, cancellationToken);
     }
 
-    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> ExistsAsync(Guid id, Guid clientId, CancellationToken cancellationToken)
     {
-        return ExistsAsync<Invoice>(id, cancellationToken);
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.Id, id),
+            _filterBuilder.Eq(x => x.ClientId, clientId));
+        var count = await GetCollection<Invoice>().Find(filter).CountDocumentsAsync(cancellationToken);
+        return count > 0;
     }
 
     public async Task<bool> ExistsAsync(string invoiceNumber, CancellationToken cancellationToken)
@@ -58,43 +64,99 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         return UpdateAsync(invoice.Id, definition, cancellationToken);
     }
 
-    public async Task<(string CurrencyCode, decimal Total)> GetTotalAmountByDateRangeAsync(Guid clientId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken)
+    public async Task UpdatePaidStatusAsync(Guid id, Guid clientId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.Id, id),
+            _filterBuilder.Eq(x => x.ClientId, clientId),
+            _filterBuilder.In(x => x.PaymentStatus, new[] { PaymentStatus.Unpaid, PaymentStatus.Overdue }));
+
+        PipelineDefinition<Invoice, Invoice> pipeline = new[]
+        {
+            new BsonDocument("$set", new BsonDocument(nameof(PaymentStatus),
+            new BsonDocument("$cond", new BsonArray
+            {
+                new BsonDocument("$eq", new BsonArray { $"${nameof(PaymentStatus)}", PaymentStatus.Unpaid.ToString() }),
+                PaymentStatus.PaidOnTime.ToString(),
+                PaymentStatus.PaidLate.ToString()
+            })))
+        };
+
+        await GetCollection<Invoice>().UpdateOneAsync(filter, pipeline, cancellationToken: cancellationToken);
+    }
+
+    public async Task<long> UpdateOverdueStatusAsync(DateTime date, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.PaymentStatus, PaymentStatus.Unpaid),
+            _filterBuilder.Lt(x => x.DueDate, date),
+            _filterBuilder.Eq(x => x.IsDeleted, false));
+        var updateDefinition = Builders<Invoice>.Update.Set(x => x.PaymentStatus, PaymentStatus.Overdue);
+
+        var result = await GetCollection<Invoice>().UpdateManyAsync(filter, updateDefinition, cancellationToken: cancellationToken);
+        return result.ModifiedCount;
+    }
+
+    public async Task<TotalRevenue> GetTotalAmountByDateRangeAsync(Guid clientId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.ClientId, clientId),
             _filterBuilder.Gte(x => x.IssueDate, startDate),
             _filterBuilder.Lte(x => x.IssueDate, endDate),
-            _filterBuilder.Eq(x => x.ClientId, clientId),
             _filterBuilder.Eq(x => x.IsDeleted, false));
 
         var result = await GetCollection<Invoice>()
             .Aggregate()
             .Match(filter)
-            .Group(x => x.ClientCurrencyCode, g => new
+            .Group(x => x.ClientCurrencyCode, g => new TotalRevenue
             {
-                Currency = g.Key,
-                Total = g.Sum(x => x.ClientCurrencyAmount)
+                TotalAmount = g.Sum(x => x.ClientCurrencyAmount),
+                CurrencyCode = g.Key,
             })
             .SingleOrDefaultAsync(cancellationToken);
 
-        return (result.Currency, result.Total);
+        if (result is null)
+        {
+            return new TotalRevenue();
+        }
+
+        return result;
     }
 
     public async Task<Dictionary<Guid, int>> GetCountByDateRangeAsync(DateTime startDate, DateTime endDate, Guid clientId, Guid? customerId, CancellationToken cancellationToken)
     {
-        var filters = new List<FilterDefinition<Invoice>>
-        {
+        var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.ClientId, clientId),
             _filterBuilder.Gte(x => x.IssueDate, startDate),
             _filterBuilder.Lte(x => x.IssueDate, endDate),
-            _filterBuilder.Eq(x => x.IsDeleted, false)
-        };
+            _filterBuilder.Eq(x => x.IsDeleted, false));
+
         if (customerId.HasValue)
         {
-            filters.Add(_filterBuilder.Eq(x => x.CustomerId, customerId));
+            filter &= _filterBuilder.Eq(x => x.CustomerId, customerId);
         }
 
-        var filter = _filterBuilder.And(filters);
         var grouping = await GetCollection<Invoice>().Aggregate().Match(filter).Group(x => x.CustomerId, g => new { CustomerId = g.Key, Count = g.Count() }).ToListAsync(cancellationToken);
         return grouping.ToDictionary(x => x.CustomerId, x => x.Count);
+    }
+
+    public async Task<OverdueCount> GetOverdueAsync(Guid clientId, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.ClientId, clientId),
+            _filterBuilder.Eq(x => x.PaymentStatus, PaymentStatus.Overdue),
+            _filterBuilder.Eq(x => x.IsDeleted, false));
+
+        var result = await GetCollection<Invoice>()
+            .Aggregate()
+            .Match(filter)
+            .Group(x => x.ClientCurrencyCode, g => new OverdueCount
+            {
+                Count = g.Count(),
+                TotalAmount = g.Sum(x => x.ClientCurrencyAmount),
+                ClientCurrencyCode = g.Key,
+            })
+            .SingleOrDefaultAsync(cancellationToken);
+        return result;
     }
 }

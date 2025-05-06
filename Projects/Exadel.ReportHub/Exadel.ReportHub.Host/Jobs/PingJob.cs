@@ -8,7 +8,7 @@ public class PingJob(IHttpClientFactory clientFactory, ILogger<PingJob> logger) 
     public void Schedule()
     {
         RecurringJob.AddOrUpdate<PingJob>(
-            recurringJobId: "PingJob",
+            recurringJobId: Constants.Job.Id.Ping,
             methodCall: j => j.PingAsync(),
             cronExpression: "*/14 * * * *",
             options: new RecurringJobOptions

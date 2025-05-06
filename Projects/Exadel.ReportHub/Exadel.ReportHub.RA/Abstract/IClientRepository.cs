@@ -12,6 +12,8 @@ public interface IClientRepository
 
     Task<IList<Client>> GetAsync(CancellationToken cancellationToken);
 
+    Task<string> GetCurrencyAsync(Guid id, CancellationToken cancellationToken);
+
     Task UpdateNameAsync(Guid id, string name, CancellationToken cancellationToken);
 
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);

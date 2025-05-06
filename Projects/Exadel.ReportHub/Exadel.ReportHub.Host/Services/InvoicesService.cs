@@ -5,12 +5,16 @@ using Exadel.ReportHub.Handlers.Invoice.Delete;
 using Exadel.ReportHub.Handlers.Invoice.ExportPdf;
 using Exadel.ReportHub.Handlers.Invoice.GetByClientId;
 using Exadel.ReportHub.Handlers.Invoice.GetById;
+using Exadel.ReportHub.Handlers.Invoice.GetByOverdueStatus;
 using Exadel.ReportHub.Handlers.Invoice.GetCount;
 using Exadel.ReportHub.Handlers.Invoice.GetRevenue;
 using Exadel.ReportHub.Handlers.Invoice.Import;
 using Exadel.ReportHub.Handlers.Invoice.Update;
+using Exadel.ReportHub.Handlers.Invoice.UpdateOverdueStatus;
+using Exadel.ReportHub.Handlers.Invoice.UpdatePaidStatus;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Exadel.ReportHub.Host.Services.Abstract;
+using Exadel.ReportHub.SDK.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Import;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
 using MediatR;
@@ -22,7 +26,7 @@ namespace Exadel.ReportHub.Host.Services;
 
 [ExcludeFromCodeCoverage]
 [Route("api/invoices")]
-public class InvoicesService(ISender sender) : BaseService
+public class InvoicesService(ISender sender) : BaseService, IInvoiceService
 {
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost("import")]
@@ -32,7 +36,7 @@ public class InvoicesService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to perform this action")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult<ImportResultDTO>> ImportInvoicesAsync([FromForm] ImportDTO importDto, [FromQuery][Required] Guid clientId)
+    public async Task<ActionResult<ImportResultDTO>> ImportInvoicesAsync([FromForm] ImportDTO importDto, [FromQuery, Required] Guid clientId)
     {
         var result = await sender.Send(new ImportInvoicesRequest(importDto));
         return FromResult(result, StatusCodes.Status201Created);
@@ -59,7 +63,7 @@ public class InvoicesService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to access this invoice")]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult<IList<InvoiceDTO>>> GetInvoicesByClientId([FromQuery][Required] Guid clientId)
+    public async Task<ActionResult<IList<InvoiceDTO>>> GetInvoicesByClientId([FromQuery, Required] Guid clientId)
     {
         var result = await sender.Send(new GetInvoicesByClientIdRequest(clientId));
         return FromResult(result);
@@ -73,7 +77,7 @@ public class InvoicesService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to access this invoice")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Invoice was not found for the given id", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult<InvoiceDTO>> GetInvoiceById([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
+    public async Task<ActionResult<InvoiceDTO>> GetInvoiceById([FromRoute] Guid id, [FromQuery, Required] Guid clientId)
     {
         var result = await sender.Send(new GetInvoiceByIdRequest(id));
         return FromResult(result);
@@ -90,7 +94,7 @@ public class InvoicesService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
     public async Task<ActionResult> DeleteInvoice([FromRoute] Guid id, [FromQuery][Required] Guid clientId)
     {
-        var result = await sender.Send(new DeleteInvoiceRequest(id));
+        var result = await sender.Send(new DeleteInvoiceRequest(id, clientId));
         return FromResult(result);
     }
 
@@ -103,9 +107,9 @@ public class InvoicesService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to access this invoice")]
     [SwaggerResponse(StatusCodes.Status404NotFound, "Invoice was not found for the specified id", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult> UpdateInvoice([FromRoute] Guid id, [FromBody] UpdateInvoiceDTO invoiceDto)
+    public async Task<ActionResult> UpdateInvoice([FromRoute] Guid id, [FromQuery] Guid clientId, [FromBody] UpdateInvoiceDTO invoiceDto)
     {
-        var result = await sender.Send(new UpdateInvoiceRequest(id, invoiceDto));
+        var result = await sender.Send(new UpdateInvoiceRequest(id, clientId, invoiceDto));
         return FromResult(result);
     }
 
@@ -148,5 +152,40 @@ public class InvoicesService(ISender sender) : BaseService
     {
         var result = await sender.Send(new GetInvoiceCountRequest(invoiceCountFilterDto));
         return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.Update)]
+    [HttpPatch("{id:guid}/pay")]
+    [SwaggerOperation(Summary = "Mark invoice as paid", Description = "Marks the invoice as paid — on time or late depending on due date")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Invoice payment status was updated successfully")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to update this invoice")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Invoice was not found for the specified id", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    public async Task<ActionResult> PayInvoice([FromRoute] Guid id, [FromQuery, Required] Guid clientId)
+    {
+        var result = await sender.Send(new UpdateInvoicePaidStatusRequest(id, clientId));
+
+        return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.Read)]
+    [HttpGet("overdue")]
+    [SwaggerOperation(Summary = "Get overdue invoices summary", Description = "Returns the total number of overdue invoices and their amount for the specified client")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Overdue invoices data was retrieved successfully", typeof(ActionResult<OverdueInvoicesResultDTO>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "User does not have permission to access this invoice")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Invoice was not found for the specified dates", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    public async Task<ActionResult<OverdueInvoicesResultDTO>> GetOverdue([Required] Guid clientId)
+    {
+        var result = await sender.Send(new GetInvoicesByOverdueStatusRequest(clientId));
+        return FromResult(result);
+    }
+
+    [NonAction]
+    public async Task UpdateOverdueInvoicesStatusAsync()
+    {
+        await sender.Send(new UpdateOverdueInvoicesStatusRequest());
     }
 }
