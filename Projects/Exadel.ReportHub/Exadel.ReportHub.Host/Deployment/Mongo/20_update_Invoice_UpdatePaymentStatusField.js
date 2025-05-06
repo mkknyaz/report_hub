@@ -11,12 +11,6 @@ const result = db.Invoice.updateMany(
     { $set: { paymentStatus: "PaidOnTime" } }
 );
 
-db.MigrationHistory.insertOne({
-    ScriptName: scriptName,
-    Version: version,
-    ScriptRunTime: new Date()
-});
-
 print(`Updated ${result.modifiedCount} invoices to "PaidOnTime".`);
 
 db.MigrationHistory.insertOne({
