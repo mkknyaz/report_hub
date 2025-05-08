@@ -3,8 +3,10 @@ using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.Handlers.User.Delete;
 using Exadel.ReportHub.Handlers.User.Get;
 using Exadel.ReportHub.Handlers.User.GetById;
+using Exadel.ReportHub.Handlers.User.GetProfile;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.Handlers.User.UpdateName;
+using Exadel.ReportHub.Handlers.User.UpdateNotificationFrequency;
 using Exadel.ReportHub.Handlers.User.UpdatePassword;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Exadel.ReportHub.Host.Services.Abstract;
@@ -59,6 +61,19 @@ public class UsersService(ISender sender) : BaseService
     {
         var result = await sender.Send(new GetUsersRequest(isActive));
 
+        return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.Read)]
+    [HttpGet("profile")]
+    [SwaggerOperation(Summary = "Get user profile", Description = "Retrieves the profile of a user by their unique id.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "User profile was retrieved successfully", typeof(ActionResult<UserProfileDTO>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User was not found", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<UserProfileDTO>> GetUserProfileById()
+    {
+        var result = await sender.Send(new GetUserProfileRequest());
         return FromResult(result);
     }
 
@@ -117,6 +132,21 @@ public class UsersService(ISender sender) : BaseService
     public async Task<ActionResult> DeleteUser([FromRoute] Guid id)
     {
         var result = await sender.Send(new DeleteUserRequest(id));
+        return FromResult(result);
+    }
+
+    [Authorize(Policy = Constants.Authorization.Policy.Update)]
+    [HttpPut("notification-settings")]
+    [SwaggerOperation(Summary = "Update user notification frequency", Description = "Updates the notification frequency of the user specified by id.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "User notification frequency was changed successfully")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid notification frequency data", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "this User does not have permission to update the notification frequency")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "User was not found", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    public async Task<ActionResult> UpdateUserNotificationFrequency([FromBody] NotificationSettingsDTO notificationSettingsDTO)
+    {
+        var result = await sender.Send(new UpdateUserNotificationSettingsRequest(notificationSettingsDTO));
         return FromResult(result);
     }
 }

@@ -119,6 +119,16 @@ public static class Constants
         {
             public const int MaxValue = 100;
         }
+
+        public static class NotificationSettings
+        {
+            public const int DefaultHourValue = 9;
+            public const int MaxHour = 23;
+            public const string TimeHourRange = "Time must be between 0 and 23 (hour of day).";
+            public const string MonthDayRange = "Invalid day of month for the current month";
+            public const string ShouldNotBeSet = "This field should not be set for the selected notification settings.";
+            public const string ShouldBeSet = "This field is required for the selected notification settings.";
+        }
     }
 
     public static class ClientData

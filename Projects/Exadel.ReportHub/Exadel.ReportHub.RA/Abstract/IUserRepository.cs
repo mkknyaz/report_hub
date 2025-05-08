@@ -1,4 +1,5 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using Exadel.ReportHub.Data.Enums;
+using Exadel.ReportHub.Data.Models;
 
 namespace Exadel.ReportHub.RA.Abstract;
 
@@ -25,4 +26,8 @@ public interface IUserRepository
     Task UpdateNameAsync(Guid id, string fullName, CancellationToken cancellationToken);
 
     Task DeleteAsync(Guid id, CancellationToken cancellationToken);
+
+    Task<IList<User>> GetUsersByNotificationSettingsAsync(int dayOfMonth, DayOfWeek dayOfWeek, int hour, CancellationToken cancellationToken);
+
+    Task UpdateNotificationSettingsAsync(Guid id, NotificationSettings notificationSettings, CancellationToken cancellationToken);
 }

@@ -48,6 +48,7 @@ public static class Constants
     {
         public static class Id
         {
+            public const string SendUserReports = nameof(SendUserReports);
             public const string OverduePaymentStatusUpdater = nameof(OverduePaymentStatusUpdater);
             public const string Ping = nameof(Ping);
         }

@@ -1,4 +1,5 @@
 using Exadel.ReportHub.Data.Abstract;
+using Exadel.ReportHub.Data.Enums;
 
 namespace Exadel.ReportHub.Data.Models;
 
@@ -15,4 +16,6 @@ public class User : IDocument
     public string PasswordSalt { get; set; }
 
     public bool IsActive { get; set; } = true;
+
+    public NotificationSettings NotificationSettings { get; set; }
 }

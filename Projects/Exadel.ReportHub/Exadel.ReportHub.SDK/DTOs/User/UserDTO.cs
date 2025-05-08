@@ -1,4 +1,6 @@
-﻿namespace Exadel.ReportHub.SDK.DTOs.User;
+﻿using Exadel.ReportHub.SDK.Enums;
+
+namespace Exadel.ReportHub.SDK.DTOs.User;
 
 public class UserDTO
 {
