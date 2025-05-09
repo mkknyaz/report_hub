@@ -33,4 +33,10 @@
     <ProjectReference Include="..\Exadel.ReportHub.RA\Exadel.ReportHub.RA.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Deployment\Resources\**">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

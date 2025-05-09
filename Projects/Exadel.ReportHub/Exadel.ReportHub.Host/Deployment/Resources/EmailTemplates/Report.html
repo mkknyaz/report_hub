@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Your report is ready</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #fff;
+        }
+
+        .header {
+            background: #1E90FF;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .content {
+            padding: 30px;
+            color: #333;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background: #e50914;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #777;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <table class="container" cellspacing="0" cellpadding="0">
+        <tr>
+            <td class="header">Exadel Report Hub</td>
+        </tr>
+        <tr>
+            <td class="content">
+                <h2>Hello, {{UserName}}!</h2>
+
+                {{#IsSuccess}}
+                <p>Your report for <strong>{{StartDate}}</strong> to <strong>{{EndDate}}</strong> is now ready.</p>
+                {{/IsSuccess}}
+
+                {{^IsSuccess}}
+                <p>Unfortunately, we couldn't generate your report for <strong>{{StartDate}}</strong> to <strong>{{EndDate}}</strong>.</p>
+                <p>Please try again later or contact support.</p>
+                {{/IsSuccess}}
+            </td>
+        </tr>
+        <tr>
+            <td class="footer">
+                &copy; Exadel Report Hub<br />
+                You received this email because you requested a report from our service.
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
