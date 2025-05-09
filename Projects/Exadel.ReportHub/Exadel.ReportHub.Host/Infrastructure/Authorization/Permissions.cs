@@ -77,6 +77,7 @@ public static class Permissions
                 { Permission.Read, new() { UserRole.Owner, UserRole.ClientAdmin } },
                 { Permission.Update, new() { UserRole.Owner } },
                 { Permission.Delete, new() { UserRole.Owner } },
+                { Permission.Export, new() { UserRole.Owner, UserRole.ClientAdmin } }
             }
         },
         {

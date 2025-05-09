@@ -12,16 +12,16 @@ namespace Exadel.ReportHub.Handlers.Invoice.Import;
 public record ImportInvoicesRequest(ImportDTO ImportDTO) : IRequest<ErrorOr<ImportResultDTO>>;
 
 public class ImportInvoicesHandler(
-    ICsvProcessor csvProcessor,
+    ICsvImporter csvImporter,
     IInvoiceRepository invoiceRepository,
     IInvoiceManager invoiceManager,
     IValidator<CreateInvoiceDTO> invoiceValidator) : IRequestHandler<ImportInvoicesRequest, ErrorOr<ImportResultDTO>>
 {
     public async Task<ErrorOr<ImportResultDTO>> Handle(ImportInvoicesRequest request, CancellationToken cancellationToken)
     {
-        using var stream = request.ImportDTO.File.OpenReadStream();
+        await using var stream = request.ImportDTO.File.OpenReadStream();
 
-        var invoiceDtos = csvProcessor.ReadInvoices(stream);
+        var invoiceDtos = csvImporter.ReadInvoices<CreateInvoiceDTO>(stream);
         var tasks = invoiceDtos.Select(dto => invoiceValidator.ValidateAsync(dto, cancellationToken));
         var validationResults = await Task.WhenAll(tasks);
 

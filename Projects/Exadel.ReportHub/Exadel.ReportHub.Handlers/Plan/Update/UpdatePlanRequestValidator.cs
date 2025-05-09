@@ -16,7 +16,7 @@ public class UpdatePlanRequestValidator : AbstractValidator<UpdatePlanRequest>
             {
                 child.RuleLevelCascadeMode = CascadeMode.Stop;
 
-                child.RuleFor(x => x.Amount)
+                child.RuleFor(x => x.Count)
                     .GreaterThan(0);
 
                 child.RuleFor(x => x.StartDate)

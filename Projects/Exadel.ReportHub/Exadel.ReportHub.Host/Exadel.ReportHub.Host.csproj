@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Exadel.ReportHub.Common\Exadel.ReportHub.Common.csproj" />
+    <ProjectReference Include="..\Exadel.ReportHub.Excel\Exadel.ReportHub.Excel.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.ExchangeRate\Exadel.ReportHub.Ecb.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.Handlers\Exadel.ReportHub.Handlers.csproj" />
     <ProjectReference Include="..\Exadel.ReportHub.Identity\Exadel.ReportHub.Identity.csproj" />

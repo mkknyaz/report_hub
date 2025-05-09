@@ -5,10 +5,8 @@ using ErrorOr;
 using Exadel.ReportHub.Common.Providers;
 using Exadel.ReportHub.Email.Abstract;
 using Exadel.ReportHub.Email.Models;
-using Exadel.ReportHub.Pdf;
 using Exadel.ReportHub.Pdf.Abstract;
 using Exadel.ReportHub.Pdf.Models;
-using Exadel.ReportHub.RA;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Item;
 using MediatR;
@@ -48,7 +46,7 @@ public class TestEmailHandler(
             invoiceModel.Items = mapper.Map<IList<ItemDTO>>(itemsTask.Result);
 
             var stream = await pdfInvoiceGenerator.GenerateAsync(invoiceModel, cancellationToken);
-            var attachment = new Attachment(stream, $"{invoice.InvoiceNumber}{Constants.File.Extension.Pdf}", MediaTypeNames.Application.Pdf);
+            var attachment = new Attachment(stream, $"{invoice.InvoiceNumber}{Export.Abstract.Constants.File.Extension.Pdf}", MediaTypeNames.Application.Pdf);
 
             var user = await userRepository.GetByIdAsync(userProvider.GetUserId(), cancellationToken);
             var reportEmail = new ReportEmailModel

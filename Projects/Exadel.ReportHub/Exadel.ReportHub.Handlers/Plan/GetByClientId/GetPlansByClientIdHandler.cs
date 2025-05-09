@@ -12,7 +12,7 @@ public class GetPlansByClientIdHandler(IPlanRepository planRepository, IMapper m
 {
     public async Task<ErrorOr<IList<PlanDTO>>> Handle(GetPlansByClientIdRequest request, CancellationToken cancellationToken)
     {
-        var plans = await planRepository.GetByClientIdAsync(request.ClientId, cancellationToken);
+        var plans = await planRepository.GetByClientIdAsync(request.ClientId, cancellationToken: cancellationToken);
 
         var plansDto = mapper.Map<List<PlanDTO>>(plans);
         return plansDto;

@@ -54,6 +54,13 @@ public class ItemRepository(MongoDbContext context) : BaseRepository(context), I
         return SoftDeleteAsync<Item>(id, cancellationToken);
     }
 
+    public async Task<Dictionary<Guid, decimal>> GetClientItemPricesAsync(Guid clientId, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.ClientId, clientId);
+        var projections = await GetCollection<Item>().Find(filter).Project(x => new { x.Id, x.Price }).ToListAsync(cancellationToken);
+        return projections.ToDictionary(x => x.Id, x => x.Price);
+    }
+
     public Task UpdateAsync(Item item, CancellationToken cancellationToken)
     {
         return UpdateAsync(item.Id, item, cancellationToken);

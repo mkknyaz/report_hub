@@ -10,7 +10,7 @@ public class Plan : IDocument, ISoftDeletable
 
     public Guid ItemId { get; set; }
 
-    public int Amount { get; set; }
+    public int Count { get; set; }
 
     public DateTime StartDate { get; set; }
 

@@ -21,4 +21,6 @@ public interface IItemRepository
     Task UpdateAsync(Item item, CancellationToken cancellationToken);
 
     Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken);
+
+    Task<Dictionary<Guid, decimal>> GetClientItemPricesAsync(Guid clientId, CancellationToken cancellationToken);
 }

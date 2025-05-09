@@ -1,7 +1,6 @@
-﻿using Exadel.ReportHub.Data.Enums;
-using Exadel.ReportHub.SDK.Abstract;
+﻿using Exadel.ReportHub.SDK.Abstract;
 
-namespace Exadel.ReportHub.Handlers.Invoice.ExportPdf;
+namespace Exadel.ReportHub.Export.Abstract;
 
 public class ExportResult : IFileResult
 {

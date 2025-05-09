@@ -2,7 +2,7 @@
 
 public class UpdatePlanDTO
 {
-    public int Amount { get; set; }
+    public int Count { get; set; }
 
     public DateTime StartDate { get; set; }
 

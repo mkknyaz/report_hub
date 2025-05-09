@@ -2,18 +2,17 @@
 using CsvHelper;
 using Exadel.ReportHub.Csv.Abstract;
 using Exadel.ReportHub.Csv.ClassMaps;
-using Exadel.ReportHub.SDK.DTOs.Invoice;
 
 namespace Exadel.ReportHub.Csv;
 
-public class CsvProcessor : ICsvProcessor
+public class CsvImporter : ICsvImporter
 {
-    public IList<CreateInvoiceDTO> ReadInvoices(Stream csvStream)
+    public IList<TResult> ReadInvoices<TResult>(Stream csvStream)
     {
         using var reader = new StreamReader(csvStream);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-        csv.Context.RegisterClassMap<CreateInvoiceMap>();
+        csv.Context.RegisterClassMap(ClassMapFactory.GetClassMap<TResult>());
 
-        return csv.GetRecords<CreateInvoiceDTO>().ToList();
+        return csv.GetRecords<TResult>().ToList();
     }
 }

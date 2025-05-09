@@ -2,6 +2,7 @@
 using AutoMapper;
 using ErrorOr;
 using Exadel.ReportHub.Common.Providers;
+using Exadel.ReportHub.Export.Abstract;
 using Exadel.ReportHub.Handlers.Notifications.Invoice.Export;
 using Exadel.ReportHub.Pdf.Abstract;
 using Exadel.ReportHub.Pdf.Models;
@@ -51,7 +52,7 @@ public class ExportPdfInvoiceHandler(
             var exportDto = new ExportResult
             {
                 Stream = stream,
-                FileName = $"{invoice.InvoiceNumber}{Constants.File.Extension.Pdf}",
+                FileName = $"{invoice.InvoiceNumber}{Export.Abstract.Constants.File.Extension.Pdf}",
                 ContentType = MediaTypeNames.Application.Pdf
             };
             isSuccess = true;

@@ -159,4 +159,150 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
             .SingleOrDefaultAsync(cancellationToken);
         return result;
     }
+
+    public async Task<Dictionary<Guid, int>> GetClientItemsCountAsync(Guid clientId, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.ClientId, clientId);
+        if (startDate.HasValue)
+        {
+            filter &= _filterBuilder.Gte(x => x.IssueDate, startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            filter &= _filterBuilder.Lte(x => x.IssueDate, endDate.Value);
+        }
+
+        var grouping = await GetCollection<Invoice>()
+            .Aggregate().
+            Match(filter)
+            .Unwind<Invoice, UnwoundInvoice>(x => x.ItemIds)
+            .Group(x => x.ItemIds, g => new { ItemId = g.Key, Count = g.Count() })
+            .ToListAsync(cancellationToken);
+        return grouping.ToDictionary(x => x.ItemId, x => x.Count);
+    }
+
+    public async Task<Dictionary<Guid, int>> GetPlansActualCountAsync(IEnumerable<Plan> plans, CancellationToken cancellationToken)
+    {
+        var planList = plans.ToList();
+        var facets = planList
+            .Select(plan =>
+                AggregateFacet.Create(
+                    plan.Id.ToString(),
+                    PipelineDefinition<Invoice, AggregateCountResult>.Create([
+                        PipelineStageDefinitionBuilder.Match(
+                            _filterBuilder.AnyEq(x => x.ItemIds, plan.ItemId) &
+                            _filterBuilder.Gte(x => x.IssueDate, plan.StartDate) &
+                            _filterBuilder.Lte(x => x.IssueDate, plan.EndDate)),
+                        PipelineStageDefinitionBuilder.Count<Invoice>()
+                    ])))
+            .ToList();
+
+        var facetResults = await GetCollection<Invoice>()
+            .Aggregate()
+            .Facet(facets)
+            .SingleAsync(cancellationToken);
+
+        return facetResults.Facets.ToDictionary(
+            x => Guid.Parse(x.Name),
+            x => x.Output<AggregateCountResult>().Any() ?
+                (int)x.Output<AggregateCountResult>()[0].Count : 0);
+    }
+
+    public async Task<InvoicesReport> GetReportAsync(Guid clientId, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.ClientId, clientId);
+        if (startDate.HasValue)
+        {
+            filter &= _filterBuilder.Gte(x => x.IssueDate, startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            filter &= _filterBuilder.Lte(x => x.IssueDate, endDate.Value);
+        }
+
+        var facetMainStatistics = AggregateFacet.Create(
+            "MainStatistics",
+            PipelineDefinition<Invoice, ReportMainStatistics>.Create([
+                PipelineStageDefinitionBuilder.Match(filter),
+                PipelineStageDefinitionBuilder.Group<Invoice, bool, ReportMainStatistics>(
+                    _ => true,
+                    g => new ReportMainStatistics(
+                        g.Count(),
+                        g.Sum(x => x.ClientCurrencyAmount),
+                        g.Average(x => x.ClientCurrencyAmount)))
+            ]));
+
+        var facetMonthCount = AggregateFacet.Create(
+            "MonthCount",
+            PipelineDefinition<Invoice, MonthCount>.Create([
+                PipelineStageDefinitionBuilder.Match(filter),
+                PipelineStageDefinitionBuilder.Group<Invoice, YearMonth, MonthCount>(
+                    x => new YearMonth(x.IssueDate.Year, x.IssueDate.Month),
+                    g => new MonthCount(
+                        g.Key,
+                        g.Count()))
+            ]));
+
+        var facetStatusCount = AggregateFacet.Create(
+            "StatusCount",
+            PipelineDefinition<Invoice, StatusCount>.Create([
+                PipelineStageDefinitionBuilder.Match(filter),
+                PipelineStageDefinitionBuilder.Group<Invoice, PaymentStatus, StatusCount>(
+                    x => x.PaymentStatus,
+                    g => new StatusCount(
+                        g.Key,
+                        g.Count()))
+                ]));
+
+        var facetResults = await GetCollection<Invoice>()
+            .Aggregate()
+            .Facet(facetMainStatistics, facetMonthCount, facetStatusCount)
+            .SingleAsync(cancellationToken);
+
+        var mainStatistics = facetResults.Facets[0]
+            .Output<ReportMainStatistics>()
+            .SingleOrDefault();
+
+        if (mainStatistics == null)
+        {
+            return null;
+        }
+
+        var monthCounts = facetResults.Facets[1]
+            .Output<MonthCount>();
+
+        var statusCounts = facetResults.Facets[2]
+            .Output<StatusCount>()
+            .ToDictionary(x => x.Status, x => x.Count);
+
+        statusCounts.TryGetValue(PaymentStatus.Unpaid, out var unpaidCount);
+        statusCounts.TryGetValue(PaymentStatus.Overdue, out var overdueCount);
+        statusCounts.TryGetValue(PaymentStatus.PaidOnTime, out var paidOnTimeCount);
+        statusCounts.TryGetValue(PaymentStatus.PaidLate, out var paidLateCount);
+
+        return new InvoicesReport
+        {
+            TotalCount = mainStatistics.TotalCount,
+            AverageMonthCount = monthCounts.Any() ?
+                (int)Math.Round(monthCounts.Average(x => x.Count)) : 0,
+            TotalAmount = mainStatistics.TotalAmount,
+            AverageAmount = mainStatistics.AverageAmount,
+            UnpaidCount = unpaidCount,
+            OverdueCount = overdueCount,
+            PaidOnTimeCount = paidOnTimeCount,
+            PaidLateCount = paidLateCount
+        };
+    }
+
+    private sealed record UnwoundInvoice(Guid ItemIds, DateTime IssueDate);
+
+    private sealed record ReportMainStatistics(int TotalCount, decimal TotalAmount, decimal AverageAmount);
+
+    private sealed record YearMonth(int Year, int Month);
+
+    private sealed record MonthCount(YearMonth Month, int Count);
+
+    private sealed record StatusCount(PaymentStatus Status, int Count);
 }

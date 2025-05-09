@@ -4,7 +4,7 @@ namespace Exadel.ReportHub.RA.Abstract;
 
 public interface IPlanRepository
 {
-    Task<IList<Plan>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken);
+    Task<IList<Plan>> GetByClientIdAsync(Guid clientId, DateTime? startDate = null, DateTime? endDate = null, CancellationToken cancellationToken = default);
 
     Task<Plan> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
@@ -12,7 +12,7 @@ public interface IPlanRepository
 
     Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken);
 
-    Task<bool> ExistsAsync(Guid itemId, Guid clientId, CancellationToken cancellationToken);
+    Task<bool> ExistsForItemByPeriodAsync(Guid itemId, Guid clientId, DateTime startDate, DateTime endDate, CancellationToken cancellationToken);
 
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
 

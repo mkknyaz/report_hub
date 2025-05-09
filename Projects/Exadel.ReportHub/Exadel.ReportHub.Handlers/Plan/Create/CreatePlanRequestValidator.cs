@@ -39,7 +39,7 @@ public class CreatePlanRequestValidator : AbstractValidator<CreatePlanRequest>
                     .MustAsync(_clientRepository.ExistsAsync)
                     .WithMessage(Constants.Validation.Client.DoesNotExist);
 
-                child.RuleFor(x => x.Amount)
+                child.RuleFor(x => x.Count)
                     .GreaterThan(0);
 
                 child.RuleFor(x => x.StartDate)
@@ -54,9 +54,10 @@ public class CreatePlanRequestValidator : AbstractValidator<CreatePlanRequest>
             });
     }
 
-    private async Task<bool> IsUniquePlanAsync(CreatePlanDTO createPlanDTO, CancellationToken cancellationToken)
+    private async Task<bool> IsUniquePlanAsync(CreatePlanDTO createPlanDto, CancellationToken cancellationToken)
     {
-        var isExists = await _planRepository.ExistsAsync(createPlanDTO.ItemId, createPlanDTO.ClientId, cancellationToken);
+        var isExists = await _planRepository.ExistsForItemByPeriodAsync(
+            createPlanDto.ItemId, createPlanDto.ClientId, createPlanDto.StartDate, createPlanDto.EndDate, cancellationToken);
         return !isExists;
     }
 }

@@ -16,7 +16,7 @@ namespace Exadel.ReportHub.Tests.Invoice.Import;
 
 public class ImportInvoicesHandlerTests : BaseTestFixture
 {
-    private Mock<ICsvProcessor> _csvProcessorMock;
+    private Mock<ICsvImporter> _csvProcessorMock;
     private Mock<IInvoiceRepository> _invoiceRepositoryMock;
     private Mock<IInvoiceManager> _invoiceManagerMock;
     private Mock<IValidator<CreateInvoiceDTO>> _invoiceValidatorMock;
@@ -26,7 +26,7 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
     [SetUp]
     public void Setup()
     {
-        _csvProcessorMock = new Mock<ICsvProcessor>();
+        _csvProcessorMock = new Mock<ICsvImporter>();
         _invoiceRepositoryMock = new Mock<IInvoiceRepository>();
         _invoiceManagerMock = new Mock<IInvoiceManager>();
         _invoiceValidatorMock = new Mock<IValidator<CreateInvoiceDTO>>();
@@ -47,7 +47,7 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes("CSV content"));
 
         _csvProcessorMock
-            .Setup(x => x.ReadInvoices(It.Is<Stream>(str => str.Length == memoryStream.Length)))
+            .Setup(x => x.ReadInvoices<CreateInvoiceDTO>(It.Is<Stream>(str => str.Length == memoryStream.Length)))
             .Returns(invoiceDtos);
 
         _invoiceManagerMock
@@ -145,7 +145,7 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
             .ReturnsAsync(new ValidationResult(errorsInvoice));
 
         _csvProcessorMock
-            .Setup(x => x.ReadInvoices(It.Is<Stream>(str => str.Length == memoryStream.Length)))
+            .Setup(x => x.ReadInvoices<CreateInvoiceDTO>(It.Is<Stream>(str => str.Length == memoryStream.Length)))
             .Returns(invoiceDtos);
 
         var importDto = new ImportDTO
@@ -206,7 +206,7 @@ public class ImportInvoicesHandlerTests : BaseTestFixture
             .ReturnsAsync(new ValidationResult(errorsInvoice));
 
         _csvProcessorMock
-            .Setup(x => x.ReadInvoices(It.Is<Stream>(str => str.Length == memoryStream.Length)))
+            .Setup(x => x.ReadInvoices<CreateInvoiceDTO>(It.Is<Stream>(str => str.Length == memoryStream.Length)))
             .Returns(invoiceDtos);
 
         var importDto = new ImportDTO
