@@ -82,7 +82,6 @@ public static class Constants
             public const string InvalidInvoiceNumberFormat = "Invoice number must start with 'INV' followed by digits.";
             public const string IssueDateInFuture = "Issue date cannot be in the future.";
             public const string DueDateBeforeIssueDate = "Due date must be greater than issue date.";
-            public const string TimeComponentNotAllowed = "Date cannot have a time component.";
             public const string DuplicateInvoice = "Invoice number already exists.";
             public const string DuplicateItem = "Items must not be duplicated.";
         }
@@ -113,6 +112,8 @@ public static class Constants
             public const string EndDateNotInPast = "End date must be less than/or equals to today's date";
             public const string EndDateInPast = "End date must be in the future";
             public const string EmptyStartDate = "Start date is required";
+            public const string InFuture = "Date cannot be in the future.";
+            public const string TimeComponentNotAllowed = "Date cannot have a time component.";
         }
 
         public static class Pagination

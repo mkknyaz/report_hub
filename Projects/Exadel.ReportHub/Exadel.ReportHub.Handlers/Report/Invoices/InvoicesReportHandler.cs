@@ -3,21 +3,22 @@ using ErrorOr;
 using Exadel.ReportHub.Export.Abstract;
 using Exadel.ReportHub.Export.Abstract.Helpers;
 using Exadel.ReportHub.RA.Abstract;
-using Exadel.ReportHub.SDK.Enums;
+using Exadel.ReportHub.SDK.DTOs.Report;
 using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Report.Invoices;
 
-public record InvoicesReportRequest(Guid ClientId, ExportFormat Format, DateTime? StartDate, DateTime? EndDate) : IRequest<ErrorOr<ExportResult>>;
+public record InvoicesReportRequest(ExportReportDTO ExportReportDto) : IRequest<ErrorOr<ExportResult>>;
 
 public class InvoicesReportHandler(IInvoiceRepository invoiceRepository, IClientRepository clientRepository, IExportStrategyFactory exportStrategyFactory)
     : IRequestHandler<InvoicesReportRequest, ErrorOr<ExportResult>>
 {
     public async Task<ErrorOr<ExportResult>> Handle(InvoicesReportRequest request, CancellationToken cancellationToken)
     {
-        var exportStrategyTask = exportStrategyFactory.GetStrategyAsync(request.Format, cancellationToken);
-        var reportTask = invoiceRepository.GetReportAsync(request.ClientId, request.StartDate, request.EndDate, cancellationToken);
-        var clientCurrencyTask = clientRepository.GetCurrencyAsync(request.ClientId, cancellationToken);
+        var exportStrategyTask = exportStrategyFactory.GetStrategyAsync(request.ExportReportDto.Format, cancellationToken);
+        var reportTask = invoiceRepository.GetReportAsync(request.ExportReportDto.ClientId,
+            request.ExportReportDto.StartDate, request.ExportReportDto.EndDate, cancellationToken);
+        var clientCurrencyTask = clientRepository.GetCurrencyAsync(request.ExportReportDto.ClientId, cancellationToken);
 
         await Task.WhenAll(exportStrategyTask, reportTask, clientCurrencyTask);
 
@@ -31,8 +32,8 @@ public class InvoicesReportHandler(IInvoiceRepository invoiceRepository, IClient
         {
             Stream = stream,
             FileName = $"InvoicesReport_{report.ReportDate.Date.ToString(Export.Abstract.Constants.Format.Date, CultureInfo.InvariantCulture)}" +
-                $"{ExportFormatHelper.GetFileExtension(request.Format)}",
-            ContentType = ExportFormatHelper.GetContentType(request.Format)
+                $"{ExportFormatHelper.GetFileExtension(request.ExportReportDto.Format)}",
+            ContentType = ExportFormatHelper.GetContentType(request.ExportReportDto.Format)
         };
     }
 }

@@ -4,23 +4,24 @@ using Exadel.ReportHub.Export.Abstract;
 using Exadel.ReportHub.Export.Abstract.Helpers;
 using Exadel.ReportHub.Export.Abstract.Models;
 using Exadel.ReportHub.RA.Abstract;
-using Exadel.ReportHub.SDK.Enums;
+using Exadel.ReportHub.SDK.DTOs.Report;
 using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Report.Items;
 
-public record ItemsReportRequest(Guid ClientId, ExportFormat Format, DateTime? StartDate, DateTime? EndDate) : IRequest<ErrorOr<ExportResult>>;
+public record ItemsReportRequest(ExportReportDTO ExportReportDto) : IRequest<ErrorOr<ExportResult>>;
 
 public class ItemsReportHandler(IItemRepository itemRepository, IInvoiceRepository invoiceRepository, IClientRepository clientRepository, IExportStrategyFactory exportStrategyFactory)
     : IRequestHandler<ItemsReportRequest, ErrorOr<ExportResult>>
 {
     public async Task<ErrorOr<ExportResult>> Handle(ItemsReportRequest request, CancellationToken cancellationToken)
     {
-        var exportStrategyTask = exportStrategyFactory.GetStrategyAsync(request.Format, cancellationToken);
+        var exportStrategyTask = exportStrategyFactory.GetStrategyAsync(request.ExportReportDto.Format, cancellationToken);
 
-        var itemPricesTask = itemRepository.GetClientItemPricesAsync(request.ClientId, cancellationToken);
-        var countsTask = invoiceRepository.GetClientItemsCountAsync(request.ClientId, request.StartDate, request.EndDate, cancellationToken);
-        var currencyTask = clientRepository.GetCurrencyAsync(request.ClientId, cancellationToken);
+        var itemPricesTask = itemRepository.GetClientItemPricesAsync(request.ExportReportDto.ClientId, cancellationToken);
+        var countsTask = invoiceRepository.GetClientItemsCountAsync(request.ExportReportDto.ClientId,
+            request.ExportReportDto.StartDate, request.ExportReportDto.EndDate, cancellationToken);
+        var currencyTask = clientRepository.GetCurrencyAsync(request.ExportReportDto.ClientId, cancellationToken);
 
         await Task.WhenAll(exportStrategyTask, itemPricesTask, countsTask, currencyTask);
         var report = new ItemsReport
@@ -41,8 +42,8 @@ public class ItemsReportHandler(IItemRepository itemRepository, IInvoiceReposito
         {
             Stream = stream,
             FileName = $"ItemsReport_{report.ReportDate.Date.ToString(Export.Abstract.Constants.Format.Date, CultureInfo.InvariantCulture)}" +
-                $"{ExportFormatHelper.GetFileExtension(request.Format)}",
-            ContentType = ExportFormatHelper.GetContentType(request.Format)
+                $"{ExportFormatHelper.GetFileExtension(request.ExportReportDto.Format)}",
+            ContentType = ExportFormatHelper.GetContentType(request.ExportReportDto.Format)
         };
     }
 }

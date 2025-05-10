@@ -30,11 +30,11 @@ public class InvoiceRevenueFilterDtoValidator : AbstractValidator<InvoiceRevenue
 
                 child.RuleFor(x => x.StartDate.TimeOfDay)
                     .Equal(TimeSpan.Zero)
-                    .WithMessage(Constants.Validation.Invoice.TimeComponentNotAllowed);
+                    .WithMessage(Constants.Validation.Date.TimeComponentNotAllowed);
 
                 child.RuleFor(x => x.EndDate.TimeOfDay)
                     .Equal(TimeSpan.Zero)
-                    .WithMessage(Constants.Validation.Invoice.TimeComponentNotAllowed);
+                    .WithMessage(Constants.Validation.Date.TimeComponentNotAllowed);
             });
     }
 }

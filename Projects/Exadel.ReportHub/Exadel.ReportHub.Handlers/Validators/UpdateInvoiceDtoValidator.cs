@@ -23,7 +23,7 @@ public class UpdateInvoiceDtoValidator : AbstractValidator<UpdateInvoiceDTO>
                   .WithMessage(Constants.Validation.Invoice.IssueDateInFuture);
               child.RuleFor(x => x.IssueDate.TimeOfDay)
                   .Equal(TimeSpan.Zero)
-                  .WithMessage(Constants.Validation.Invoice.TimeComponentNotAllowed);
+                  .WithMessage(Constants.Validation.Date.TimeComponentNotAllowed);
 
               child.RuleFor(x => x.DueDate)
                   .NotEmpty()
@@ -31,7 +31,7 @@ public class UpdateInvoiceDtoValidator : AbstractValidator<UpdateInvoiceDTO>
                   .WithMessage(Constants.Validation.Invoice.DueDateBeforeIssueDate);
               child.RuleFor(x => x.DueDate.TimeOfDay)
                   .Equal(TimeSpan.Zero)
-                  .WithMessage(Constants.Validation.Invoice.TimeComponentNotAllowed);
+                  .WithMessage(Constants.Validation.Date.TimeComponentNotAllowed);
           });
     }
 }

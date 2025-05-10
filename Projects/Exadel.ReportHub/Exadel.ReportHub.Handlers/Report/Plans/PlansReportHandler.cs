@@ -4,12 +4,12 @@ using Exadel.ReportHub.Export.Abstract;
 using Exadel.ReportHub.Export.Abstract.Helpers;
 using Exadel.ReportHub.Export.Abstract.Models;
 using Exadel.ReportHub.RA.Abstract;
-using Exadel.ReportHub.SDK.Enums;
+using Exadel.ReportHub.SDK.DTOs.Report;
 using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Report.Plans;
 
-public record PlansReportRequest(Guid ClientId, ExportFormat Format, DateTime? StartDate, DateTime? EndDate) : IRequest<ErrorOr<ExportResult>>;
+public record PlansReportRequest(ExportReportDTO ExportReportDto) : IRequest<ErrorOr<ExportResult>>;
 
 public class PlansReportHandler(IPlanRepository planRepository, IInvoiceRepository invoiceRepository, IItemRepository itemRepository,
     IClientRepository clientRepository, IExportStrategyFactory exportStrategyFactory)
@@ -17,16 +17,17 @@ public class PlansReportHandler(IPlanRepository planRepository, IInvoiceReposito
 {
     public async Task<ErrorOr<ExportResult>> Handle(PlansReportRequest request, CancellationToken cancellationToken)
     {
-        var exportStrategyTask = exportStrategyFactory.GetStrategyAsync(request.Format, cancellationToken);
-        var plansTask = planRepository.GetByClientIdAsync(request.ClientId, request.StartDate, request.EndDate, cancellationToken);
+        var exportStrategyTask = exportStrategyFactory.GetStrategyAsync(request.ExportReportDto.Format, cancellationToken);
+        var plansTask = planRepository.GetByClientIdAsync(request.ExportReportDto.ClientId,
+            request.ExportReportDto.StartDate, request.ExportReportDto.EndDate, cancellationToken);
         var reports = new List<PlanReport>();
 
         await Task.WhenAll(exportStrategyTask, plansTask);
         if (plansTask.Result.Any())
         {
             var countsTask = invoiceRepository.GetPlansActualCountAsync(plansTask.Result, cancellationToken);
-            var itemPricesTask = itemRepository.GetClientItemPricesAsync(request.ClientId, cancellationToken);
-            var clientCurrencyTask = clientRepository.GetCurrencyAsync(request.ClientId, cancellationToken);
+            var itemPricesTask = itemRepository.GetClientItemPricesAsync(request.ExportReportDto.ClientId, cancellationToken);
+            var clientCurrencyTask = clientRepository.GetCurrencyAsync(request.ExportReportDto.ClientId, cancellationToken);
 
             await Task.WhenAll(countsTask, itemPricesTask, clientCurrencyTask);
 
@@ -49,8 +50,8 @@ public class PlansReportHandler(IPlanRepository planRepository, IInvoiceReposito
         {
             Stream = stream,
             FileName = $"PlansReport_{DateTime.UtcNow.Date.ToString(Export.Abstract.Constants.Format.Date, CultureInfo.InvariantCulture)}" +
-                $"{ExportFormatHelper.GetFileExtension(request.Format)}",
-            ContentType = ExportFormatHelper.GetContentType(request.Format)
+                $"{ExportFormatHelper.GetFileExtension(request.ExportReportDto.Format)}",
+            ContentType = ExportFormatHelper.GetContentType(request.ExportReportDto.Format)
         };
     }
 }
