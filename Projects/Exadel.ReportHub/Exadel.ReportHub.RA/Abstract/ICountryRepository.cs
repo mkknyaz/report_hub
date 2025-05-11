@@ -10,5 +10,7 @@ public interface ICountryRepository
 
     Task<Country> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 
+    Task<IList<Country>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken);
+
     Task<bool> CountryCodeExistsAsync(string countryCode, CancellationToken cancellationToken);
 }

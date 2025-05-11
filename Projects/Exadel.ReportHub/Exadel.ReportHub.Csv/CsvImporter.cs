@@ -7,7 +7,7 @@ namespace Exadel.ReportHub.Csv;
 
 public class CsvImporter : ICsvImporter
 {
-    public IList<TResult> ReadInvoices<TResult>(Stream csvStream)
+    public IList<TResult> Read<TResult>(Stream csvStream)
     {
         using var reader = new StreamReader(csvStream);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);

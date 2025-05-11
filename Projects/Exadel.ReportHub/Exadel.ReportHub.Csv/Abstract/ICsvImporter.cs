@@ -2,5 +2,5 @@
 
 public interface ICsvImporter
 {
-    IList<TResult> ReadInvoices<TResult>(Stream csvStream);
+    IList<TResult> Read<TResult>(Stream csvStream);
 }

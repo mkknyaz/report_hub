@@ -15,6 +15,11 @@ public class ClientRepository(MongoDbContext context) : BaseRepository(context),
         return base.AddAsync(client, cancellationToken);
     }
 
+    public Task AddManyAsync(IEnumerable<Client> clients, CancellationToken cancellationToken)
+    {
+        return base.AddManyAsync(clients, cancellationToken);
+    }
+
     public Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return GetByIdAsync<Client>(id, cancellationToken);

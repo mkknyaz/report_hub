@@ -3,7 +3,7 @@ using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.Ecb;
 using Exadel.ReportHub.Ecb.Abstract;
-using Exadel.ReportHub.Handlers.Managers;
+using Exadel.ReportHub.Handlers.Managers.Invoice;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
 using Exadel.ReportHub.Tests.Abstracts;

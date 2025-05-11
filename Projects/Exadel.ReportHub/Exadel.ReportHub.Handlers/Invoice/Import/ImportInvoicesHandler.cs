@@ -1,6 +1,6 @@
 ﻿using ErrorOr;
 using Exadel.ReportHub.Csv.Abstract;
-using Exadel.ReportHub.Handlers.Managers;
+using Exadel.ReportHub.Handlers.Managers.Invoice;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Import;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
@@ -21,7 +21,7 @@ public class ImportInvoicesHandler(
     {
         await using var stream = request.ImportDTO.File.OpenReadStream();
 
-        var invoiceDtos = csvImporter.ReadInvoices<CreateInvoiceDTO>(stream);
+        var invoiceDtos = csvImporter.Read<CreateInvoiceDTO>(stream);
         var tasks = invoiceDtos.Select(dto => invoiceValidator.ValidateAsync(dto, cancellationToken));
         var validationResults = await Task.WhenAll(tasks);
 

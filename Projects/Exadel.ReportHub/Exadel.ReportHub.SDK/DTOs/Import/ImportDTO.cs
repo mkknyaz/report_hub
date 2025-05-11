@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Exadel.ReportHub.SDK.DTOs.Invoice;
+namespace Exadel.ReportHub.SDK.DTOs.Import;
 
 public class ImportDTO
 {

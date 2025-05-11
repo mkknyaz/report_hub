@@ -23,6 +23,11 @@ public class CountryRepository(MongoDbContext context) : BaseRepository(context)
         return GetByIdAsync<Country>(id, cancellationToken);
     }
 
+    public Task<IList<Country>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    {
+        return GetByIdsAsync<Country>(ids, cancellationToken);
+    }
+
     public async Task<bool> CountryCodeExistsAsync(string countryCode, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.CountryCode, countryCode);

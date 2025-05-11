@@ -1,6 +1,6 @@
 ﻿using Exadel.ReportHub.SDK.DTOs.Invoice;
 
-namespace Exadel.ReportHub.Handlers.Managers;
+namespace Exadel.ReportHub.Handlers.Managers.Invoice;
 
 public interface IInvoiceManager
 {

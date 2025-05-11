@@ -4,10 +4,12 @@ using Exadel.ReportHub.Handlers.Customer.Create;
 using Exadel.ReportHub.Handlers.Customer.Delete;
 using Exadel.ReportHub.Handlers.Customer.Get;
 using Exadel.ReportHub.Handlers.Customer.GetById;
+using Exadel.ReportHub.Handlers.Customer.Import;
 using Exadel.ReportHub.Handlers.Customer.Update;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Exadel.ReportHub.Host.Services.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Customer;
+using Exadel.ReportHub.SDK.DTOs.Import;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,20 @@ namespace Exadel.ReportHub.Host.Services;
 [Route("api/customers")]
 public class CustomersService(ISender sender) : BaseService
 {
+    [Authorize(Policy = Constants.Authorization.Policy.Create)]
+    [HttpPost("import")]
+    [SwaggerOperation(Summary = "Import customers", Description = "Imports a list of customers from a file.")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Customers were imported successfully", typeof(ActionResult<ImportResultDTO>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input data", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "User doesnt have permission to import a Customer")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<ImportResultDTO>> ImportCustomers([FromForm] ImportDTO importDto, [FromQuery][Required] Guid clientId)
+    {
+        var result = await sender.Send(new ImportCustomersRequest(importDto));
+        return FromResult(result, StatusCodes.Status201Created);
+    }
+
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost]
     [SwaggerOperation(Summary = "Add a new customer", Description = "Creates a new customer and returns its details.")]

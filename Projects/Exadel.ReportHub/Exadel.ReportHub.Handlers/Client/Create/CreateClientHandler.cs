@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ErrorOr;
+using Exadel.ReportHub.Handlers.Managers.Common;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Client;
 using MediatR;
@@ -10,17 +11,11 @@ public record CreateClientRequest(CreateClientDTO CreateClientDto) : IRequest<Er
 public class CreateClientHandler(
     IClientRepository clientRepository,
     IMapper mapper,
-    ICountryRepository countryRepository) : IRequestHandler<CreateClientRequest, ErrorOr<ClientDTO>>
+    ICountryBasedEntityManager countryBasedEntityManager) : IRequestHandler<CreateClientRequest, ErrorOr<ClientDTO>>
 {
     public async Task<ErrorOr<ClientDTO>> Handle(CreateClientRequest request, CancellationToken cancellationToken)
     {
-        var country = await countryRepository.GetByIdAsync(request.CreateClientDto.CountryId, cancellationToken);
-
-        var client = mapper.Map<Data.Models.Client>(request.CreateClientDto);
-        client.Id = Guid.NewGuid();
-        client.Country = country.Name;
-        client.CurrencyId = country.CurrencyId;
-        client.CurrencyCode = country.CurrencyCode;
+        var client = await countryBasedEntityManager.GenerateEntityAsync<CreateClientDTO, Data.Models.Client>(request.CreateClientDto, cancellationToken);
 
         await clientRepository.AddAsync(client, cancellationToken);
 

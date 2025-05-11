@@ -16,6 +16,11 @@ public class CustomerRepository(MongoDbContext context) : BaseRepository(context
         return AddAsync<Customer>(customer, cancellationToken);
     }
 
+    public Task AddManyAsync(IEnumerable<Customer> customers, CancellationToken cancellationToken)
+    {
+        return base.AddManyAsync(customers, cancellationToken);
+    }
+
     public async Task<bool> EmailExistsAsync(string email, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.Email, email);

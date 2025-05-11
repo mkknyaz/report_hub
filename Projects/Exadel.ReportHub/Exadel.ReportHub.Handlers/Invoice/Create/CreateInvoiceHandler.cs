@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ErrorOr;
-using Exadel.ReportHub.Handlers.Managers;
+using Exadel.ReportHub.Handlers.Managers.Invoice;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
 using MediatR;

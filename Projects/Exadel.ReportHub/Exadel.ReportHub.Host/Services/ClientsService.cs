@@ -1,12 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Handlers.Client.Create;
 using Exadel.ReportHub.Handlers.Client.Delete;
 using Exadel.ReportHub.Handlers.Client.Get;
 using Exadel.ReportHub.Handlers.Client.GetById;
+using Exadel.ReportHub.Handlers.Client.Import;
 using Exadel.ReportHub.Handlers.Client.UpdateName;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Exadel.ReportHub.Host.Services.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Client;
+using Exadel.ReportHub.SDK.DTOs.Import;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +21,20 @@ namespace Exadel.ReportHub.Host.Services;
 [Route("api/clients")]
 public class ClientsService(ISender sender) : BaseService
 {
+    [Authorize(Policy = Constants.Authorization.Policy.Create)]
+    [HttpPost("import")]
+    [SwaggerOperation(Summary = "Import clients", Description = "Imports a list of clients from a file and returns the result of the import process")]
+    [SwaggerResponse(StatusCodes.Status201Created, "Clients were imported successfully", typeof(ActionResult<ImportResultDTO>))]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid input data", typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "User doesnt have permission to import clients")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    public async Task<ActionResult<ImportResultDTO>> ImportClients([FromForm] ImportDTO importDto, [FromQuery][Required] Guid clientId)
+    {
+        var result = await sender.Send(new ImportClientRequest(importDto));
+        return FromResult(result, StatusCodes.Status201Created);
+    }
+
     [Authorize(Policy = Constants.Authorization.Policy.Create)]
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new client", Description = "Creates a new client and returns the created client object")]

@@ -4,6 +4,8 @@ namespace Exadel.ReportHub.RA.Abstract;
 
 public interface ICustomerRepository
 {
+    Task AddManyAsync(IEnumerable<Customer> customers, CancellationToken cancellationToken);
+
     Task AddAsync(Customer customer, CancellationToken cancellationToken);
 
     Task<IList<Customer>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken);

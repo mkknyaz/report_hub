@@ -2,7 +2,7 @@
 
 namespace Exadel.ReportHub.Data.Models;
 
-public class Client : IDocument, ISoftDeletable
+public class Client : IDocument, ISoftDeletable, ICountryBasedDocument
 {
     public Guid Id { get; set; }
 

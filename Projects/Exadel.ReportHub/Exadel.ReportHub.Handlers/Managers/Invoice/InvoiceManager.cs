@@ -3,7 +3,7 @@ using Exadel.ReportHub.Ecb.Abstract;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
 
-namespace Exadel.ReportHub.Handlers.Managers;
+namespace Exadel.ReportHub.Handlers.Managers.Invoice;
 
 public class InvoiceManager(
     IClientRepository clientRepository,
