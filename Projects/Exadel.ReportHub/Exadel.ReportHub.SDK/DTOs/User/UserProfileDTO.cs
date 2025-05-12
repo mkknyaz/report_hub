@@ -1,4 +1,5 @@
 ﻿namespace Exadel.ReportHub.SDK.DTOs.User;
+
 public class UserProfileDTO
 {
     public Guid Id { get; set; }

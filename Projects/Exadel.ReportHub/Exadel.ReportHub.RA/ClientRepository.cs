@@ -42,6 +42,12 @@ public class ClientRepository(MongoDbContext context) : BaseRepository(context),
         return await GetCollection<Client>().Find(filter).Project(x => x.CurrencyCode).SingleOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<string> GetNameAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.Id, id);
+        return await GetCollection<Client>().Find(filter).Project(x => x.Name).SingleOrDefaultAsync(cancellationToken);
+    }
+
     public Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         return SoftDeleteAsync<Client>(id, cancellationToken);

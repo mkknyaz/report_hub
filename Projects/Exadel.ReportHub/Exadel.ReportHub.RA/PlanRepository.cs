@@ -27,12 +27,12 @@ public class PlanRepository(MongoDbContext context) : BaseRepository(context), I
             _filterBuilder.Eq(x => x.ClientId, clientId));
         if (startDate.HasValue)
         {
-            filter &= _filterBuilder.Gte(x => x.StartDate, startDate.Value);
+            filter &= _filterBuilder.Gte(x => x.EndDate, startDate.Value);
         }
 
         if (endDate.HasValue)
         {
-            filter &= _filterBuilder.Lte(x => x.EndDate, endDate.Value);
+            filter &= _filterBuilder.Lte(x => x.StartDate, endDate.Value);
         }
 
         return GetAsync(filter, cancellationToken);
@@ -57,8 +57,8 @@ public class PlanRepository(MongoDbContext context) : BaseRepository(context), I
         var filter =
             _filterBuilder.Eq(x => x.ClientId, clientId) &
             _filterBuilder.Eq(x => x.ItemId, itemId) &
-            (_filterBuilder.Gte(x => x.EndDate, startDate) |
-            _filterBuilder.Lte(x => x.StartDate, endDate)) &
+            _filterBuilder.Gte(x => x.EndDate, startDate) &
+            _filterBuilder.Lte(x => x.StartDate, endDate) &
             _filterBuilder.Eq(x => x.IsDeleted, false);
         var count = await GetCollection<Plan>().CountDocumentsAsync(filter, cancellationToken: cancellationToken);
         return count > 0;

@@ -42,8 +42,16 @@ public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(c
     {
         var filter = _filterBuilder.Eq(x => x.UserId, userId);
         var field = new ExpressionFieldDefinition<UserAssignment, UserRole>(x => x.Role);
-        var userRoles = await GetCollection<UserAssignment>().DistinctAsync(field, filter);
-        return await userRoles.ToListAsync();
+        var userRoles = await GetCollection<UserAssignment>().DistinctAsync(field, filter, cancellationToken: cancellationToken);
+        return await userRoles.ToListAsync(cancellationToken);
+    }
+
+    public Task<UserRole?> GetUserRoleByClientIdAsync(Guid userId, Guid clientId, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.UserId, userId) &
+                     _filterBuilder.Eq(x => x.ClientId, clientId);
+
+        return GetCollection<UserAssignment>().Find(filter).Project(x => (UserRole?)x.Role).SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task UpdateRoleAsync(Guid userId, Guid clientId, UserRole userRole, CancellationToken cancellationToken)

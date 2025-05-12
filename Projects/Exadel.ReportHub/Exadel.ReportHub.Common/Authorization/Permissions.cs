@@ -1,6 +1,6 @@
 ﻿using Exadel.ReportHub.Data.Enums;
 
-namespace Exadel.ReportHub.Host.Infrastructure.Authorization;
+namespace Exadel.ReportHub.Common.Authorization;
 
 public static class Permissions
 {

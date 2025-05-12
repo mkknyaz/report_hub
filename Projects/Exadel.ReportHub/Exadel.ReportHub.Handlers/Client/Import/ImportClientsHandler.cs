@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using ErrorOr;
+﻿using ErrorOr;
 using Exadel.ReportHub.Excel.Abstract;
 using Exadel.ReportHub.Handlers.Managers.Common;
 using Exadel.ReportHub.RA.Abstract;

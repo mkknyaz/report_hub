@@ -123,12 +123,15 @@ public static class Constants
 
         public static class NotificationSettings
         {
-            public const int DefaultHourValue = 9;
             public const int MaxHour = 23;
+            public const int MaxDayOfMonth = 31;
             public const string TimeHourRange = "Time must be between 0 and 23 (hour of day).";
-            public const string MonthDayRange = "Invalid day of month for the current month";
+            public const string MonthDayRange = "Invalid day of month";
+            public const string WeekDayRange = "Invalid day of week";
+            public const string NoPermissions = "No permissions to get reports from selected client.";
             public const string ShouldNotBeSet = "This field should not be set for the selected notification settings.";
             public const string ShouldBeSet = "This field is required for the selected notification settings.";
+            public const string ZeroDaysCount = "Must be set at least 1 day.";
         }
     }
 

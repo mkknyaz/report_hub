@@ -9,6 +9,8 @@ public interface IUserAssignmentRepository
 
     Task<IList<UserRole>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken);
 
+    Task<UserRole?> GetUserRoleByClientIdAsync(Guid userId, Guid clientId, CancellationToken cancellationToken);
+
     Task<bool> ExistsAsync(Guid userId, Guid clientId, CancellationToken cancellationToken);
 
     Task<bool> ExistAnyAsync(Guid userId, IEnumerable<Guid> clientIds, IEnumerable<UserRole> roles, CancellationToken cancellationToken);

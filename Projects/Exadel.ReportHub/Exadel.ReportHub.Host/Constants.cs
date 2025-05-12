@@ -1,6 +1,4 @@
-﻿using Exadel.ReportHub.Data.Models;
-
-namespace Exadel.ReportHub.Host;
+﻿namespace Exadel.ReportHub.Host;
 
 public static class Constants
 {
@@ -17,19 +15,6 @@ public static class Constants
             public const string Update = nameof(Update);
             public const string Delete = nameof(Delete);
             public const string Export = nameof(Export);
-        }
-
-        public static class Resource
-        {
-            public const string Clients = nameof(Clients);
-            public const string Users = nameof(Users);
-            public const string UserAssignments = nameof(UserAssignments);
-            public const string Items = nameof(Items);
-            public const string Invoices = nameof(Invoices);
-            public const string Customers = nameof(Customers);
-            public const string Plans = nameof(Plans);
-            public const string Reports = nameof(Reports);
-            public const string AuditReports = nameof(AuditReports);
         }
     }
 

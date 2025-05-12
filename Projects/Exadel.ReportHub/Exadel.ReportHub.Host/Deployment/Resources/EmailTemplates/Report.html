@@ -59,11 +59,11 @@
                 <h2>Hello, {{UserName}}!</h2>
 
                 {{#IsSuccess}}
-                <p>Your report for <strong>{{StartDate}}</strong> to <strong>{{EndDate}}</strong> is now ready.</p>
+                <p>Your <strong>{{Period}}</strong> reports for <strong>{{ClientName}}</strong> are now ready.</p>
                 {{/IsSuccess}}
 
                 {{^IsSuccess}}
-                <p>Unfortunately, we couldn't generate your report for <strong>{{StartDate}}</strong> to <strong>{{EndDate}}</strong>.</p>
+                <p>Unfortunately, we couldn't generate your <strong>{{Period}}</strong> reports for <strong>{{ClientName}}</strong>.</p>
                 <p>Please try again later or contact support.</p>
                 {{/IsSuccess}}
             </td>

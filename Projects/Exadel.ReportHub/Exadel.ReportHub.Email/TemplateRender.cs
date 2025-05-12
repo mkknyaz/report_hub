@@ -1,7 +1,5 @@
 ﻿using Exadel.ReportHub.Email.Abstract;
-using Stubble.Core;
 using Stubble.Core.Builders;
-using Stubble.Core.Interfaces;
 
 namespace Exadel.ReportHub.Email;
 

@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
 using Duende.IdentityServer.Extensions;
+using Exadel.ReportHub.Common.Authorization;
 using Exadel.ReportHub.Data.Enums;
-using Exadel.ReportHub.Host.Infrastructure.Authorization;
 using Exadel.ReportHub.Host.Services;
 using Exadel.ReportHub.RA.Abstract;
 using Microsoft.AspNetCore.Authorization;

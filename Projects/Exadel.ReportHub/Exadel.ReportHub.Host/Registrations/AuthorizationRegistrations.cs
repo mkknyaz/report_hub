@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Common.Authorization;
 using Exadel.ReportHub.Common.Providers;
-using Exadel.ReportHub.Host.Infrastructure.Authorization;
 using Exadel.ReportHub.Host.PolicyHandlers;
 using Exadel.ReportHub.RA;
 using Microsoft.AspNetCore.Authorization;

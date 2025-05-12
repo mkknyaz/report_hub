@@ -16,6 +16,9 @@ public class UserProfile : Profile
             .ForMember(x => x.PasswordSalt, opt => opt.Ignore())
             .ForMember(x => x.IsActive, opt => opt.Ignore())
             .ForMember(x => x.NotificationSettings, opt => opt.Ignore());
-        CreateMap<NotificationSettings, NotificationSettingsDTO>().ReverseMap();
+
+        CreateMap<NotificationSettings, NotificationSettingsDTO>();
+        CreateMap<UpdateNotificationSettingsDTO, NotificationSettings>()
+            .ForMember(x => x.ClientName, opt => opt.Ignore());
     }
 }

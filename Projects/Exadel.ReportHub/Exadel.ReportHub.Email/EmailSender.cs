@@ -2,14 +2,13 @@
 using System.Net.Mail;
 using Exadel.ReportHub.Email.Abstract;
 using Exadel.ReportHub.Email.Configs;
-using Exadel.ReportHub.Email.Models;
 using Microsoft.Extensions.Options;
 
 namespace Exadel.ReportHub.Email;
 
 public class EmailSender(IOptionsMonitor<SmtpConfig> smtpConfig, ITemplateRender templateRender) : IEmailSender
 {
-    public async Task SendAsync(string to, string subject, Attachment attachment, string templateName, object data, CancellationToken cancellationToken)
+    public async Task SendAsync(string to, string subject, IEnumerable<Attachment> attachments, string templateName, object data, CancellationToken cancellationToken)
     {
         var htmlBody = await templateRender.RenderAsync(templateName, data, cancellationToken);
         using var message = new MailMessage
@@ -20,7 +19,7 @@ public class EmailSender(IOptionsMonitor<SmtpConfig> smtpConfig, ITemplateRender
             IsBodyHtml = true
         };
         message.To.Add(to);
-        if (attachment is not null)
+        foreach (var attachment in attachments)
         {
             message.Attachments.Add(attachment);
         }

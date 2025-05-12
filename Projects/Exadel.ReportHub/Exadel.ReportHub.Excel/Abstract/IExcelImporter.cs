@@ -1,6 +1,4 @@
-﻿using Aspose.Cells;
-
-namespace Exadel.ReportHub.Excel.Abstract;
+﻿namespace Exadel.ReportHub.Excel.Abstract;
 
 public interface IExcelImporter
 {

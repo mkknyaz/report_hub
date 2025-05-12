@@ -3,6 +3,7 @@ using Exadel.ReportHub.Audit;
 using Exadel.ReportHub.Audit.Abstract;
 using Exadel.ReportHub.Handlers.Managers.Common;
 using Exadel.ReportHub.Handlers.Managers.Invoice;
+using Exadel.ReportHub.Handlers.Managers.Report;
 
 namespace Exadel.ReportHub.Host.Registrations;
 
@@ -13,6 +14,7 @@ public static class ManagerRegistrations
     {
         services.AddSingleton<IInvoiceManager, InvoiceManager>();
         services.AddSingleton<IAuditManager, AuditManager>();
+        services.AddSingleton<IReportManager, ReportManager>();
         services.AddSingleton<ICountryBasedEntityManager, CountryBasedEntityManager>();
 
         return services;

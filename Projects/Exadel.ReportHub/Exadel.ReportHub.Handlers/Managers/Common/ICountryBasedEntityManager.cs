@@ -1,5 +1,4 @@
 ﻿using Exadel.ReportHub.Data.Abstract;
-using Exadel.ReportHub.SDK.DTOs.Client;
 
 namespace Exadel.ReportHub.Handlers.Managers.Common;
 

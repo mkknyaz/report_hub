@@ -6,7 +6,7 @@ using Exadel.ReportHub.Handlers.User.GetById;
 using Exadel.ReportHub.Handlers.User.GetProfile;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.Handlers.User.UpdateName;
-using Exadel.ReportHub.Handlers.User.UpdateNotificationFrequency;
+using Exadel.ReportHub.Handlers.User.UpdateNotificationSettings;
 using Exadel.ReportHub.Handlers.User.UpdatePassword;
 using Exadel.ReportHub.Host.Infrastructure.Models;
 using Exadel.ReportHub.Host.Services.Abstract;
@@ -135,18 +135,28 @@ public class UsersService(ISender sender) : BaseService
         return FromResult(result);
     }
 
-    [Authorize(Policy = Constants.Authorization.Policy.Update)]
+    [Authorize]
     [HttpPut("notification-settings")]
-    [SwaggerOperation(Summary = "Update user notification frequency", Description = "Updates the notification frequency of the user specified by id.")]
-    [SwaggerResponse(StatusCodes.Status204NoContent, "User notification frequency was changed successfully")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid notification frequency data", typeof(ErrorResponse))]
+    [SwaggerOperation(Summary = "Update user notification settings", Description = "Updates the notification settings of the authorized user.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "User notification settings were changed successfully")]
+    [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid notification settings data", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
-    [SwaggerResponse(StatusCodes.Status403Forbidden, "this User does not have permission to update the notification frequency")]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "User was not found", typeof(ErrorResponse))]
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
-    public async Task<ActionResult> UpdateUserNotificationFrequency([FromBody] NotificationSettingsDTO notificationSettingsDTO)
+    public async Task<ActionResult> UpdateUserNotificationSettings([FromBody] UpdateNotificationSettingsDTO updateNotificationSettingsDto)
     {
-        var result = await sender.Send(new UpdateUserNotificationSettingsRequest(notificationSettingsDTO));
+        var result = await sender.Send(new UpdateUserNotificationSettingsRequest(updateNotificationSettingsDto));
+        return FromResult(result);
+    }
+
+    [Authorize]
+    [HttpPut("notification-settings/turn-off")]
+    [SwaggerOperation(Summary = "Turn user notifications off", Description = "Turns notifications off for the authorized user.")]
+    [SwaggerResponse(StatusCodes.Status204NoContent, "User notifications were turned off successfully")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    public async Task<ActionResult> TurnOffUserNotificationSettings()
+    {
+        var result = await sender.Send(new UpdateUserNotificationSettingsRequest(null));
         return FromResult(result);
     }
 }

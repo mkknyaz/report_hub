@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Exadel.ReportHub.Data.Abstract;
-using Exadel.ReportHub.RA;
 using Exadel.ReportHub.RA.Abstract;
-using Exadel.ReportHub.SDK.DTOs.Client;
 
 namespace Exadel.ReportHub.Handlers.Managers.Common;
 

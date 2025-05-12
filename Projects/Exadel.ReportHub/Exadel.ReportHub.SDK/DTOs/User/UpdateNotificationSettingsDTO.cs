@@ -1,8 +1,8 @@
-﻿using Exadel.ReportHub.Data.Enums;
+﻿using Exadel.ReportHub.SDK.Enums;
 
-namespace Exadel.ReportHub.Data.Models;
+namespace Exadel.ReportHub.SDK.DTOs.User;
 
-public class NotificationSettings
+public class UpdateNotificationSettingsDTO
 {
     public NotificationFrequency Frequency { get; set; }
 
@@ -13,8 +13,6 @@ public class NotificationSettings
     public int Hour { get; set; }
 
     public Guid ClientId { get; set; }
-
-    public string ClientName { get; set; }
 
     public ExportFormat ExportFormat { get; set; }
 
