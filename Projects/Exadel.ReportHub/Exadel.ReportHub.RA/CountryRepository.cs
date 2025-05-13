@@ -1,9 +1,11 @@
-﻿using Exadel.ReportHub.Data.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
 
+[ExcludeFromCodeCoverage]
 public class CountryRepository(MongoDbContext context) : BaseRepository(context), ICountryRepository
 {
     private static readonly FilterDefinitionBuilder<Country> _filterBuilder = Builders<Country>.Filter;
@@ -32,6 +34,7 @@ public class CountryRepository(MongoDbContext context) : BaseRepository(context)
     {
         var filter = _filterBuilder.Eq(x => x.CountryCode, countryCode);
         var count = await GetCollection<Country>().Find(filter).CountDocumentsAsync(cancellationToken);
+
         return count > 0;
     }
 }

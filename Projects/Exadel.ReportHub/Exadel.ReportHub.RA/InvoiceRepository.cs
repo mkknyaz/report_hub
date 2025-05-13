@@ -2,6 +2,7 @@
 using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
+using Exadel.ReportHub.RA.Extensions;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -26,7 +27,9 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
     {
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.Id, id),
-            _filterBuilder.Eq(x => x.ClientId, clientId));
+            _filterBuilder.Eq(x => x.ClientId, clientId))
+            .NotDeleted();
+
         var count = await GetCollection<Invoice>().Find(filter).CountDocumentsAsync(cancellationToken);
         return count > 0;
     }
@@ -35,14 +38,14 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
     {
         var filter = _filterBuilder.Eq(x => x.InvoiceNumber, invoiceNumber);
         var count = await GetCollection<Invoice>().Find(filter).CountDocumentsAsync(cancellationToken);
+
         return count > 0;
     }
 
     public Task<IList<Invoice>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.And(
-            _filterBuilder.Eq(x => x.ClientId, clientId),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+        var filter = _filterBuilder.Eq(x => x.ClientId, clientId).NotDeleted();
+
         return GetAsync(filter, cancellationToken);
     }
 
@@ -50,8 +53,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
     {
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.Id, id),
-            _filterBuilder.Eq(x => x.ClientId, clientId),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+            _filterBuilder.Eq(x => x.ClientId, clientId))
+            .NotDeleted();
 
         return await GetCollection<Invoice>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
@@ -66,6 +69,7 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         var definition = Builders<Invoice>.Update
             .Set(x => x.IssueDate, invoice.IssueDate)
             .Set(x => x.DueDate, invoice.DueDate);
+
         return UpdateAsync(invoice.Id, definition, cancellationToken);
     }
 
@@ -74,7 +78,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.Id, id),
             _filterBuilder.Eq(x => x.ClientId, clientId),
-            _filterBuilder.In(x => x.PaymentStatus, new[] { PaymentStatus.Unpaid, PaymentStatus.Overdue }));
+            _filterBuilder.In(x => x.PaymentStatus, [PaymentStatus.Unpaid, PaymentStatus.Overdue]))
+            .NotDeleted();
 
         PipelineDefinition<Invoice, Invoice> pipeline = new[]
         {
@@ -94,8 +99,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
     {
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.PaymentStatus, PaymentStatus.Unpaid),
-            _filterBuilder.Lt(x => x.DueDate, date),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+            _filterBuilder.Lt(x => x.DueDate, date))
+            .NotDeleted();
         var updateDefinition = Builders<Invoice>.Update.Set(x => x.PaymentStatus, PaymentStatus.Overdue);
 
         var result = await GetCollection<Invoice>().UpdateManyAsync(filter, updateDefinition, cancellationToken: cancellationToken);
@@ -107,8 +112,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.ClientId, clientId),
             _filterBuilder.Gte(x => x.IssueDate, startDate),
-            _filterBuilder.Lte(x => x.IssueDate, endDate),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+            _filterBuilder.Lte(x => x.IssueDate, endDate))
+            .NotDeleted();
 
         var result = await GetCollection<Invoice>()
             .Aggregate()
@@ -133,8 +138,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.ClientId, clientId),
             _filterBuilder.Gte(x => x.IssueDate, startDate),
-            _filterBuilder.Lte(x => x.IssueDate, endDate),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+            _filterBuilder.Lte(x => x.IssueDate, endDate))
+            .NotDeleted();
 
         if (customerId.HasValue)
         {
@@ -149,8 +154,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
     {
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.ClientId, clientId),
-            _filterBuilder.Eq(x => x.PaymentStatus, PaymentStatus.Overdue),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+            _filterBuilder.Eq(x => x.PaymentStatus, PaymentStatus.Overdue))
+            .NotDeleted();
 
         var result = await GetCollection<Invoice>()
             .Aggregate()
@@ -198,7 +203,8 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
                         PipelineStageDefinitionBuilder.Match(
                             _filterBuilder.AnyEq(x => x.ItemIds, plan.ItemId) &
                             _filterBuilder.Gte(x => x.IssueDate, plan.StartDate) &
-                            _filterBuilder.Lte(x => x.IssueDate, plan.EndDate)),
+                            _filterBuilder.Lte(x => x.IssueDate, plan.EndDate) &
+                            _filterBuilder.Eq(x => x.IsDeleted, false)),
                         PipelineStageDefinitionBuilder.Count<Invoice>()
                     ])))
             .ToList();
@@ -216,7 +222,7 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
 
     public async Task<InvoicesReport> GetReportAsync(Guid clientId, DateTime? startDate, DateTime? endDate, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.Eq(x => x.ClientId, clientId);
+        var filter = _filterBuilder.Eq(x => x.ClientId, clientId).NotDeleted();
         if (startDate.HasValue)
         {
             filter &= _filterBuilder.Gte(x => x.IssueDate, startDate.Value);

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Duende.IdentityServer.Models;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
+using Exadel.ReportHub.RA.Extensions;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
@@ -25,6 +25,7 @@ public class CustomerRepository(MongoDbContext context) : BaseRepository(context
     {
         var filter = _filterBuilder.Eq(x => x.Email, email);
         var count = await GetCollection<Customer>().Find(filter).CountDocumentsAsync(cancellationToken);
+
         return count > 0;
     }
 
@@ -32,29 +33,23 @@ public class CustomerRepository(MongoDbContext context) : BaseRepository(context
     {
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.Id, id),
-            _filterBuilder.Eq(x => x.ClientId, clientId),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+            _filterBuilder.Eq(x => x.ClientId, clientId))
+            .NotDeleted();
         var count = await GetCollection<Customer>().CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
         return count > 0;
     }
 
     public Task<IList<Customer>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.And(
-            _filterBuilder.Eq(x => x.ClientId, clientId),
-            _filterBuilder.Eq(x => x.IsDeleted, false));
+        var filter = _filterBuilder.Eq(x => x.ClientId, clientId).NotDeleted();
+
         return GetAsync(filter, cancellationToken);
     }
 
     public async Task<Customer> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await GetByIdAsync<Customer>(id, cancellationToken);
-    }
-
-    public async Task<Guid> GetClientIdAsync(Guid id, CancellationToken cancellationToken)
-    {
-        var filter = _filterBuilder.Eq(x => x.Id, id);
-        return await GetCollection<Customer>().Find(filter).Project(x => x.ClientId).SingleOrDefaultAsync(cancellationToken);
     }
 
     public Task<IList<Customer>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)

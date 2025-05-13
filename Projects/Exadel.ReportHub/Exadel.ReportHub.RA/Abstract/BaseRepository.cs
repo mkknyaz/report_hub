@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Data.Abstract;
+using Exadel.ReportHub.RA.Extensions;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA.Abstract;
@@ -10,6 +12,7 @@ public abstract class BaseRepository(MongoDbContext context)
     public async Task<IList<TDocument>> GetAllAsync<TDocument>(CancellationToken cancellationToken)
     {
         var filter = Builders<TDocument>.Filter.Empty;
+
         return await GetCollection<TDocument>().Find(filter).ToListAsync(cancellationToken);
     }
 
@@ -21,22 +24,26 @@ public abstract class BaseRepository(MongoDbContext context)
     public async Task<TDocument> GetByIdAsync<TDocument>(Guid id, CancellationToken cancellationToken)
         where TDocument : IDocument
     {
-        var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
+        var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id).NotDeletedAndActive();
+
         return await GetCollection<TDocument>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IList<TDocument>> GetByIdsAsync<TDocument>(IEnumerable<Guid> ids, CancellationToken cancellationToken)
         where TDocument : IDocument
     {
-        var filter = Builders<TDocument>.Filter.In(x => x.Id, ids);
+        var filter = Builders<TDocument>.Filter.In(x => x.Id, ids).NotDeletedAndActive();
+
         return await GetAsync(filter, cancellationToken);
     }
 
     public async Task<bool> ExistsAsync<TDocument>(Guid id, CancellationToken cancellationToken)
         where TDocument : IDocument
     {
-        var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
+        var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id).NotDeletedAndActive();
+
         var count = await GetCollection<TDocument>().CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
         return count > 0;
     }
 
@@ -49,6 +56,7 @@ public abstract class BaseRepository(MongoDbContext context)
         where TDocument : IDocument
     {
         var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
+
         await GetCollection<TDocument>().ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
     }
 
@@ -56,6 +64,7 @@ public abstract class BaseRepository(MongoDbContext context)
         where TDocument : IDocument
     {
         var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
+
         await GetCollection<TDocument>().UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
 
@@ -63,6 +72,7 @@ public abstract class BaseRepository(MongoDbContext context)
         where TDocument : IDocument
     {
         var filter = Builders<TDocument>.Filter.Eq(x => x.Id, id);
+
         await GetCollection<TDocument>().DeleteOneAsync(filter, cancellationToken: cancellationToken);
     }
 
@@ -70,6 +80,7 @@ public abstract class BaseRepository(MongoDbContext context)
         where TDocument : IDocument, ISoftDeletable
     {
         var update = Builders<TDocument>.Update.Set(x => x.IsDeleted, true);
+
         await UpdateAsync(id, update, cancellationToken: cancellationToken);
     }
 

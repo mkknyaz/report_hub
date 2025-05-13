@@ -36,6 +36,7 @@ public class ExchangeRateRepository(MongoDbContext context) : BaseRepository(con
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.Currency, currency),
             _filterBuilder.Eq(x => x.RateDate, date));
+
         return await GetCollection<ExchangeRate>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 }

@@ -335,8 +335,6 @@ public class InvoiceValidatorTests : BaseTestFixture
             .ReturnsAsync(true);
         _customerRepositoryMock.Setup(x => x.ExistsAsync(customerId, clientId, CancellationToken.None))
             .ReturnsAsync(true);
-        _customerRepositoryMock.Setup(x => x.GetClientIdAsync(customerId, CancellationToken.None))
-            .ReturnsAsync(clientId);
         _invoiceRepositoryMock.Setup(x => x.ExistsAsync(invoiceNumber, CancellationToken.None))
             .ReturnsAsync(false);
         _itemRepositoryMock.Setup(x => x.AllExistAsync(itemIds, CancellationToken.None))

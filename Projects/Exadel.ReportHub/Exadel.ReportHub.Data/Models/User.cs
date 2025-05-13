@@ -3,7 +3,7 @@ using Exadel.ReportHub.Data.Enums;
 
 namespace Exadel.ReportHub.Data.Models;
 
-public class User : IDocument
+public class User : IDocument, IActivatable
 {
     public Guid Id { get; set; }
 

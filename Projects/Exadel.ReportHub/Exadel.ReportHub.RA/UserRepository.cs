@@ -2,6 +2,7 @@
 using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.RA.Abstract;
+using Exadel.ReportHub.RA.Extensions;
 using MongoDB.Driver;
 
 namespace Exadel.ReportHub.RA;
@@ -57,7 +58,7 @@ public class UserRepository(MongoDbContext context) : BaseRepository(context), I
 
     public async Task<User> GetByEmailAsync(string email, CancellationToken cancellationToken)
     {
-        var filter = _filterBuilder.Eq(x => x.Email, email);
+        var filter = _filterBuilder.Eq(x => x.Email, email).Active();
         return await GetCollection<User>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 
@@ -82,7 +83,7 @@ public class UserRepository(MongoDbContext context) : BaseRepository(context), I
 
     public async Task<IList<User>> GetUsersByNotificationSettingsAsync(int dayOfMonth, DayOfWeek dayOfWeek, int hour, CancellationToken cancellationToken)
     {
-        var baseFilter = _filterBuilder.Eq(u => u.NotificationSettings.Hour, hour);
+        var baseFilter = _filterBuilder.Eq(u => u.NotificationSettings.Hour, hour).Active();
 
         var dailyFilter = _filterBuilder.Eq(u => u.NotificationSettings.Frequency, NotificationFrequency.Daily);
 

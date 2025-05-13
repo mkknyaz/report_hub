@@ -18,6 +18,7 @@ public class CurrencyRepository(MongoDbContext context) : BaseRepository(context
     public async Task<string> GetCodeByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.Id, id);
+
         return await GetCollection<Currency>().Find(filter).Project(x => x.CurrencyCode).SingleOrDefaultAsync(cancellationToken);
     }
 }

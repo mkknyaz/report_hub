@@ -12,18 +12,21 @@ public class IdentityRepository(MongoDbContext context) : BaseRepository(context
         where TDocument : Resource
     {
         var filter = Builders<TDocument>.Filter.In(x => x.Name, names);
-        return await GetCollection<TDocument>().Find(filter).ToListAsync();
+
+        return await GetCollection<TDocument>().Find(filter).ToListAsync(cancellationToken);
     }
 
     public async Task<IList<ApiResource>> GetApiResourcesByScopeNameAsync(IEnumerable<string> scopeNames, CancellationToken cancellationToken)
     {
         var filter = Builders<ApiResource>.Filter.AnyIn(x => x.Scopes, scopeNames);
-        return await GetCollection<ApiResource>().Find(filter).ToListAsync();
+
+        return await GetCollection<ApiResource>().Find(filter).ToListAsync(cancellationToken);
     }
 
     public async Task<Client> GetClientByIdAsync(string clientId, CancellationToken cancellationToken)
     {
         var filter = Builders<Client>.Filter.Eq(x => x.ClientId, clientId);
-        return await GetCollection<Client>("IdentityClient").Find(filter).SingleOrDefaultAsync();
+
+        return await GetCollection<Client>("IdentityClient").Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 }

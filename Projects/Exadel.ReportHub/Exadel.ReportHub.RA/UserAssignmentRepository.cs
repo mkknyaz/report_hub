@@ -24,6 +24,7 @@ public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(c
     public async Task<bool> ExistsAsync(Guid userId, Guid clientId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.And(_filterBuilder.Eq(x => x.UserId, userId), _filterBuilder.Eq(x => x.ClientId, clientId));
+
         var count = await GetCollection<UserAssignment>().Find(filter).CountDocumentsAsync(cancellationToken);
         return count > 0;
     }
@@ -34,6 +35,7 @@ public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(c
             _filterBuilder.Eq(x => x.UserId, userId),
             _filterBuilder.In(x => x.ClientId, clientIds),
             _filterBuilder.In(x => x.Role, roles));
+
         var count = await GetCollection<UserAssignment>().Find(filter).CountDocumentsAsync(cancellationToken);
         return count > 0;
     }
@@ -58,12 +60,14 @@ public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(c
     {
         var filter = _filterBuilder.And(_filterBuilder.Eq(x => x.UserId, userId), _filterBuilder.Eq(x => x.ClientId, clientId));
         var update = Builders<UserAssignment>.Update.Set(x => x.Role, userRole);
+
         await GetCollection<UserAssignment>().UpdateOneAsync(filter, update, cancellationToken: cancellationToken);
     }
 
     public async Task<IList<Guid>> GetClientIdsAsync(Guid userId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.Eq(x => x.UserId, userId);
+
         var clientIds = await GetCollection<UserAssignment>().Find(filter).Project(x => x.ClientId).ToListAsync(cancellationToken);
         return clientIds;
     }
@@ -71,6 +75,7 @@ public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(c
     public Task DeleteAsync(Guid userId, IEnumerable<Guid> clientIds, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.And(_filterBuilder.Eq(x => x.UserId, userId), _filterBuilder.In(x => x.ClientId, clientIds));
+
         return GetCollection<UserAssignment>().DeleteManyAsync(filter, cancellationToken);
     }
 }
