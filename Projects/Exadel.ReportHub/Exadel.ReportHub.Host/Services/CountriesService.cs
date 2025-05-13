@@ -17,9 +17,9 @@ public class CountriesService(ISender sender) : BaseService
     [Authorize]
     [HttpGet]
     [SwaggerOperation(Summary = "Get all countries", Description = "Returns a list of all available countries")]
-    [SwaggerResponse(StatusCodes.Status200OK, "Countries were retrieved successfully", typeof(ActionResult<IList<CountryDTO>>))]
-    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Authentication is required to access this endpoint")]
-    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status200OK, Constants.SwaggerSummary.Country.Status200RetrieveDescription, typeof(ActionResult<IList<CountryDTO>>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, Constants.SwaggerSummary.Common.Status401Description)]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, Constants.SwaggerSummary.Common.Status500Description, typeof(ErrorResponse))]
     public async Task<ActionResult<IList<CountryDTO>>> GetAllCountries()
     {
         var result = await sender.Send(new GetAllCountriesRequest());

@@ -13,7 +13,7 @@ public class PingService : BaseService
     [HttpGet]
     [SwaggerOperation(Summary = "Ping server", Description = "Checks the server's health")]
     [SwaggerResponse(StatusCodes.Status200OK, "Server is healthy")]
-    [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, Constants.SwaggerSummary.Common.Status500Description, typeof(ErrorResponse))]
     public ActionResult Ping()
     {
         return Ok();
