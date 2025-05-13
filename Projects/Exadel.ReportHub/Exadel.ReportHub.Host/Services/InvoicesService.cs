@@ -80,7 +80,7 @@ public class InvoicesService(ISender sender) : BaseService, IInvoiceService
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
     public async Task<ActionResult<InvoiceDTO>> GetInvoiceById([FromRoute] Guid id, [FromQuery, Required] Guid clientId)
     {
-        var result = await sender.Send(new GetInvoiceByIdRequest(id));
+        var result = await sender.Send(new GetInvoiceByIdRequest(id, clientId));
         return FromResult(result);
     }
 
@@ -124,7 +124,7 @@ public class InvoicesService(ISender sender) : BaseService, IInvoiceService
     [SwaggerResponse(StatusCodes.Status500InternalServerError, type: typeof(ErrorResponse))]
     public async Task<ActionResult<ExportResult>> ExportInvoiceAsync(Guid id, Guid clientId)
     {
-        var result = await sender.Send(new ExportPdfInvoiceRequest(id));
+        var result = await sender.Send(new ExportPdfInvoiceRequest(id, clientId));
         return FromResult(result);
     }
 

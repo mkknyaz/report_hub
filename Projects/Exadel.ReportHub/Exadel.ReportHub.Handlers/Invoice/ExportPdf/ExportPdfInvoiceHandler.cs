@@ -12,7 +12,7 @@ using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Invoice.ExportPdf;
 
-public record ExportPdfInvoiceRequest(Guid InvoiceId) : IRequest<ErrorOr<ExportResult>>;
+public record ExportPdfInvoiceRequest(Guid Id, Guid ClientId) : IRequest<ErrorOr<ExportResult>>;
 
 public class ExportPdfInvoiceHandler(
     IPdfInvoiceGenerator pdfInvoiceGenerator,
@@ -31,7 +31,7 @@ public class ExportPdfInvoiceHandler(
 
         try
         {
-            var invoice = await invoiceRepository.GetByIdAsync(request.InvoiceId, cancellationToken);
+            var invoice = await invoiceRepository.GetByIdAsync(request.Id, request.ClientId, cancellationToken);
             if (invoice is null)
             {
                 return Error.NotFound();
@@ -61,7 +61,7 @@ public class ExportPdfInvoiceHandler(
         }
         finally
         {
-            var notification = new InvoiceExportedNotification(userId, request.InvoiceId, DateTime.UtcNow, isSuccess);
+            var notification = new InvoiceExportedNotification(userId, request.Id, DateTime.UtcNow, isSuccess);
             await publisher.Publish(notification, cancellationToken);
         }
     }

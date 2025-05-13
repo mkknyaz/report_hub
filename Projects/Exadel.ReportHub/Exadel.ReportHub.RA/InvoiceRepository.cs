@@ -46,9 +46,14 @@ public class InvoiceRepository(MongoDbContext context) : BaseRepository(context)
         return GetAsync(filter, cancellationToken);
     }
 
-    public Task<Invoice> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Invoice> GetByIdAsync(Guid id, Guid clientId, CancellationToken cancellationToken)
     {
-        return GetByIdAsync<Invoice>(id, cancellationToken);
+        var filter = _filterBuilder.And(
+            _filterBuilder.Eq(x => x.Id, id),
+            _filterBuilder.Eq(x => x.ClientId, clientId),
+            _filterBuilder.Eq(x => x.IsDeleted, false));
+
+        return await GetCollection<Invoice>().Find(filter).SingleOrDefaultAsync(cancellationToken);
     }
 
     public Task SoftDeleteAsync(Guid id, CancellationToken cancellationToken)

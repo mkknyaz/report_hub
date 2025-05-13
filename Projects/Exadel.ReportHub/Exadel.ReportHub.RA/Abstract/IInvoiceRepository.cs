@@ -11,7 +11,7 @@ public interface IInvoiceRepository
 
     Task<IList<Invoice>> GetByClientIdAsync(Guid clientId, CancellationToken cancellationToken);
 
-    Task<Invoice> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Invoice> GetByIdAsync(Guid id, Guid clientId, CancellationToken cancellationToken);
 
     Task<bool> ExistsAsync(Guid id, Guid clientId, CancellationToken cancellationToken);
 
