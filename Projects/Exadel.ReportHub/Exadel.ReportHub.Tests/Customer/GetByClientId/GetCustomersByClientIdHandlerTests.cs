@@ -4,10 +4,10 @@ using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.Tests.Abstracts;
 using Moq;
 
-namespace Exadel.ReportHub.Tests.Customer.Get;
+namespace Exadel.ReportHub.Tests.Customer.GetByClientId;
 
 [TestFixture]
-public class GetCustomersHandlerTests : BaseTestFixture
+public class GetCustomersByClientIdHandlerTests : BaseTestFixture
 {
     private GetCustomersByClientIdHandler _handler;
     private Mock<ICustomerRepository> _customerRepositoryMock;

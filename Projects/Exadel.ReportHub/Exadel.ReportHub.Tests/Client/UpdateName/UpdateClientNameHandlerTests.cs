@@ -24,8 +24,7 @@ public class UpdateClientNameHandlerTests
         // Arrange
         var clientId = Guid.NewGuid();
         var newName = "Organization Inc.";
-        _clientRepositoryMock
-            .Setup(x => x.UpdateNameAsync(clientId, newName, CancellationToken.None));
+
         _clientRepositoryMock
             .Setup(x => x.ExistsAsync(clientId, CancellationToken.None))
             .ReturnsAsync(true);
@@ -53,8 +52,7 @@ public class UpdateClientNameHandlerTests
         // Arrange
         var clientId = Guid.NewGuid();
         var newName = "Organization Inc.";
-        _clientRepositoryMock
-            .Setup(x => x.UpdateNameAsync(clientId, newName, CancellationToken.None));
+
         _clientRepositoryMock
             .Setup(x => x.ExistsAsync(clientId, CancellationToken.None))
             .ReturnsAsync(false);

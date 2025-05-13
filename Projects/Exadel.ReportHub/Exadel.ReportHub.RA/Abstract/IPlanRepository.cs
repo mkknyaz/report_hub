@@ -16,5 +16,5 @@ public interface IPlanRepository
 
     Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken);
 
-    Task UpdateDateAsync(Guid id, Plan plan, CancellationToken cancellationToken);
+    Task UpdateAsync(Guid id, Plan plan, CancellationToken cancellationToken);
 }

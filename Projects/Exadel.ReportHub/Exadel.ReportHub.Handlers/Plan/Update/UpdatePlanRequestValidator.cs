@@ -1,33 +1,21 @@
-﻿using FluentValidation;
+﻿using Exadel.ReportHub.SDK.DTOs.Plan;
+using FluentValidation;
 
 namespace Exadel.ReportHub.Handlers.Plan.Update;
 
 public class UpdatePlanRequestValidator : AbstractValidator<UpdatePlanRequest>
 {
-    public UpdatePlanRequestValidator()
+    private readonly IValidator<UpdatePlanDTO> _updatePlanDtoValidator;
+
+    public UpdatePlanRequestValidator(IValidator<UpdatePlanDTO> updatePlanDtoValidator)
     {
+        _updatePlanDtoValidator = updatePlanDtoValidator;
         ConfigureRules();
     }
 
     private void ConfigureRules()
     {
-        RuleFor(x => x.UpdatePlanDatedto)
-            .ChildRules(child =>
-            {
-                child.RuleLevelCascadeMode = CascadeMode.Stop;
-
-                child.RuleFor(x => x.Count)
-                    .GreaterThan(0);
-
-                child.RuleFor(x => x.StartDate)
-                    .NotEmpty()
-                    .LessThan(x => x.EndDate)
-                    .WithMessage(Constants.Validation.Date.InvalidStartDate);
-
-                child.RuleFor(x => x.EndDate)
-                    .NotEmpty()
-                    .GreaterThan(DateTime.UtcNow)
-                    .WithMessage(Constants.Validation.Date.EndDateInPast);
-            });
+        RuleFor(x => x.UpdatePlanDto)
+            .SetValidator(_updatePlanDtoValidator);
     }
 }

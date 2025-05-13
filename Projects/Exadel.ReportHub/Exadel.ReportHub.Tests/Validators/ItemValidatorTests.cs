@@ -220,8 +220,6 @@ public class ItemValidatorTests : BaseTestFixture
     {
         var clientId = Guid.Parse("ea94747b-3d45-46d6-8775-bf27eb5da02b");
         var currencyId = Guid.Parse("04d123f0-dc7e-4b92-829c-dffd1ef0b89a");
-        var name = "Valid Item name";
-        var description = "Valid Item description";
 
         _clientRepositoryMock
             .Setup(x => x.ExistsAsync(clientId, It.IsAny<CancellationToken>()))
@@ -233,9 +231,6 @@ public class ItemValidatorTests : BaseTestFixture
 
         return Fixture.Build<CreateUpdateItemDTO>()
             .With(x => x.ClientId, clientId)
-            .With(x => x.Name, name)
-            .With(x => x.Description, description)
-            .With(x => x.Price, 1500.50m)
             .With(x => x.CurrencyId, currencyId)
             .Create();
     }

@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Plan.Update;
 
-public record UpdatePlanRequest(Guid Id, UpdatePlanDTO UpdatePlanDatedto) : IRequest<ErrorOr<Updated>>;
+public record UpdatePlanRequest(Guid Id, UpdatePlanDTO UpdatePlanDto) : IRequest<ErrorOr<Updated>>;
 
 public class UpdatePlanHandler(IPlanRepository planRepository, IMapper mapper) : IRequestHandler<UpdatePlanRequest, ErrorOr<Updated>>
 {
@@ -18,8 +18,8 @@ public class UpdatePlanHandler(IPlanRepository planRepository, IMapper mapper) :
             return Error.NotFound();
         }
 
-        var plan = mapper.Map<Data.Models.Plan>(request.UpdatePlanDatedto);
-        await planRepository.UpdateDateAsync(request.Id, plan, cancellationToken);
+        var plan = mapper.Map<Data.Models.Plan>(request.UpdatePlanDto);
+        await planRepository.UpdateAsync(request.Id, plan, cancellationToken);
         return Result.Updated;
     }
 }

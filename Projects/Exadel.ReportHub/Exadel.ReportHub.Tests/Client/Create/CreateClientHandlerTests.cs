@@ -29,7 +29,7 @@ public class CreateClientHandlerTests : BaseTestFixture
     {
         // Arrange
         var createClientDto = Fixture.Create<CreateClientDTO>();
-        var country = Fixture.Build<Country>().With(x => x.Id, createClientDto.CountryId).Create();
+        var country = Fixture.Build<Data.Models.Country>().With(x => x.Id, createClientDto.CountryId).Create();
 
         var client = Fixture.Build<Data.Models.Client>()
                 .With(x => x.Id, Guid.NewGuid())

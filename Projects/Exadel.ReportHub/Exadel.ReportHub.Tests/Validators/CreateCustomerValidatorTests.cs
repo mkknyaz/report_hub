@@ -182,7 +182,6 @@ public class CreateCustomerValidatorTests : BaseTestFixture
 
     private CreateCustomerDTO GetValidCustomer()
     {
-        var name = "Customer name";
         var email = "customer@test.com";
         var clientId = Guid.NewGuid();
         var countryId = Guid.NewGuid();
@@ -200,7 +199,6 @@ public class CreateCustomerValidatorTests : BaseTestFixture
             .ReturnsAsync(false);
 
         return Fixture.Build<CreateCustomerDTO>()
-            .With(x => x.Name, name)
             .With(x => x.Email, email)
             .With(x => x.ClientId, clientId)
             .With(x => x.CountryId, countryId)

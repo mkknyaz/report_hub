@@ -85,7 +85,6 @@ public class UpdateCustomerValidatorTests : BaseTestFixture
 
     private UpdateCustomerDTO GetValidCustomer()
     {
-        var name = "Customer name";
         var countryId = Guid.NewGuid();
 
         _countryRepositoryMock
@@ -93,7 +92,6 @@ public class UpdateCustomerValidatorTests : BaseTestFixture
         .ReturnsAsync(true);
 
         return Fixture.Build<UpdateCustomerDTO>()
-            .With(x => x.Name, name)
             .With(x => x.CountryId, countryId)
             .Create();
     }

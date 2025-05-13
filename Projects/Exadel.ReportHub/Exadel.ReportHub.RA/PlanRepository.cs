@@ -42,7 +42,7 @@ public class PlanRepository(MongoDbContext context) : BaseRepository(context), I
         return GetByIdAsync<Plan>(id, cancellationToken);
     }
 
-    public Task UpdateDateAsync(Guid id, Plan plan, CancellationToken cancellationToken)
+    public Task UpdateAsync(Guid id, Plan plan, CancellationToken cancellationToken)
     {
         var update = Builders<Plan>.Update
             .Set(x => x.StartDate, plan.StartDate)
