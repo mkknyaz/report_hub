@@ -20,6 +20,9 @@ public class CreateCustomerValidator : AbstractValidator<CreateCustomerDTO>
 
     private void ConfigureRules()
     {
+        RuleLevelCascadeMode = CascadeMode.Stop;
+        ClassLevelCascadeMode = CascadeMode.Stop;
+
         RuleFor(x => x)
            .SetValidator(_updateCustomerValidator);
 

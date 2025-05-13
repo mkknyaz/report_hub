@@ -21,11 +21,12 @@ public class CreateClientValidator : AbstractValidator<CreateClientDTO>
     private void ConfigureRules()
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
+        RuleLevelCascadeMode = CascadeMode.Stop;
 
         RuleFor(x => x.Name)
             .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names)
             .MustAsync(async (name, cancellationToken) => !await _clientRepository.NameExistsAsync(name, cancellationToken))
-            .WithMessage(Constants.Validation.Name.AlreadyTaken);
+            .WithMessage(Constants.Validation.Name.IsTaken);
         RuleFor(x => x.BankAccountNumber)
             .NotEmpty()
             .Length(Constants.Validation.BankAccountNumber.MinLength, Constants.Validation.BankAccountNumber.MaxLength)

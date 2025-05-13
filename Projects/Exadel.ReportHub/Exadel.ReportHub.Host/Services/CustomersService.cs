@@ -59,7 +59,7 @@ public class CustomersService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IList<CustomerDTO>>> GetCustomersByClient([FromQuery][Required] Guid clientId)
     {
-        var result = await sender.Send(new GetCustomersRequest(clientId));
+        var result = await sender.Send(new GetCustomersByClientIdRequest(clientId));
         return FromResult(result);
     }
 
