@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using Exadel.ReportHub.Handlers;
 using Exadel.ReportHub.Handlers.Customer.Import;
+using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Import;
 using Exadel.ReportHub.Tests.Abstracts;
 using FluentValidation;
@@ -13,6 +14,7 @@ namespace Exadel.ReportHub.Tests.Customer.Import;
 [TestFixture]
 public class ImportCustomersRequestValidatorTests : BaseTestFixture
 {
+    private Mock<IClientRepository> _clientRepositoryMock;
     private ImportCustomersRequestValidator _validator;
     private Mock<IFormFile> _mockFormFile;
 
@@ -20,7 +22,8 @@ public class ImportCustomersRequestValidatorTests : BaseTestFixture
     public void Setup()
     {
         var importDtoValidator = new InlineValidator<ImportDTO>();
-        _validator = new ImportCustomersRequestValidator(importDtoValidator);
+        _clientRepositoryMock = new Mock<IClientRepository>();
+        _validator = new ImportCustomersRequestValidator(_clientRepositoryMock.Object, importDtoValidator);
 
         _mockFormFile = new Mock<IFormFile>();
 
@@ -34,16 +37,41 @@ public class ImportCustomersRequestValidatorTests : BaseTestFixture
         // Arrange
         _mockFormFile.Setup(f => f.FileName).Returns("invalid.txt");
         var importDto = GetValidImportDto();
+        var clientId = Guid.NewGuid();
+        _clientRepositoryMock
+            .Setup(x => x.ExistsAsync(clientId, CancellationToken.None))
+            .ReturnsAsync(true);
 
         // Act
-        var request = new ImportCustomersRequest(importDto);
+        var request = new ImportCustomersRequest(clientId, importDto);
         var result = await _validator.TestValidateAsync(request);
 
         // Assert
         Assert.That(result.IsValid, Is.False);
         Assert.That(result.Errors, Has.Exactly(1).Items);
-        Assert.That(result.Errors[0].PropertyName, Is.EqualTo("ImportDTO.File.FileName"));
+        Assert.That(result.Errors[0].PropertyName, Is.EqualTo("ImportDto.File.FileName"));
         Assert.That(result.Errors[0].ErrorMessage, Is.EqualTo(Constants.Validation.Import.InvalidFileExtension));
+    }
+
+    [Test]
+    public async Task ValidateAsync_ClientNotExist_ErrorReturned()
+    {
+        // Arrange
+        var importDto = GetValidImportDto();
+        var clientId = Guid.NewGuid();
+        _clientRepositoryMock
+            .Setup(x => x.ExistsAsync(clientId, CancellationToken.None))
+            .ReturnsAsync(false);
+
+        // Act
+        var request = new ImportCustomersRequest(clientId, importDto);
+        var result = await _validator.TestValidateAsync(request);
+
+        // Assert
+        Assert.That(result.IsValid, Is.False);
+        Assert.That(result.Errors, Has.Exactly(1).Items);
+        Assert.That(result.Errors[0].PropertyName, Is.EqualTo(nameof(request.ClientId)));
+        Assert.That(result.Errors[0].ErrorMessage, Is.EqualTo(Constants.Validation.Client.DoesNotExist));
     }
 
     [Test]
@@ -51,9 +79,13 @@ public class ImportCustomersRequestValidatorTests : BaseTestFixture
     {
         // Arrange
         var importDto = GetValidImportDto();
+        var clientId = Guid.NewGuid();
+        _clientRepositoryMock
+            .Setup(x => x.ExistsAsync(clientId, CancellationToken.None))
+            .ReturnsAsync(true);
 
         // Act
-        var request = new ImportCustomersRequest(importDto);
+        var request = new ImportCustomersRequest(clientId, importDto);
         var result = await _validator.TestValidateAsync(request);
 
         // Assert

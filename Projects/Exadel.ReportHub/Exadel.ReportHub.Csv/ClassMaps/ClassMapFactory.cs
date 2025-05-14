@@ -14,7 +14,7 @@ public static class ClassMapFactory
             nameof(InvoicesReport) => new InvoicesReportMap(),
             nameof(ItemsReport) => new ItemsReportMap(),
             nameof(PlanReport) => new PlansReportMap(),
-            nameof(CreateInvoiceDTO) => new CreateInvoiceMap(),
+            nameof(ImportInvoiceDTO) => new ImportInvoiceMap(),
             _ => throw new ArgumentException($"No ClassMap for {typeof(TModel).Name}")
         };
     }

@@ -6,22 +6,21 @@ using Exadel.ReportHub.SDK.DTOs.Invoice;
 namespace Exadel.ReportHub.Handlers.Managers.Invoice;
 
 public class InvoiceManager(
+    IInvoiceRepository invoiceRepository,
     IClientRepository clientRepository,
     ICustomerRepository customerRepository,
     IItemRepository itemRepository,
     ICurrencyConverter currencyConverter,
     IMapper mapper) : IInvoiceManager
 {
-    public async Task<Data.Models.Invoice> GenerateInvoiceAsync(CreateInvoiceDTO invoiceDto, CancellationToken cancellationToken)
+    public async Task<InvoiceDTO> CreateInvoiceAsync(CreateInvoiceDTO createInvoiceDto, CancellationToken cancellationToken)
     {
-        var invoice = (await GenerateInvoicesAsync([invoiceDto], cancellationToken)).Single();
-
-        return invoice;
+        return (await CreateInvoicesAsync([createInvoiceDto], cancellationToken)).Single();
     }
 
-    public async Task<IList<Data.Models.Invoice>> GenerateInvoicesAsync(IEnumerable<CreateInvoiceDTO> invoiceDtos, CancellationToken cancellationToken)
+    public async Task<IList<InvoiceDTO>> CreateInvoicesAsync(IEnumerable<CreateInvoiceDTO> createInvoiceDtos, CancellationToken cancellationToken)
     {
-        var invoices = mapper.Map<IList<Data.Models.Invoice>>(invoiceDtos);
+        var invoices = mapper.Map<IList<Data.Models.Invoice>>(createInvoiceDtos);
 
         var customersTask = customerRepository.GetByIdsAsync(invoices.Select(x => x.CustomerId).Distinct(), cancellationToken);
         var itemsTask = itemRepository.GetByIdsAsync(invoices.SelectMany(x => x.ItemIds).Distinct(), cancellationToken);
@@ -58,6 +57,8 @@ public class InvoiceManager(
             invoice.ClientCurrencyId = clients[invoice.ClientId].CurrencyId;
         }
 
-        return invoices;
+        await invoiceRepository.AddManyAsync(invoices, cancellationToken);
+
+        return mapper.Map<IList<InvoiceDTO>>(invoices);
     }
 }

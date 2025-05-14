@@ -36,7 +36,7 @@ public class UpdateCustomerValidatorTests : BaseTestFixture
     public async Task ValidateAsync_EmptyCountryId_ErrorReturned()
     {
         // Arrange
-        var customer = GetValidCustomer();
+        var customer = SetupValidCustomer();
         customer.CountryId = Guid.Empty;
 
         // Act
@@ -53,7 +53,7 @@ public class UpdateCustomerValidatorTests : BaseTestFixture
     public async Task ValidateAsync_CountryIdDoesNotExist_ErrorReturned()
     {
         // Arrange
-        var customer = GetValidCustomer();
+        var customer = SetupValidCustomer();
 
         _countryRepositoryMock
             .Setup(x => x.ExistsAsync(customer.CountryId, CancellationToken.None))
@@ -73,7 +73,7 @@ public class UpdateCustomerValidatorTests : BaseTestFixture
     public async Task ValidateAsync_ValidCustomer_NoErrorReturned()
     {
         // Arrange
-        var customer = GetValidCustomer();
+        var customer = SetupValidCustomer();
 
         // Act
         var result = await _validator.TestValidateAsync(customer);
@@ -83,16 +83,14 @@ public class UpdateCustomerValidatorTests : BaseTestFixture
         Assert.That(result.Errors, Is.Empty);
     }
 
-    private UpdateCustomerDTO GetValidCustomer()
+    private UpdateCustomerDTO SetupValidCustomer()
     {
-        var countryId = Guid.NewGuid();
+        var customer = Fixture.Create<UpdateCustomerDTO>();
 
         _countryRepositoryMock
-            .Setup(x => x.ExistsAsync(countryId, CancellationToken.None))
+            .Setup(x => x.ExistsAsync(customer.CountryId, CancellationToken.None))
         .ReturnsAsync(true);
 
-        return Fixture.Build<UpdateCustomerDTO>()
-            .With(x => x.CountryId, countryId)
-            .Create();
+        return customer;
     }
 }

@@ -29,7 +29,7 @@ public class CustomerRepository(MongoDbContext context) : BaseRepository(context
         return count > 0;
     }
 
-    public async Task<bool> ExistsAsync(Guid id, Guid clientId, CancellationToken cancellationToken)
+    public async Task<bool> ExistsOnClientAsync(Guid id, Guid clientId, CancellationToken cancellationToken)
     {
         var filter = _filterBuilder.And(
             _filterBuilder.Eq(x => x.Id, id),

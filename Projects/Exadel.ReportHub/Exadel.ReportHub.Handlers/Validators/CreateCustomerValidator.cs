@@ -6,15 +6,13 @@ namespace Exadel.ReportHub.Handlers.Validators;
 
 public class CreateCustomerValidator : AbstractValidator<CreateCustomerDTO>
 {
-    private readonly ICustomerRepository _customerRepository;
     private readonly IClientRepository _clientRepository;
-    private readonly IValidator<UpdateCustomerDTO> _updateCustomerValidator;
+    private readonly IValidator<ImportCustomerDTO> _importCustomerValidator;
 
-    public CreateCustomerValidator(ICustomerRepository customerRepository, IClientRepository clientRepository, IValidator<UpdateCustomerDTO> updateCustomerValidator)
+    public CreateCustomerValidator(IClientRepository clientRepository, IValidator<ImportCustomerDTO> importCustomerValidator)
     {
-        _customerRepository = customerRepository;
         _clientRepository = clientRepository;
-        _updateCustomerValidator = updateCustomerValidator;
+        _importCustomerValidator = importCustomerValidator;
         ConfigureRules();
     }
 
@@ -24,14 +22,7 @@ public class CreateCustomerValidator : AbstractValidator<CreateCustomerDTO>
         ClassLevelCascadeMode = CascadeMode.Stop;
 
         RuleFor(x => x)
-           .SetValidator(_updateCustomerValidator);
-
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress()
-            .WithMessage(Constants.Validation.Email.IsInvalid)
-            .MustAsync(async (email, cancellationToken) => !await _customerRepository.EmailExistsAsync(email, cancellationToken))
-            .WithMessage(Constants.Validation.Email.IsTaken);
+           .SetValidator(_importCustomerValidator);
 
         RuleFor(x => x.ClientId)
             .NotEmpty()

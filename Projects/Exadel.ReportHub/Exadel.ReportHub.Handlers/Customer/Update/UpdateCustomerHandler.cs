@@ -12,7 +12,7 @@ public class UpdateCustomerHandler(ICustomerRepository customerRepository, ICoun
 {
     public async Task<ErrorOr<Updated>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var isExists = await customerRepository.ExistsAsync(request.CustomerId, request.ClientId, cancellationToken);
+        var isExists = await customerRepository.ExistsOnClientAsync(request.CustomerId, request.ClientId, cancellationToken);
         if (!isExists)
         {
             return Error.NotFound();

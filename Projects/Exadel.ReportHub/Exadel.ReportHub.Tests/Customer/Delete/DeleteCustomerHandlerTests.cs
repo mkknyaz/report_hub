@@ -26,7 +26,7 @@ public class DeleteCustomerHandlerTests
         var clientId = Guid.NewGuid();
 
         _customerRepositoryMock
-            .Setup(x => x.ExistsAsync(customerId, clientId, CancellationToken.None))
+            .Setup(x => x.ExistsOnClientAsync(customerId, clientId, CancellationToken.None))
             .ReturnsAsync(true);
 
         // Act
@@ -38,7 +38,7 @@ public class DeleteCustomerHandlerTests
         Assert.That(result.Value, Is.EqualTo(Result.Deleted));
 
         _customerRepositoryMock.Verify(
-            x => x.ExistsAsync(customerId, clientId, CancellationToken.None),
+            x => x.ExistsOnClientAsync(customerId, clientId, CancellationToken.None),
             Times.Once);
 
         _customerRepositoryMock.Verify(
@@ -53,7 +53,7 @@ public class DeleteCustomerHandlerTests
         var clientId = Guid.NewGuid();
 
         _customerRepositoryMock
-            .Setup(x => x.ExistsAsync(customerId, clientId, CancellationToken.None))
+            .Setup(x => x.ExistsOnClientAsync(customerId, clientId, CancellationToken.None))
             .ReturnsAsync(false);
 
         // Act
@@ -66,7 +66,7 @@ public class DeleteCustomerHandlerTests
         Assert.That(result.FirstError.Type, Is.EqualTo(ErrorType.NotFound));
 
         _customerRepositoryMock.Verify(
-            x => x.ExistsAsync(customerId, clientId, CancellationToken.None),
+            x => x.ExistsOnClientAsync(customerId, clientId, CancellationToken.None),
             Times.Once);
 
         _customerRepositoryMock.Verify(

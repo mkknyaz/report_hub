@@ -9,6 +9,9 @@ public class InvoiceProfile : Profile
 {
     public InvoiceProfile()
     {
+        CreateMap<ImportInvoiceDTO, CreateInvoiceDTO>()
+            .ForMember(x => x.ClientId, opt => opt.Ignore());
+
         CreateMap<CreateInvoiceDTO, Invoice>()
             .ForMember(x => x.Id, opt => opt.Ignore())
             .ForMember(x => x.CustomerCurrencyAmount, opt => opt.Ignore())

@@ -1,5 +1,4 @@
 ﻿using ErrorOr;
-using Exadel.ReportHub.RA;
 using Exadel.ReportHub.RA.Abstract;
 using MediatR;
 
@@ -11,7 +10,7 @@ public class DeleteCustomerHandler(ICustomerRepository customerRepository) : IRe
 {
     public async Task<ErrorOr<Deleted>> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
     {
-        var isExists = await customerRepository.ExistsAsync(request.CustomerId, request.ClientId, cancellationToken);
+        var isExists = await customerRepository.ExistsOnClientAsync(request.CustomerId, request.ClientId, cancellationToken);
         if (!isExists)
         {
             return Error.NotFound();

@@ -4,13 +4,13 @@ using Exadel.ReportHub.SDK.DTOs.Invoice;
 
 namespace Exadel.ReportHub.Csv.ClassMaps;
 
-public class CreateInvoiceMap : ClassMap<CreateInvoiceDTO>
+public class ImportInvoiceMap : ClassMap<ImportInvoiceDTO>
 {
-    public CreateInvoiceMap()
+    public ImportInvoiceMap()
     {
         AutoMap(CultureInfo.InvariantCulture);
 
         Map(x => x.ItemIds)
-            .Convert(args => args.Row.GetField(nameof(CreateInvoiceDTO.ItemIds)).Split(";").Select(Guid.Parse).ToList());
+            .Convert(args => args.Row.GetField(nameof(ImportInvoiceDTO.ItemIds)).Split(";").Select(Guid.Parse).ToList());
     }
 }

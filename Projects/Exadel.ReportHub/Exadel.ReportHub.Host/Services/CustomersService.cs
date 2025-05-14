@@ -31,7 +31,7 @@ public class CustomersService(ISender sender) : BaseService
     [SwaggerResponse(StatusCodes.Status500InternalServerError, Constants.SwaggerSummary.Common.Status500Description, typeof(ErrorResponse))]
     public async Task<ActionResult<ImportResultDTO>> ImportCustomers([FromForm] ImportDTO importDto, [FromQuery][Required] Guid clientId)
     {
-        var result = await sender.Send(new ImportCustomersRequest(importDto));
+        var result = await sender.Send(new ImportCustomersRequest(clientId, importDto));
         return FromResult(result, StatusCodes.Status201Created);
     }
 

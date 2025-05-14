@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using Exadel.ReportHub.Handlers.Invoice.Create;
 using Exadel.ReportHub.Handlers.Managers.Invoice;
-using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Invoice;
+using Exadel.ReportHub.SDK.Enums;
 using Exadel.ReportHub.Tests.Abstracts;
 using Moq;
 
@@ -11,16 +11,14 @@ namespace Exadel.ReportHub.Tests.Invoice.Create;
 [TestFixture]
 public class CreateInvoiceHandlerTests : BaseTestFixture
 {
-    private Mock<IInvoiceRepository> _invoiceRepositoryMock;
     private Mock<IInvoiceManager> _invoiceManagerMock;
     private CreateInvoiceHandler _handler;
 
     [SetUp]
     public void Setup()
     {
-        _invoiceRepositoryMock = new Mock<IInvoiceRepository>();
         _invoiceManagerMock = new Mock<IInvoiceManager>();
-        _handler = new CreateInvoiceHandler(_invoiceRepositoryMock.Object, _invoiceManagerMock.Object, Mapper);
+        _handler = new CreateInvoiceHandler(_invoiceManagerMock.Object);
     }
 
     [Test]
@@ -28,6 +26,7 @@ public class CreateInvoiceHandlerTests : BaseTestFixture
     {
         // Arrange
         var createInvoiceDto = Fixture.Build<CreateInvoiceDTO>().With(x => x.ItemIds, Fixture.CreateMany<Guid>(3).ToList()).Create();
+
         var generatedInvoice = Mapper.Map<Data.Models.Invoice>(createInvoiceDto);
         generatedInvoice.Id = Guid.NewGuid();
         generatedInvoice.ClientBankAccountNumber = Fixture.Create<string>();
@@ -39,9 +38,11 @@ public class CreateInvoiceHandlerTests : BaseTestFixture
         generatedInvoice.CustomerCurrencyAmount = Fixture.Create<decimal>();
         generatedInvoice.PaymentStatus = Data.Enums.PaymentStatus.Unpaid;
 
+        var generatedInvoiceDto = Mapper.Map<InvoiceDTO>(generatedInvoice);
+
         _invoiceManagerMock
-                .Setup(m => m.GenerateInvoiceAsync(createInvoiceDto, CancellationToken.None))
-                .ReturnsAsync(generatedInvoice);
+                .Setup(m => m.CreateInvoiceAsync(createInvoiceDto, CancellationToken.None))
+                .ReturnsAsync(generatedInvoiceDto);
 
         // Act
         var result = await _handler.Handle(new CreateInvoiceRequest(createInvoiceDto), CancellationToken.None);
@@ -51,24 +52,20 @@ public class CreateInvoiceHandlerTests : BaseTestFixture
         Assert.That(result.IsError, Is.False);
         Assert.That(result.Value, Is.InstanceOf<InvoiceDTO>(), "Returned object should be an instance of InvoiceDTO");
 
-        _invoiceRepositoryMock.Verify(
-            mock => mock.AddAsync(
-                It.Is<Data.Models.Invoice>(
-                    i => i.ClientId == createInvoiceDto.ClientId &&
-                    i.CustomerId == createInvoiceDto.CustomerId &&
-                    i.InvoiceNumber == createInvoiceDto.InvoiceNumber &&
-                    i.IssueDate == createInvoiceDto.IssueDate &&
-                    i.DueDate == createInvoiceDto.DueDate &&
-                    i.ItemIds.SequenceEqual(createInvoiceDto.ItemIds) &&
-                    i.ClientBankAccountNumber == generatedInvoice.ClientBankAccountNumber &&
-                    i.ClientCurrencyId == generatedInvoice.ClientCurrencyId &&
-                    i.ClientCurrencyCode == generatedInvoice.ClientCurrencyCode &&
-                    i.ClientCurrencyAmount == generatedInvoice.ClientCurrencyAmount &&
-                    i.CustomerCurrencyId == generatedInvoice.CustomerCurrencyId &&
-                    i.CustomerCurrencyCode == generatedInvoice.CustomerCurrencyCode &&
-                    i.CustomerCurrencyAmount == generatedInvoice.CustomerCurrencyAmount &&
-                    i.PaymentStatus == generatedInvoice.PaymentStatus),
-                CancellationToken.None),
-            Times.Once);
+        Assert.That(result.Value.Id, Is.EqualTo(generatedInvoice.Id));
+        Assert.That(result.Value.ClientId, Is.EqualTo(createInvoiceDto.ClientId));
+        Assert.That(result.Value.CustomerId, Is.EqualTo(createInvoiceDto.CustomerId));
+        Assert.That(result.Value.InvoiceNumber, Is.EqualTo(createInvoiceDto.InvoiceNumber));
+        Assert.That(result.Value.IssueDate, Is.EqualTo(createInvoiceDto.IssueDate));
+        Assert.That(result.Value.DueDate, Is.EqualTo(createInvoiceDto.DueDate));
+        Assert.That(result.Value.ItemIds, Is.EquivalentTo(createInvoiceDto.ItemIds));
+        Assert.That(result.Value.ClientBankAccountNumber, Is.EqualTo(generatedInvoice.ClientBankAccountNumber));
+        Assert.That(result.Value.ClientCurrencyId, Is.EqualTo(generatedInvoice.ClientCurrencyId));
+        Assert.That(result.Value.ClientCurrencyCode, Is.EqualTo(generatedInvoice.ClientCurrencyCode));
+        Assert.That(result.Value.ClientCurrencyAmount, Is.EqualTo(generatedInvoice.ClientCurrencyAmount));
+        Assert.That(result.Value.CustomerCurrencyId, Is.EqualTo(generatedInvoice.CustomerCurrencyId));
+        Assert.That(result.Value.CustomerCurrencyCode, Is.EqualTo(generatedInvoice.CustomerCurrencyCode));
+        Assert.That(result.Value.CustomerCurrencyAmount, Is.EqualTo(generatedInvoice.CustomerCurrencyAmount));
+        Assert.That(result.Value.PaymentStatus, Is.EqualTo((PaymentStatus)generatedInvoice.PaymentStatus));
     }
 }

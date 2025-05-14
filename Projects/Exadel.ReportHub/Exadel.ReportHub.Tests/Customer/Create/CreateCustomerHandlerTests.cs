@@ -1,8 +1,8 @@
 ﻿using AutoFixture;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.Handlers.Customer.Create;
-using Exadel.ReportHub.Handlers.Managers.Common;
-using Exadel.ReportHub.RA.Abstract;
+using Exadel.ReportHub.Handlers.Managers.Customer;
+using Exadel.ReportHub.SDK.DTOs.Client;
 using Exadel.ReportHub.SDK.DTOs.Customer;
 using Exadel.ReportHub.Tests.Abstracts;
 using Moq;
@@ -12,16 +12,14 @@ namespace Exadel.ReportHub.Tests.Customer.Create;
 [TestFixture]
 public class CreateCustomerHandlerTests : BaseTestFixture
 {
-    private Mock<ICustomerRepository> _customerRepository;
-    private Mock<ICountryBasedEntityManager> _countryBasedEntityManagerMock;
+    private Mock<ICustomerManager> _customerManagerMock;
     private CreateCustomerHandler _handler;
 
     [SetUp]
     public void Setup()
     {
-        _customerRepository = new Mock<ICustomerRepository>();
-        _countryBasedEntityManagerMock = new Mock<ICountryBasedEntityManager>();
-        _handler = new CreateCustomerHandler(_customerRepository.Object, Mapper, _countryBasedEntityManagerMock.Object);
+        _customerManagerMock = new Mock<ICustomerManager>();
+        _handler = new CreateCustomerHandler(_customerManagerMock.Object);
     }
 
     [Test]
@@ -29,21 +27,11 @@ public class CreateCustomerHandlerTests : BaseTestFixture
     {
         // Arrange
         var createCustomerDto = Fixture.Create<CreateCustomerDTO>();
-        var country = Fixture.Build<Data.Models.Country>().With(x => x.Id, createCustomerDto.CountryId).Create();
+        var customerDto = Fixture.Create<CustomerDTO>();
 
-        var customer = Fixture.Build<Data.Models.Customer>()
-                .With(x => x.Id, Guid.NewGuid())
-                .With(x => x.Name, createCustomerDto.Name)
-                .With(x => x.Email, createCustomerDto.Email)
-                .With(x => x.CountryId, createCustomerDto.CountryId)
-                .With(x => x.Country, country.Name)
-                .With(x => x.CurrencyId, country.CurrencyId)
-                .With(x => x.CurrencyCode, country.CurrencyCode)
-                .Create();
-
-        _countryBasedEntityManagerMock
-            .Setup(x => x.GenerateEntityAsync<CreateCustomerDTO, Data.Models.Customer>(createCustomerDto, CancellationToken.None))
-            .ReturnsAsync(customer);
+        _customerManagerMock
+            .Setup(x => x.CreateCustomerAsync(createCustomerDto, CancellationToken.None))
+            .ReturnsAsync(customerDto);
 
         // Act
         var request = new CreateCustomerRequest(createCustomerDto);
@@ -53,29 +41,12 @@ public class CreateCustomerHandlerTests : BaseTestFixture
         Assert.That(result.Value, Is.Not.Null);
         Assert.That(result.IsError, Is.False);
         Assert.That(result.Value, Is.InstanceOf<CustomerDTO>(), "Returned object should be an instance of CustomerDTO");
-        Assert.That(result.Value.Id, Is.Not.EqualTo(Guid.Empty));
-        Assert.That(result.Value.Name, Is.EqualTo(createCustomerDto.Name));
-        Assert.That(result.Value.Email, Is.EqualTo(createCustomerDto.Email));
-        Assert.That(result.Value.CountryId, Is.EqualTo(createCustomerDto.CountryId));
-        Assert.That(result.Value.Country, Is.EqualTo(customer.Country));
-        Assert.That(result.Value.CurrencyCode, Is.EqualTo(customer.CurrencyCode));
-        Assert.That(result.Value.CurrencyId, Is.EqualTo(customer.CurrencyId));
-        Assert.That(createCustomerDto.CountryId, Is.EqualTo(country.Id));
-
-        _customerRepository.Verify(
-            mock => mock.AddAsync(
-                It.Is<Data.Models.Customer>(
-                    c => c.Name == createCustomerDto.Name &&
-                    c.Email == createCustomerDto.Email &&
-                    c.CountryId == createCustomerDto.CountryId &&
-                    c.Country == customer.Country &&
-                    c.CurrencyCode == customer.CurrencyCode &&
-                    c.CurrencyId == customer.CurrencyId),
-                CancellationToken.None),
-            Times.Once);
-
-        _countryBasedEntityManagerMock.Verify(
-            x => x.GenerateEntityAsync<CreateCustomerDTO, Data.Models.Customer>(createCustomerDto, CancellationToken.None),
-            Times.Once);
+        Assert.That(result.Value.Id, Is.EqualTo(customerDto.Id));
+        Assert.That(result.Value.Name, Is.EqualTo(customerDto.Name));
+        Assert.That(result.Value.Email, Is.EqualTo(customerDto.Email));
+        Assert.That(result.Value.CountryId, Is.EqualTo(customerDto.CountryId));
+        Assert.That(result.Value.Country, Is.EqualTo(customerDto.Country));
+        Assert.That(result.Value.CurrencyCode, Is.EqualTo(customerDto.CurrencyCode));
+        Assert.That(result.Value.CurrencyId, Is.EqualTo(customerDto.CurrencyId));
     }
 }

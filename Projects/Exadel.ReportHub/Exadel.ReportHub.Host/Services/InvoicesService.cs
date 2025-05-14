@@ -39,7 +39,7 @@ public class InvoicesService(ISender sender) : BaseService, IInvoiceService
     [SwaggerResponse(StatusCodes.Status500InternalServerError, Constants.SwaggerSummary.Common.Status500Description, typeof(ErrorResponse))]
     public async Task<ActionResult<ImportResultDTO>> ImportInvoicesAsync([FromForm] ImportDTO importDto, [FromQuery, Required] Guid clientId)
     {
-        var result = await sender.Send(new ImportInvoicesRequest(importDto));
+        var result = await sender.Send(new ImportInvoicesRequest(clientId, importDto));
         return FromResult(result, StatusCodes.Status201Created);
     }
 

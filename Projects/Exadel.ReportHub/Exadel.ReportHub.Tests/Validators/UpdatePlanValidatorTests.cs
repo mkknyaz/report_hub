@@ -22,7 +22,7 @@ public class UpdatePlanValidatorTests : BaseTestFixture
     public async Task ValidateAsync_ValidPlan_NoErrorReturned()
     {
         // Arrange
-        var plan = GetValidPlan();
+        var plan = SetupValidPlan();
 
         // Act
         var result = await _validator.TestValidateAsync(plan);
@@ -36,7 +36,7 @@ public class UpdatePlanValidatorTests : BaseTestFixture
     public async Task ValidateAsync_CountIsLessThanZero_ErrorReturned()
     {
         // Arrange
-        var plan = GetValidPlan();
+        var plan = SetupValidPlan();
         plan.Count = -123;
 
         // Act
@@ -53,7 +53,7 @@ public class UpdatePlanValidatorTests : BaseTestFixture
     public async Task ValidateAsync_EmptyStartDate_ErrorReturned()
     {
         // Arrange
-        var plan = GetValidPlan();
+        var plan = SetupValidPlan();
         plan.StartDate = DateTime.MinValue;
 
         // Act
@@ -70,7 +70,7 @@ public class UpdatePlanValidatorTests : BaseTestFixture
     public async Task ValidateAsync_StartDateGreaterThanEndDate_ErrorReturned()
     {
         // Arrange
-        var client = GetValidPlan();
+        var client = SetupValidPlan();
         client.StartDate = client.EndDate.AddDays(1);
 
         // Act
@@ -87,7 +87,7 @@ public class UpdatePlanValidatorTests : BaseTestFixture
     public async Task ValidateAsync_EndDateLessThanCurrentDate_ErrorReturned()
     {
         // Arrange
-        var plan = GetValidPlan();
+        var plan = SetupValidPlan();
         plan.EndDate = DateTime.UtcNow.AddDays(-1);
 
         // Act
@@ -100,14 +100,11 @@ public class UpdatePlanValidatorTests : BaseTestFixture
         Assert.That(result.Errors[0].ErrorMessage, Is.EqualTo(Constants.Validation.Date.EndDateInPast));
     }
 
-    private UpdatePlanDTO GetValidPlan()
+    private UpdatePlanDTO SetupValidPlan()
     {
-        var startDate = DateTime.UtcNow.AddDays(-1);
-        var endDate = startDate.AddDays(Random.Shared.Next(1, 7));
-
         return Fixture.Build<UpdatePlanDTO>()
-            .With(x => x.StartDate, startDate)
-            .With(x => x.EndDate, endDate)
+            .With(x => x.StartDate, DateTime.UtcNow.AddDays(-1))
+            .With(x => x.EndDate, DateTime.UtcNow.AddDays(7))
             .Create();
     }
 }

@@ -1,7 +1,7 @@
-﻿using ErrorOr;
+﻿using AutoMapper;
+using ErrorOr;
 using Exadel.ReportHub.Excel.Abstract;
-using Exadel.ReportHub.Handlers.Managers.Common;
-using Exadel.ReportHub.RA.Abstract;
+using Exadel.ReportHub.Handlers.Managers.Customer;
 using Exadel.ReportHub.SDK.DTOs.Customer;
 using Exadel.ReportHub.SDK.DTOs.Import;
 using FluentValidation;
@@ -9,22 +9,22 @@ using MediatR;
 
 namespace Exadel.ReportHub.Handlers.Customer.Import;
 
-public record ImportCustomersRequest(ImportDTO ImportDTO) : IRequest<ErrorOr<ImportResultDTO>>;
+public record ImportCustomersRequest(Guid ClientId, ImportDTO ImportDto) : IRequest<ErrorOr<ImportResultDTO>>;
 
 public class ImportCustomersHandler(
     IExcelImporter excelImporter,
-    ICustomerRepository customerRepository,
-    IValidator<CreateCustomerDTO> createCustomerValidator,
-    ICountryBasedEntityManager countryBasedEntityManager) : IRequestHandler<ImportCustomersRequest, ErrorOr<ImportResultDTO>>
+    ICustomerManager customerManager,
+    IValidator<ImportCustomerDTO> createCustomerValidator,
+    IMapper mapper) : IRequestHandler<ImportCustomersRequest, ErrorOr<ImportResultDTO>>
 {
     public async Task<ErrorOr<ImportResultDTO>> Handle(ImportCustomersRequest request, CancellationToken cancellationToken)
     {
-        using var stream = request.ImportDTO.File.OpenReadStream();
+        await using var stream = request.ImportDto.File.OpenReadStream();
 
-        var customerDtos = excelImporter.Read<CreateCustomerDTO>(stream);
+        var importCustomerDtos = excelImporter.Read<ImportCustomerDTO>(stream);
 
-        var tasks = customerDtos.Select(dto => createCustomerValidator.ValidateAsync(dto, cancellationToken));
-        var validationResults = await Task.WhenAll(tasks);
+        var validationTasks = importCustomerDtos.Select(dto => createCustomerValidator.ValidateAsync(dto, cancellationToken));
+        var validationResults = await Task.WhenAll(validationTasks);
 
         var validationErrors = validationResults
             .SelectMany((result, index) => result.Errors.Select(error => (RowIndex: index, Error: error.ErrorMessage)))
@@ -38,9 +38,14 @@ public class ImportCustomersHandler(
                 .ToList();
         }
 
-        var customers = await countryBasedEntityManager.GenerateEntitiesAsync<CreateCustomerDTO, Data.Models.Customer>(customerDtos, cancellationToken);
-        await customerRepository.AddManyAsync(customers, cancellationToken);
+        var createCustomerDtos = mapper.Map<List<CreateCustomerDTO>>(importCustomerDtos);
+        foreach (var dto in createCustomerDtos)
+        {
+            dto.ClientId = request.ClientId;
+        }
 
-        return new ImportResultDTO { ImportedCount = customers.Count };
+        var customerDtos = await customerManager.CreateCustomersAsync(createCustomerDtos, cancellationToken);
+
+        return new ImportResultDTO { ImportedCount = customerDtos.Count };
     }
 }

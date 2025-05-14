@@ -6,20 +6,16 @@ namespace Exadel.ReportHub.Handlers.Validators;
 
 public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
 {
-    private readonly IInvoiceRepository _invoiceRepository;
     private readonly IClientRepository _clientRepository;
     private readonly ICustomerRepository _customerRepository;
-    private readonly IItemRepository _itemRepository;
-    private readonly IValidator<UpdateInvoiceDTO> _updateInvoiceValidator;
+    private readonly IValidator<ImportInvoiceDTO> _importInvoiceValidator;
 
-    public CreateInvoiceDtoValidator(IInvoiceRepository invoiceRepository, IClientRepository clientRepository, ICustomerRepository customerRepository,
-        IItemRepository itemRepository, IValidator<UpdateInvoiceDTO> updateInvoiceValidator)
+    public CreateInvoiceDtoValidator(IClientRepository clientRepository, ICustomerRepository customerRepository,
+        IValidator<ImportInvoiceDTO> importInvoiceValidator)
     {
-        _invoiceRepository = invoiceRepository;
         _clientRepository = clientRepository;
         _customerRepository = customerRepository;
-        _itemRepository = itemRepository;
-        _updateInvoiceValidator = updateInvoiceValidator;
+        _importInvoiceValidator = importInvoiceValidator;
         ConfigureRules();
     }
 
@@ -29,7 +25,7 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
         ClassLevelCascadeMode = CascadeMode.Stop;
 
         RuleFor(x => x)
-            .SetValidator(_updateInvoiceValidator);
+            .SetValidator(_importInvoiceValidator);
 
         RuleFor(x => x.ClientId)
             .NotEmpty()
@@ -37,23 +33,7 @@ public class CreateInvoiceDtoValidator : AbstractValidator<CreateInvoiceDTO>
             .WithMessage(Constants.Validation.Client.DoesNotExist);
 
         RuleFor(x => x.CustomerId)
-            .NotEmpty()
-            .MustAsync(async (dto, customerId, cancellationToken) => await _customerRepository.ExistsAsync(customerId, dto.ClientId, cancellationToken))
-            .WithMessage(Constants.Validation.Customer.DoesNotExist);
-
-        RuleFor(x => x.InvoiceNumber)
-            .NotEmpty()
-            .MaximumLength(Constants.Validation.Invoice.InvoiceNumberMaxLength)
-            .Matches(@"^INV\d+$")
-            .WithMessage(Constants.Validation.Invoice.InvalidInvoiceNumberFormat)
-            .MustAsync(async (number, cancellationToken) => !await _invoiceRepository.ExistsAsync(number, cancellationToken))
-            .WithMessage(Constants.Validation.Invoice.DuplicateInvoice);
-
-        RuleFor(x => x.ItemIds)
-            .NotEmpty()
-            .Must(x => x.Count == x.Distinct().Count())
-            .WithMessage(Constants.Validation.Invoice.DuplicateItem)
-            .MustAsync(_itemRepository.AllExistAsync)
-            .WithMessage(Constants.Validation.Item.DoesNotExist);
+            .MustAsync(async (dto, customerId, cancellationToken) => await _customerRepository.ExistsOnClientAsync(customerId, dto.ClientId, cancellationToken))
+            .WithMessage(Constants.Validation.Customer.DoesNotExistOnClient);
     }
 }

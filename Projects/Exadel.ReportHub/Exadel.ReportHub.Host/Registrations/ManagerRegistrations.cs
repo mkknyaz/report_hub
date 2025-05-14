@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Exadel.ReportHub.Audit;
 using Exadel.ReportHub.Audit.Abstract;
-using Exadel.ReportHub.Handlers.Managers.Common;
+using Exadel.ReportHub.Handlers.Managers.Client;
+using Exadel.ReportHub.Handlers.Managers.Customer;
+using Exadel.ReportHub.Handlers.Managers.Helpers;
 using Exadel.ReportHub.Handlers.Managers.Invoice;
 using Exadel.ReportHub.Handlers.Managers.Report;
 
@@ -15,7 +17,9 @@ public static class ManagerRegistrations
         services.AddSingleton<IInvoiceManager, InvoiceManager>();
         services.AddSingleton<IAuditManager, AuditManager>();
         services.AddSingleton<IReportManager, ReportManager>();
-        services.AddSingleton<ICountryBasedEntityManager, CountryBasedEntityManager>();
+        services.AddSingleton<IClientManager, ClientManager>();
+        services.AddSingleton<ICustomerManager, CustomerManager>();
+        services.AddSingleton<ICountryDataFiller, CountryDataFiller>();
 
         return services;
     }
