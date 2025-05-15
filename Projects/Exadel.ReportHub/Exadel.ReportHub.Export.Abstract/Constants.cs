@@ -22,4 +22,11 @@ public static class Constants
             public const string Excel = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         }
     }
+
+    public static class ChartInfo
+    {
+        public const string PlansChartTitle = "Revenue Trend ({0})";
+        public const string PlansNamesTitle = "Item";
+        public const string PlansValuesTitle = "Revenue";
+    }
 }

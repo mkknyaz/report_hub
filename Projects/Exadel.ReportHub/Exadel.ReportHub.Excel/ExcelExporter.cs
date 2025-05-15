@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using Aspose.Cells;
 using Exadel.ReportHub.Data.Abstract;
+using Exadel.ReportHub.Excel.Helpers;
 using Exadel.ReportHub.Export.Abstract;
+using Exadel.ReportHub.Export.Abstract.Models;
 using Exadel.ReportHub.SDK.Enums;
 
 namespace Exadel.ReportHub.Excel;
@@ -13,19 +15,21 @@ public class ExcelExporter : IExportStrategy
         return Task.FromResult(format == ExportFormat.Excel);
     }
 
-    public async Task<Stream> ExportAsync<TModel>(TModel exportModel, CancellationToken cancellationToken)
+    public async Task<Stream> ExportAsync<TModel>(TModel exportModel, ChartData chartData = null, CancellationToken cancellationToken = default)
         where TModel : BaseReport
     {
-        return await ExportAsync([exportModel], cancellationToken);
+        return await ExportAsync([exportModel], chartData, cancellationToken);
     }
 
-    public async Task<Stream> ExportAsync<TModel>(IEnumerable<TModel> exportModels, CancellationToken cancellationToken)
+    public async Task<Stream> ExportAsync<TModel>(IEnumerable<TModel> exportModels, ChartData chartData = null, CancellationToken cancellationToken = default)
         where TModel : BaseReport
     {
         var stream = new MemoryStream();
+        const string worksheetName = "Report";
 
         using var workbook = new Workbook();
         using var worksheet = workbook.Worksheets[0];
+        worksheet.Name = worksheetName;
 
         var dateStyle = workbook.CreateStyle();
         dateStyle.Custom = Constants.Format.Date;
@@ -42,6 +46,11 @@ public class ExcelExporter : IExportStrategy
 
         PutHeaders(cells, properties);
         PutData(cells, properties, modelList, dateStyle, decimalStyle);
+
+        if (modelList.Count > 0 && chartData != null)
+        {
+            ChartPrinter.PrintChart(worksheet, chartData);
+        }
 
         worksheet.AutoFitColumns();
         worksheet.AutoFitRows();

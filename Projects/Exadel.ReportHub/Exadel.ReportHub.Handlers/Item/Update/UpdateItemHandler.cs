@@ -8,7 +8,8 @@ namespace Exadel.ReportHub.Handlers.Item.Update;
 
 public record UpdateItemRequest(Guid Id, CreateUpdateItemDTO UpdateItemDto) : IRequest<ErrorOr<Updated>>;
 
-public class UpdateItemHandler(IItemRepository itemRepository, ICurrencyRepository currencyRepository, IMapper mapper) : IRequestHandler<UpdateItemRequest, ErrorOr<Updated>>
+public class UpdateItemHandler(IItemRepository itemRepository, ICurrencyRepository currencyRepository, IMapper mapper)
+    : IRequestHandler<UpdateItemRequest, ErrorOr<Updated>>
 {
     public async Task<ErrorOr<Updated>> Handle(UpdateItemRequest request, CancellationToken cancellationToken)
     {

@@ -3,6 +3,7 @@ using CsvHelper;
 using Exadel.ReportHub.Csv.ClassMaps;
 using Exadel.ReportHub.Data.Abstract;
 using Exadel.ReportHub.Export.Abstract;
+using Exadel.ReportHub.Export.Abstract.Models;
 using Exadel.ReportHub.SDK.Enums;
 
 namespace Exadel.ReportHub.Csv;
@@ -14,13 +15,13 @@ public class CsvExporter : IExportStrategy
         return Task.FromResult(format == ExportFormat.CSV);
     }
 
-    public async Task<Stream> ExportAsync<TModel>(TModel exportModel, CancellationToken cancellationToken)
+    public async Task<Stream> ExportAsync<TModel>(TModel exportModel, ChartData chartData = null, CancellationToken cancellationToken = default)
         where TModel : BaseReport
     {
-        return await ExportAsync([exportModel], cancellationToken);
+        return await ExportAsync([exportModel], chartData, cancellationToken);
     }
 
-    public async Task<Stream> ExportAsync<TModel>(IEnumerable<TModel> exportModels, CancellationToken cancellationToken)
+    public async Task<Stream> ExportAsync<TModel>(IEnumerable<TModel> exportModels, ChartData chartData = null, CancellationToken cancellationToken = default)
         where TModel : BaseReport
     {
         var csvStream = new MemoryStream();
@@ -29,6 +30,7 @@ public class CsvExporter : IExportStrategy
             await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
             csv.Context.TypeConverterOptionsCache.GetOptions<Guid?>().NullValues.Add("-");
+            csv.Context.TypeConverterOptionsCache.GetOptions<string>().NullValues.Add("-");
 
             csv.Context.RegisterClassMap(ClassMapFactory.GetClassMap<TModel>());
             csv.WriteHeader<TModel>();

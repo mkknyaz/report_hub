@@ -7,7 +7,8 @@ using MediatR;
 namespace Exadel.ReportHub.Handlers.Item.Create;
 
 public record CreateItemRequest(CreateUpdateItemDTO CreateItemDto) : IRequest<ErrorOr<ItemDTO>>;
-public class CreateItemHandler(IItemRepository itemRepository, ICurrencyRepository currencyRepository, IMapper mapper) : IRequestHandler<CreateItemRequest, ErrorOr<ItemDTO>>
+public class CreateItemHandler(IItemRepository itemRepository, ICurrencyRepository currencyRepository, IMapper mapper)
+    : IRequestHandler<CreateItemRequest, ErrorOr<ItemDTO>>
 {
     public async Task<ErrorOr<ItemDTO>> Handle(CreateItemRequest request, CancellationToken cancellationToken)
     {

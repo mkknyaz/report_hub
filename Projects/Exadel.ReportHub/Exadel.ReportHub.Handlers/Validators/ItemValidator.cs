@@ -20,30 +20,30 @@ public class ItemValidator : AbstractValidator<CreateUpdateItemDTO>
 
     private void ConfigureRules()
     {
-            RuleLevelCascadeMode = CascadeMode.Stop;
+        RuleLevelCascadeMode = CascadeMode.Stop;
 
-            RuleFor(x => x.ClientId)
-                .NotEmpty()
-                .MustAsync(_clientRepository.ExistsAsync)
-                .WithMessage(Constants.Validation.Client.DoesNotExist);
+        RuleFor(x => x.ClientId)
+            .NotEmpty()
+            .MustAsync(_clientRepository.ExistsAsync)
+            .WithMessage(Constants.Validation.Client.DoesNotExist);
 
-            RuleFor(x => x.CurrencyId)
-                .NotEmpty()
-                .MustAsync(_currencyRepository.ExistsAsync)
-                .WithMessage(Constants.Validation.Currency.DoesNotExist);
+        RuleFor(x => x.CurrencyId)
+            .NotEmpty()
+            .MustAsync(_currencyRepository.ExistsAsync)
+            .WithMessage(Constants.Validation.Currency.DoesNotExist);
 
-            RuleFor(x => x.Name)
+        RuleFor(x => x.Name)
                 .SetValidator(_stringValidator, Constants.Validation.RuleSet.Names);
 
-            RuleFor(x => x.Description)
-                .NotEmpty()
-                .MaximumLength(Constants.Validation.Item.DescriptionMaxLength)
-                .Matches("^[A-Z]")
-                .WithMessage(Constants.Validation.Item.DescriptionShouldStartWithCapital);
+        RuleFor(x => x.Description)
+            .NotEmpty()
+            .MaximumLength(Constants.Validation.Item.DescriptionMaxLength)
+            .Matches("^[A-Z]")
+            .WithMessage(Constants.Validation.Item.DescriptionShouldStartWithCapital);
 
-            RuleFor(x => x.Price)
-                .NotEmpty()
-                .GreaterThan(0)
-                .WithMessage(Constants.Validation.Item.PriceMustBePositive);
+        RuleFor(x => x.Price)
+            .NotEmpty()
+            .GreaterThan(0)
+            .WithMessage(Constants.Validation.Item.PriceMustBePositive);
     }
 }
