@@ -31,11 +31,11 @@
 
         var parameters = new Dictionary<string, string>
         {
-            { "client_id", "report_hub_resource_owner" },
-            { "grant_type", "password" },
-            { "username", email },
-            { "password", password },
-            { "scope", "report_hub_api" }
+            { OidcConstants.TokenRequest.ClientId, Blazor.Constants.Authentication.ClientId },
+            { OidcConstants.TokenRequest.GrantType, OidcConstants.GrantTypes.Password },
+            { OidcConstants.TokenRequest.UserName, email },
+            { OidcConstants.TokenRequest.Password, password },
+            { OidcConstants.TokenRequest.Scope, Blazor.Constants.Authentication.Scope }
         };
 
         var response = await client.PostAsync(new Uri($"{Configuration["Authority"]}/connect/token"), new FormUrlEncodedContent(parameters));
@@ -47,14 +47,14 @@
         var dto = await response.Content.ReadFromJsonAsync<LoginResult>();
         var token = dto.AccessToken;
 
-        await SessionStorage.SetAsync("authToken", token);
+        await SessionStorage.SetAsync(OidcConstants.TokenResponse.AccessToken, token);
 
         Navigation.NavigateTo("/", forceLoad: true);
     }
 
     private class LoginResult
     {
-        [JsonPropertyName("access_token")]
+        [JsonPropertyName(OidcConstants.TokenResponse.AccessToken)]
         public string AccessToken { get; set; }
     }
 }
