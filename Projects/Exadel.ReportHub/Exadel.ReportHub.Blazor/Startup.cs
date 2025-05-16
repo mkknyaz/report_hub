@@ -1,10 +1,10 @@
-﻿using Exadel.ReportHub.Blazor.Components;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Exadel.ReportHub.Blazor.Components;
 
 namespace Exadel.ReportHub.Blazor;
 
 [ExcludeFromCodeCoverage]
-public class Startup()
+public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {

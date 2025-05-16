@@ -38,7 +38,7 @@
             { "scope", "report_hub_api" }
         };
 
-        var response = await client.PostAsync($"{Configuration["Authority"]}/connect/token", new FormUrlEncodedContent(parameters));
+        var response = await client.PostAsync(new Uri($"{Configuration["Authority"]}/connect/token"), new FormUrlEncodedContent(parameters));
 
         if (!response.IsSuccessStatusCode)
         {
