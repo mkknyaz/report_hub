@@ -11,6 +11,7 @@ public class AuditInvoiceExportedNotificationHandler(IAuditManager auditManager)
         var action = new ExportInvoicesAuditAction(
             userId: notification.UserId,
             invoiceId: notification.InvoiceId,
+            clientId: notification.ClientId,
             timeStamp: notification.TimeStamp,
             isSuccess: notification.IsSuccess);
 

@@ -1,12 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using AutoMapper;
+using Duende.IdentityModel;
 using Exadel.ReportHub.Host.Infrastructure.Filters;
 using Exadel.ReportHub.Host.Registrations;
 using Exadel.ReportHub.SDK.Abstract;
 using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace Exadel.ReportHub.Host;
@@ -80,6 +83,12 @@ public class Startup(IConfiguration configuration)
             {
                 options.Authority = configuration["Authority"];
                 options.Audience = Constants.Authorization.ResourceName;
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = JwtClaimTypes.Subject,
+                    RoleClaimType = ClaimTypes.Role
+                };
             });
 
         AuthorizationRegistrations.AddAuthorization(services);

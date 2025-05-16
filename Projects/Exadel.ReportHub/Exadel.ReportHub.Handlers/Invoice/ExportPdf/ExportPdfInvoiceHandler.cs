@@ -61,7 +61,7 @@ public class ExportPdfInvoiceHandler(
         }
         finally
         {
-            var notification = new InvoiceExportedNotification(userId, request.Id, DateTime.UtcNow, isSuccess);
+            var notification = new InvoiceExportedNotification(userId, request.Id, request.ClientId, DateTime.UtcNow, isSuccess);
             await publisher.Publish(notification, cancellationToken);
         }
     }
