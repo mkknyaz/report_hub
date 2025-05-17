@@ -20,6 +20,7 @@ public class ExportReportDtoValidator : AbstractValidator<ExportReportDTO>
             .ChildRules(child =>
             {
                 child.RuleLevelCascadeMode = CascadeMode.Stop;
+                child.ClassLevelCascadeMode = CascadeMode.Stop;
 
                 child.RuleFor(x => x.ClientId)
                     .NotEmpty()
