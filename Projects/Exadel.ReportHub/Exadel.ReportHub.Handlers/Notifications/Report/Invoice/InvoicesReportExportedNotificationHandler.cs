@@ -9,7 +9,7 @@ public class AuditInvoicesReportExportedNotificationHandler(IAuditManager auditM
 {
     public async Task Handle(InvoicesReportExportedNotification notification, CancellationToken cancellationToken)
     {
-        var action = new ExportItemsReportAuditAction(
+        var action = new ExportInvoicesReportAuditAction(
             userId: notification.UserId,
             clientId: notification.ClientId,
             timeStamp: notification.TimeStamp,

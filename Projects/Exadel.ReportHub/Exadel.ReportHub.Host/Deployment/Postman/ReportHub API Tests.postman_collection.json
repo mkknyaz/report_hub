@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "98a9b73b-f839-4dcf-b8ad-c0271b94805b",
+		"_postman_id": "8fa94161-23dc-4ee7-93f0-6eeb16d21399",
 		"name": "ReportHub API Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24902136",
-		"_collection_link": "https://report-hub-api-team.postman.co/workspace/31a352c3-8b44-446b-8bf9-071cf8037048/collection/24902136-98a9b73b-f839-4dcf-b8ad-c0271b94805b?action=share&source=collection_link&creator=24902136"
+		"_exporter_id": "25805878"
 	},
 	"item": [
 		{
@@ -21,6 +20,7 @@
 							"const password = `P@ssw0rd!${Math.floor(1000 + Math.random()*9000)}`;\r",
 							"\r",
 							"pm.variables.set(\"userEmail\", email);\r",
+							"pm.variables.set(\"fullName\", fullName);\r",
 							"pm.variables.set(\"userPassword\", password);"
 						],
 						"type": "text/javascript",
@@ -245,7 +245,12 @@
 							"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));\r",
 							"\r",
 							"const json = pm.response.json();\r",
-							"pm.variables.set(\"accessToken\", json.access_token);"
+							"pm.variables.set(\"accessToken\", json.access_token);\r",
+							"\r",
+							"const isUpdated = pm.variables.get(\"isUpdated\")\r",
+							"if(isUpdated){\r",
+							"    pm.execution.setNextRequest(\"Create Customer\");\r",
+							"}"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -330,7 +335,11 @@
 							"    pm.expect(pm.response.text()).to.eql(\"\");\r",
 							"});\r",
 							"\r",
-							"pm.execution.setNextRequest(\"Create Access Token\");"
+							"const isUpdated = pm.variables.get(\"isUpdated\")\r",
+							"if(!isUpdated){\r",
+							"    pm.variables.set(\"isUpdated\", true);\r",
+							"    pm.execution.setNextRequest(\"Create Access Token\");\r",
+							"}"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -625,8 +634,7 @@
 							"    .that.is.a(\"string\");\r",
 							"\r",
 							"  pm.expect(body)\r",
-							"    .to.have.property(\"price\")\r",
-							"    .and.to.eql(\"price\", parseFloat(pm.variables.get(\"itemPrice\")));\r",
+							"    .to.have.property(\"price\", parseFloat(pm.variables.get(\"itemPrice\")));\r",
 							"\r",
 							"  pm.expect(body)\r",
 							"    .to.have.property(\"currencyId\", pm.collectionVariables.get(\"currencyId\"))\r",
@@ -957,6 +965,133 @@
 			"response": []
 		},
 		{
+			"name": "Generate Item Report",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));\r",
+							"\r",
+							"pm.test(\"Content-Type is exactly text/csv\", () => {\r",
+							"  pm.response.to.have.header(\"content-type\", \"text/csv\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Content-Disposition header contains .csv\", () => {\r",
+							"  const cd = pm.response.headers.get(\"content-disposition\") || \"\";\r",
+							"  pm.expect(cd.toLowerCase()).to.include(\".csv\");\r",
+							"});\r",
+							"\r",
+							"const csv = pm.response.text().trim();\r",
+							"pm.test(\"CSV is non-empty\", () => pm.expect(csv.length).to.be.above(0));\r",
+							"\r",
+							"const lines = csv.split(/\\r?\\n/);\r",
+							"pm.test(\"At least header + 1 data row\", () => pm.expect(lines.length).to.be.above(1));\r",
+							"\r",
+							"const headers = lines[0].split(\",\");\r",
+							"const values  = lines[1].split(\",\");\r",
+							"\r",
+							"const columns = [\r",
+							"  \"MostSoldItemName\",\r",
+							"  \"AveragePrice\",\r",
+							"  \"AverageRevenue\",\r",
+							"  \"ClientCurrency\",\r",
+							"  \"ReportDate\"\r",
+							"];\r",
+							"\r",
+							"const index = {};\r",
+							"columns.forEach(name => {\r",
+							"  index[name] = headers.indexOf(name);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"CSV header contains all required columns\", () => {\r",
+							"  columns.forEach(name => {\r",
+							"    pm.expect(index[name], `${name} column should exist`).to.be.at.least(0);\r",
+							"  });\r",
+							"});\r",
+							"\r",
+							"pm.test(\"AveragePrice and AverageRevenue are valid numbers\", () => {\r",
+							"  const price = parseFloat(values[index[\"AveragePrice\"]]);\r",
+							"  const revenue = parseFloat(values[index[\"AverageRevenue\"]]);\r",
+							"  pm.expect(price, \"AveragePrice\").to.be.a(\"number\").and.to.be.at.least(0);\r",
+							"  pm.expect(revenue, \"AverageRevenue\").to.be.a(\"number\").and.to.be.at.least(0);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ClientCurrency matches\", () => {\r",
+							"  const cc = values[index[\"ClientCurrency\"]];\r",
+							"  pm.expect(cc).to.eql(pm.collectionVariables.get(\"сurrencyCode\"));\r",
+							"});\r",
+							"\r",
+							"pm.test(\"ReportDate equals today\", () => {\r",
+							"  const reportDate = values[index[\"ReportDate\"]];\r",
+							"  const today = new Date().toISOString().slice(0,10);\r",
+							"  pm.expect(reportDate).to.eql(today);\r",
+							"});\r",
+							"\r",
+							"pm.variables.set(\"lastGenerate\", pm.info.requestName);\r",
+							"console.log(pm.variables.get(\"lastGenerate\"));\r",
+							"pm.execution.setNextRequest(\"Audit Report\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"currentAction\", \"ExportItemsReportAuditAction\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/reports/items?clientId={{clientId}}&format=CSV&startDate=&endDate=",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"reports",
+						"items"
+					],
+					"query": [
+						{
+							"key": "clientId",
+							"value": "{{clientId}}"
+						},
+						{
+							"key": "format",
+							"value": "CSV"
+						},
+						{
+							"key": "startDate",
+							"value": ""
+						},
+						{
+							"key": "endDate",
+							"value": ""
+				}
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Export Invoice",
 			"event": [
 				{
@@ -993,6 +1128,7 @@
 							"  pm.expect(pm.response.text().length).to.be.above(1000);\r",
 							"});\r",
 							"\r",
+							"pm.variables.set(\"lastGenerate\", pm.info.requestName);\r",
 							"pm.execution.setNextRequest(\"Audit Report\");"
 						],
 						"type": "text/javascript",
@@ -1100,6 +1236,7 @@
 							"  pm.expect(reportDate, \"ReportDate\").to.eql(today);\r",
 							"});\r",
 							"\r",
+							"pm.variables.set(\"lastGenerate\", pm.info.requestName);\r",
 							"pm.execution.setNextRequest(\"Audit Report\");"
 						],
 						"type": "text/javascript",
@@ -1168,7 +1305,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"if (!pm.collectionVariables.get(\"planIndex\")) {\r",
+							"if (!pm.variables.get(\"planIndex\")) {\r",
 							"  pm.variables.set(\"planIndex\", \"0\");\r",
 							"  pm.variables.set(\"planIds\", JSON.stringify([]));\r",
 							"}\r",
@@ -1229,18 +1366,17 @@
 							"    .that.is.a(\"string\");\r",
 							"});\r",
 							"\r",
-							"let planIds = JSON.parse(pm.collectionVariables.get(\"planIds\") || \"[]\");\r",
+							"let planIds = JSON.parse(pm.variables.get(\"planIds\") || \"[]\");\r",
 							"planIds.push(body.id);\r",
-							"pm.collectionVariables.set(\"planIds\", JSON.stringify(planIds));\r",
+							"pm.variables.set(\"planIds\", JSON.stringify(planIds));\r",
 							"\r",
-							"let index = parseInt(pm.collectionVariables.get(\"planIndex\"), 10) + 1;\r",
+							"let index = parseInt(pm.variables.get(\"planIndex\"), 10) + 1;\r",
 							"\r",
 							"if (index < itemIds.length) {\r",
-							"  pm.collectionVariables.set(\"planIndex\", index.toString());\r",
+							"  pm.variables.set(\"planIndex\", index.toString());\r",
 							"  pm.execution.setNextRequest(\"Create Plan\");\r",
 							"} else {\r",
-							"  pm.collectionVariables.unset(\"planIndex\");\r",
-							"  pm.execution.setNextRequest(null);\r",
+							"  pm.execution.setNextRequest(\"Generate Plan Report\");\r",
 							"}"
 						],
 						"type": "text/javascript",
@@ -1289,8 +1425,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"pm.variables.set(\"currentAction\", \"ExportPlansReportAuditAction\");\r",
-							""
+							"pm.variables.set(\"currentAction\", \"ExportPlansReportAuditAction\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -1322,7 +1457,10 @@
 							"\r",
 							"pm.test(\"Body is non-empty\", () => {\r",
 							"  pm.expect(pm.response.text().length).to.be.above(100);\r",
-							"});"
+							"});\r",
+							"\r",
+							"pm.variables.set(\"lastGenerate\", pm.info.requestName);\r",
+							"pm.execution.setNextRequest(\"Audit Report\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -1394,11 +1532,15 @@
 							"const latest = entries[0];\r",
 							"pm.test(\"Audit entry has expected fields and values\", () => {\r",
 							"  pm.expect(latest)\r",
-							"  .to.have.property(\"action\", pm.variables(\"currentAction\"))\r",
+							"  .to.have.property(\"action\", pm.variables.get(\"currentAction\"))\r",
 							"  .that.is.a(\"string\");\r",
 							"\r",
 							"  pm.expect(latest)\r",
 							"  .to.have.property(\"userId\", pm.variables.get(\"userId\"))\r",
+							"  .that.is.a(\"string\");\r",
+							"\r",
+							"  pm.expect(latest)\r",
+							"  .to.have.property(\"clientId\", pm.variables.get(\"clientId\"))\r",
 							"  .that.is.a(\"string\");\r",
 							"\r",
 							"  pm.expect(latest)\r",
@@ -1408,8 +1550,8 @@
 							"  .to.have.property(\"timeStamp\");\r",
 							"\r",
 							"  pm.expect(latest)\r",
-							"      .to.have.property(\"isSuccess\", true)\r",
-							"      .that.is.a(\"boolean\");\r",
+							"  .to.have.property(\"isSuccess\", true)\r",
+							"  .that.is.a(\"boolean\");\r",
 							"});\r",
 							"\r",
 							"pm.test(\"timeStamp is within the last minute\", () => {\r",
@@ -1419,8 +1561,26 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Latest action is correct\", () => {\r",
-							"  pm.expect(latest.action).to.eql(pm.collectionVariables.get(\"currentAction\"));\r",
-							"});"
+							"  pm.expect(latest.action).to.eql(pm.variables.get(\"currentAction\"));\r",
+							"});\r",
+							"\r",
+							"const lastGen = pm.variables.get(\"lastGenerate\");\r",
+							"\r",
+							"const nextMap = {\r",
+							"  \"Generate Item Report\": \"Export Invoice\",\r",
+							"  \"Export Invoice\": \"Generate Invoice Report\",\r",
+							"  \"Generate Invoice Report\": \"Create Plan\",\r",
+							"  \"Generate Plan Report\": null,\r",
+							"};\r",
+							"\r",
+							"const next = nextMap[lastGen];\r",
+							"\r",
+							"if (next) {\r",
+							"  pm.execution.setNextRequest(next);\r",
+							"}\r",
+							"else{\r",
+							"    pm.execution.setNextRequest(null);\r",
+							"}"
 						],
 						"type": "text/javascript",
 						"packages": {}
