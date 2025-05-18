@@ -1,15 +1,18 @@
 ﻿using System.Net.Mail;
 using AutoFixture;
+using Exadel.ReportHub.Common.Providers;
 using Exadel.ReportHub.Data.Enums;
 using Exadel.ReportHub.Data.Models;
 using Exadel.ReportHub.Email.Abstract;
 using Exadel.ReportHub.Email.Models;
 using Exadel.ReportHub.Export.Abstract;
 using Exadel.ReportHub.Handlers.Managers.Report;
+using Exadel.ReportHub.Handlers.Notifications.Report.Send;
 using Exadel.ReportHub.Handlers.Report.Send;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Report;
 using Exadel.ReportHub.Tests.Abstracts;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -21,6 +24,7 @@ public class SendReportsHandlerTests : BaseTestFixture
     private Mock<IReportManager> _reportManagerMock;
     private Mock<IUserRepository> _userRepositoryMock;
     private Mock<IEmailSender> _emailSenderMock;
+    private Mock<IPublisher> _publisherMock;
     private Mock<ILogger<SendReportsHandler>> _loggerMock;
     private SendReportsHandler _handler;
 
@@ -30,12 +34,14 @@ public class SendReportsHandlerTests : BaseTestFixture
         _reportManagerMock = new Mock<IReportManager>();
         _userRepositoryMock = new Mock<IUserRepository>();
         _emailSenderMock = new Mock<IEmailSender>();
+        _publisherMock = new Mock<IPublisher>();
         _loggerMock = new Mock<ILogger<SendReportsHandler>>();
 
         _handler = new SendReportsHandler(
             _reportManagerMock.Object,
             _userRepositoryMock.Object,
             _emailSenderMock.Object,
+            _publisherMock.Object,
             _loggerMock.Object);
     }
 
@@ -101,6 +107,16 @@ public class SendReportsHandlerTests : BaseTestFixture
             currentHour,
             CancellationToken.None),
             Times.Once);
+        foreach (var user in users)
+        {
+            _publisherMock.Verify(
+                x => x.Publish(It.Is<SendReportsNotification>(
+                        x => x.UserId == user.Id &&
+                             x.ClientId == user.NotificationSettings.ClientId &&
+                             x.IsSuccess),
+                    CancellationToken.None),
+                Times.Once);
+        }
     }
 
     [Test]
@@ -135,6 +151,14 @@ public class SendReportsHandlerTests : BaseTestFixture
             It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains("Failed to generate reports", StringComparison.OrdinalIgnoreCase)),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception, string>>()),
+            Times.Once);
+
+        _publisherMock.Verify(
+            x => x.Publish(It.Is<SendReportsNotification>(
+                    x => x.UserId == user.Id &&
+                         x.ClientId == user.NotificationSettings.ClientId &&
+                         !x.IsSuccess),
+                CancellationToken.None),
             Times.Once);
     }
 }

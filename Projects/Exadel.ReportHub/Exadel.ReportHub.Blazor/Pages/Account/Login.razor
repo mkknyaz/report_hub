@@ -1,8 +1,7 @@
 ﻿@page "/login"
-@rendermode InteractiveServer
-@inject ProtectedSessionStorage SessionStorage
-@inject IConfiguration Configuration
 @inject NavigationManager Navigation
+@inject HttpClient Client
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <h3>Login</h3>
 
@@ -26,28 +25,30 @@
 
     private async Task LoginAsync()
     {
-        error = null;
-        using var client = new HttpClient();
-
         var parameters = new Dictionary<string, string>
         {
-            { OidcConstants.TokenRequest.ClientId, Blazor.Constants.Authentication.ClientId },
+            { OidcConstants.TokenRequest.ClientId, Constants.Authentication.ClientId },
             { OidcConstants.TokenRequest.GrantType, OidcConstants.GrantTypes.Password },
             { OidcConstants.TokenRequest.UserName, email },
             { OidcConstants.TokenRequest.Password, password },
-            { OidcConstants.TokenRequest.Scope, Blazor.Constants.Authentication.Scope }
+            { OidcConstants.TokenRequest.Scope, Constants.Authentication.Scope }
         };
 
-        var response = await client.PostAsync(new Uri($"{Configuration["Authority"]}/connect/token"), new FormUrlEncodedContent(parameters));
+        var response = await Client.PostAsync(new Uri("/connect/token", UriKind.Relative), new FormUrlEncodedContent(parameters));
 
         if (!response.IsSuccessStatusCode)
         {
             error = "Invalid email or password.";
+            return;
         }
-        var dto = await response.Content.ReadFromJsonAsync<LoginResult>();
-        var token = dto.AccessToken;
 
-        await SessionStorage.SetAsync(OidcConstants.TokenResponse.AccessToken, token);
+        var dto = await response.Content.ReadFromJsonAsync<LoginResult>();
+        string token = dto.AccessToken;
+
+        if (AuthenticationStateProvider is AuthStateProvider stateProvider)
+        {
+            await stateProvider.NotifyLoginAsync(token);
+        }
 
         Navigation.NavigateTo("/", forceLoad: true);
     }

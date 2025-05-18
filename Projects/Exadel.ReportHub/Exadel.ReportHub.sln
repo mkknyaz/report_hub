@@ -38,7 +38,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Excel", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Email", "Exadel.ReportHub.Email\Exadel.ReportHub.Email.csproj", "{A03CD7B5-357A-4C83-3311-E879AC0E2799}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Blazor", "Exadel.ReportHub.Blazor\Exadel.ReportHub.Blazor.csproj", "{43F9F158-EF0C-40D1-B167-3A6A86FF6A16}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Exadel.ReportHub.Blazor", "Exadel.ReportHub.Blazor\Exadel.ReportHub.Blazor.csproj", "{CEC31E0D-829E-4B9F-9876-2D76C8DDB628}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -106,10 +106,10 @@ Global
 		{A03CD7B5-357A-4C83-3311-E879AC0E2799}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A03CD7B5-357A-4C83-3311-E879AC0E2799}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A03CD7B5-357A-4C83-3311-E879AC0E2799}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43F9F158-EF0C-40D1-B167-3A6A86FF6A16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43F9F158-EF0C-40D1-B167-3A6A86FF6A16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43F9F158-EF0C-40D1-B167-3A6A86FF6A16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43F9F158-EF0C-40D1-B167-3A6A86FF6A16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEC31E0D-829E-4B9F-9876-2D76C8DDB628}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEC31E0D-829E-4B9F-9876-2D76C8DDB628}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEC31E0D-829E-4B9F-9876-2D76C8DDB628}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEC31E0D-829E-4B9F-9876-2D76C8DDB628}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

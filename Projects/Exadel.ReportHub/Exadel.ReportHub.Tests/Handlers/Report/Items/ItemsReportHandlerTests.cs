@@ -1,9 +1,12 @@
 ﻿using AutoFixture;
+using Exadel.ReportHub.Common.Providers;
 using Exadel.ReportHub.Export.Abstract;
 using Exadel.ReportHub.Handlers.Managers.Report;
+using Exadel.ReportHub.Handlers.Notifications.Report.Item;
 using Exadel.ReportHub.Handlers.Report.Items;
 using Exadel.ReportHub.SDK.DTOs.Report;
 using Exadel.ReportHub.Tests.Abstracts;
+using MediatR;
 using Moq;
 
 namespace Exadel.ReportHub.Tests.Handlers.Report.Items;
@@ -12,13 +15,20 @@ namespace Exadel.ReportHub.Tests.Handlers.Report.Items;
 public class ItemsReportHandlerTests : BaseTestFixture
 {
     private Mock<IReportManager> _reportManagerMock;
+    private Mock<IUserProvider> _userProviderMock;
+    private Mock<IPublisher> _publisherMock;
     private ItemsReportHandler _handler;
 
     [SetUp]
     public void SetUp()
     {
         _reportManagerMock = new Mock<IReportManager>();
-        _handler = new ItemsReportHandler(_reportManagerMock.Object);
+        _userProviderMock = new Mock<IUserProvider>();
+        _publisherMock = new Mock<IPublisher>();
+        _handler = new ItemsReportHandler(
+            _reportManagerMock.Object,
+            _userProviderMock.Object,
+            _publisherMock.Object);
     }
 
     [Test]
@@ -26,14 +36,16 @@ public class ItemsReportHandlerTests : BaseTestFixture
     {
         // Arrange
         var dto = Fixture.Create<ExportReportDTO>();
-
+        var userId = Guid.NewGuid();
         var expectedResult = new ExportResult
         {
             FileName = $"ItemsReport_{DateTime.UtcNow:yyyy-MM-dd}.xlsx",
             ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             Stream = new MemoryStream()
         };
-
+        _userProviderMock
+            .Setup(x => x.GetUserId())
+            .Returns(userId);
         _reportManagerMock
             .Setup(x => x.GenerateItemsReportAsync(dto, CancellationToken.None))
             .ReturnsAsync(expectedResult);
@@ -52,6 +64,14 @@ public class ItemsReportHandlerTests : BaseTestFixture
         _reportManagerMock.Verify(
             x => x.GenerateItemsReportAsync(
                 It.Is<ExportReportDTO>(r => r == dto),
+                CancellationToken.None),
+            Times.Once);
+
+        _publisherMock.Verify(
+            x => x.Publish(It.Is<ItemsReportExportedNotification>(
+                    x => x.UserId == userId &&
+                         x.ClientId == dto.ClientId &&
+                         x.IsSuccess),
                 CancellationToken.None),
             Times.Once);
     }
