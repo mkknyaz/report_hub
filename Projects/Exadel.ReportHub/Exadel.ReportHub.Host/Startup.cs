@@ -117,8 +117,8 @@ public class Startup(IConfiguration configuration)
     {
         mapper.ConfigurationProvider.AssertConfigurationIsValid();
 
-        app.UseBlazorFrameworkFiles();
-        app.UseStaticFiles();
+        // app.UseBlazorFrameworkFiles();
+        // app.UseStaticFiles();
 
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Report Hub API"));
@@ -138,7 +138,8 @@ public class Startup(IConfiguration configuration)
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapFallbackToFile("index.html");
+
+            // endpoints.MapFallbackToFile("index.html");
         });
 
         app.UseHangfireDashboard();
