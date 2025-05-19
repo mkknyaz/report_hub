@@ -11,20 +11,20 @@ jobs:
 
     env:
        Mongo_Scripts_Path: Projects/Exadel.ReportHub/Exadel.ReportHub.Host/Deployment/Mongo
-       Render_Deploy_Hook: ${{ secrets.RENDER_DEPLOY_HOOK }}
-       Render_Api_Key: ${{ secrets.RENDER_API_KEY }}
-       Render_Service_Id: ${{ secrets.RENDER_SERVICE_ID }}
-       ReportHubService_ClientSecret: ${{ secrets.REPORT_HUB_SERVICE_CLIENT_SECRET }}
-       Mongo_Connection_String: ${{secrets.MONGO_CONNECTION_STRING}}
+       Render_Deploy_Hook: https://api.render.com/deploy/srv-d0ldcdggjchc73evsaf0?key=d2BLL3UxCxo
+       Render_Api_Key: rnd_UcZPCUzK1K5tCebPGgwvVUSyZG0m
+       Render_Service_Id: https://report-hub-ozrv.onrender.com
+       ReportHubService_ClientSecret: Report_Hub_Service
+       Mongo_Connection_String: mongodb+srv://exadelgroupe1:5VESyWEiUwUmc9r0@cluster0.69vyv.mongodb.net/ReportHub?retryWrites=true&w=majority
        TZ: "UTC"
        
        Updates: |
-         Authority: ${{ vars.AUTHORITY }}
-         ConnectionStrings__Mongo: ${{ secrets.MONGO_CONNECTION_STRING }}
-         EcbConfig__Host: ${{ vars.ECB_CONFIG_HOST }}
-         ReportHubConfig__Host: ${{ vars.REPORTHUB_CONFIG_HOST }}
-         SmtpConfig__Email: ${{ vars.SMTP_Email }}
-         SmtpConfig__Password: ${{ secrets.SMTP_PASSWORD }}
+         Authority: https://report-hub-ozrv.onrender.com
+         ConnectionStrings__Mongo: mongodb+srv://exadelgroupe1:5VESyWEiUwUmc9r0@cluster0.69vyv.mongodb.net/ReportHub?retryWrites=true&w=majority
+         EcbConfig__Host: https://data-api.ecb.europa.eu
+         ReportHubConfig__Host: https://report-hub-ozrv.onrender.com
+         SmtpConfig__Email: groupbootcamp1@gmail.com
+         SmtpConfig__Password: zmhivblehbpotfmu
          
     steps:
     - name: Checkout
