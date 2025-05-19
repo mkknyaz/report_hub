@@ -12,10 +12,10 @@ COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.Identity/Exadel.ReportHub.Iden
 COPY ["Projects/Exadel.ReportHub/Directory.Build.props", "./"]
 COPY ["Projects/Exadel.ReportHub/Exadel.ReportHub.ruleset", "./"]
 
-RUN dotnet restore "Exadel.ReportHub.Host/Exadel.ReportHub.Host.csproj"
+RUN dotnet restore "Exadel.ReportHub.Blazor.UI/Exadel.ReportHub.Blazor.UI.csproj"
 
 COPY Projects/Exadel.ReportHub/ .
-WORKDIR "/src/Exadel.ReportHub.Host"
+WORKDIR "/src/Exadel.ReportHub.Blazor.UI"
 RUN dotnet publish -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
@@ -38,4 +38,4 @@ ENV ASPNETCORE_URLS=http://+:${PORT}
 
 EXPOSE 80
 
-ENTRYPOINT ["dotnet", "Exadel.ReportHub.Host.dll"]
+ENTRYPOINT ["dotnet", "Exadel.ReportHub.Blazor.UI.dll"]
