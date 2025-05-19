@@ -1,0 +1,75 @@
+﻿@page "/items/create/{ClientId:guid}"
+@rendermode InteractiveServer
+
+@inject IItemsService ItemsService
+@inject ICountryService CountryService
+@inject NavigationManager Nav
+
+<PageTitle>New Item</PageTitle>
+
+<h3>Create Item</h3>
+
+<EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <InputText class="form-control"
+                   @bind-Value="model.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <InputTextArea class="form-control"
+                       rows="3"
+                       @bind-Value="model.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Price</label>
+        <InputNumber class="form-control"
+                     @bind-Value="model.Price" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Currency</label>
+        <InputSelect TValue="Guid"
+                     class="form-select"
+                     @bind-Value="model.CurrencyId">
+            <option value="">-- Select currency --</option>
+            @foreach (var cur in _currencies)
+            {
+                <option value="@cur.CurrencyId">@cur.CurrencyCode</option>
+            }
+        </InputSelect>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+        Cancel
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public Guid ClientId { get; set; }
+
+    private CreateUpdateItemDTO model = new();
+    private IList<CurrencyDTO> _currencies = Array.Empty<CurrencyDTO>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        model.ClientId = ClientId;
+
+        _currencies = await CountryService.GetCurrenciesAsync();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await ItemsService.CreateItemAsync(model);
+        Nav.NavigateTo("/items");
+    }
+
+    private void Cancel()
+      => Nav.NavigateTo("/items");
+}

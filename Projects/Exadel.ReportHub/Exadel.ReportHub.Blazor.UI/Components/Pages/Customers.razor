@@ -1,0 +1,152 @@
+﻿@page "/customers"
+@rendermode InteractiveServer
+
+@inject IClientsService    ClientsService
+@inject ICustomersService   CustomerService
+@inject IUserStateService  UserStateService
+@inject AuthenticationStateProvider AuthState
+@inject NavigationManager   Nav
+
+<div class="container-fluid mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Customers</h2>
+    <div class="d-flex">
+      <select class="form-select me-2" style="width:200px"
+              @bind="_selectedClientId">
+        <option value="">-- Select client --</option>
+        @foreach (var c in _clients)
+        {
+          <option value="@c.ClientId">@c.ClientName</option>
+        }
+      </select>
+      <button class="btn btn-outline-primary me-2"
+              @onclick="LoadCustomersAsync"
+              disabled="@(_selectedClientId == Guid.Empty)">
+        Apply
+      </button>
+      @if (_canCreate)
+      {
+        <button class="btn btn-success"
+                @onclick='() => Nav.NavigateTo($"/customers/create/{_selectedClientId}")'>
+          + New Customer
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (_isLoading)
+  {
+    <div class="text-center py-5">
+      <div class="spinner-border"></div>
+    </div>
+  }
+  else if (_customers?.Count > 0)
+  {
+    <div class="card shadow-sm">
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Country</th>
+              @if (_canUpdate || _canDelete)
+              {
+                <th class="text-center">Actions</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var cust in _customers)
+            {
+              <tr>
+                <td>@cust.Name</td>
+                <td>@cust.Email</td>
+                <td>@cust.Country</td>
+                @if (_canUpdate || _canDelete)
+                {
+                  <td class="text-center">
+                    @if (_canUpdate)
+                    {
+                      <button class="btn btn-sm btn-outline-primary me-1"
+                              @onclick='() => Nav.NavigateTo($"/customers/edit/{cust.Id}")'>
+                        Edit
+                      </button>
+                    }
+                    @if (_canDelete)
+                    {
+                      <button class="btn btn-sm btn-outline-danger"
+                              @onclick="() => DeleteCustomerAsync(cust.Id)">
+                        Delete
+                      </button>
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+  else if (_selectedClientId != Guid.Empty)
+  {
+    <div class="alert alert-info mt-3">No customers found for this client.</div>
+  }
+</div>
+
+@code {
+  private IList<UserClientDTO>   _clients           = new List<UserClientDTO>();
+  private IList<CustomerDTO>     _customers         = new List<CustomerDTO>();
+  private Guid                   _selectedClientId;
+  private bool                   _isLoading;
+
+  private UserRole CurrentRole =>
+    UserStateService.GetSelectedClient()?.Role ?? UserRole.Operator;
+
+  private bool _canCreate => CurrentRole is UserRole.ClientAdmin or UserRole.Owner or UserRole.SuperAdmin;
+  private bool _canUpdate => _canCreate;
+  private bool _canDelete => CurrentRole is UserRole.Owner or UserRole.SuperAdmin;
+
+  protected override async Task OnInitializedAsync()
+  {
+    var auth = await AuthState.GetAuthenticationStateAsync();
+    if (auth.User.Identity?.IsAuthenticated != true) return;
+
+    var cache = UserStateService.GetUserClientDTOs();
+    if (cache == null || !cache.Any())
+    {
+      _clients = await ClientsService.GetClientsAsync();
+      UserStateService.SetUserClients(_clients);
+    }
+    else
+    {
+      _clients = cache;
+    }
+
+    _selectedClientId = UserStateService.GetSelectedClientId();
+    if (_selectedClientId != Guid.Empty)
+    {
+      await LoadCustomersAsync();
+    }
+  }
+
+  private async Task LoadCustomersAsync()
+  {
+    _isLoading = true;
+    StateHasChanged();
+
+    UserStateService.SetClient(_selectedClientId);
+    _customers = await CustomerService.GetCustomersByClientIdAsync(_selectedClientId);
+
+    _isLoading = false;
+    StateHasChanged();
+  }
+
+  private async Task DeleteCustomerAsync(Guid id)
+  {
+    if (!_canDelete) return;
+    await CustomerService.DeleteCustomerAsync(id, _selectedClientId);
+    await LoadCustomersAsync();
+  }
+}

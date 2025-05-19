@@ -1,0 +1,165 @@
+﻿@page "/items"
+@rendermode InteractiveServer
+
+@inject IClientsService ClientsService
+@inject IItemsService ItemsService
+@inject IUserStateService UserStateService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager Nav
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Items</h2>
+        <div class="d-flex">
+            <select class="form-select me-2"
+                    style="width: 200px"
+                    @bind="_selectedClientId">
+                <option value="">-- Select client --</option>
+                @foreach (var c in _clients)
+                {
+                    <option value="@c.ClientId">@c.ClientName</option>
+                }
+            </select>
+            <button class="btn btn-outline-primary me-2"
+                    @onclick="SaveClientAsync"
+                    disabled="@(_selectedClientId == Guid.Empty)">
+                Apply
+            </button>
+            @if (CanModify)
+            {
+                <button class="btn btn-success"
+                        @onclick="CreateItem">
+                    + New Item
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (_isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status"></div>
+        </div>
+    }
+    else if (_items?.Count > 0)
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th class="text-end">Price</th>
+                            <th>Currency</th>
+                            @if (CanModify)
+                            {
+                                <th class="text-center">Actions</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in _items)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.Name</td>
+                                <td>@item.Description</td>
+                                <td class="text-end">@item.Price.ToString()</td>
+                                <td>@item.CurrencyCode</td>
+                                @if (CanModify)
+                                {
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-primary me-1"
+                                                @onclick="() => EditItem(item.Id)">
+                                            Edit
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                @onclick="() => DeleteItem(item.Id)">
+                                            Delete
+                                        </button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (_selectedClientId != Guid.Empty)
+    {
+        <div class="alert alert-info mt-3">
+            No items found for this client.
+        </div>
+    }
+</div>
+
+@code {
+    private IList<UserClientDTO> _clients = new List<UserClientDTO>();
+    private IList<ItemDTO> _items = new List<ItemDTO>();
+    private Guid _selectedClientId;
+    private bool _isLoading;
+
+    private UserRole CurrentRole
+      => UserStateService.GetSelectedClient()?.Role
+         ?? UserRole.Operator;
+
+    private bool CanModify
+      => CurrentRole is UserRole.ClientAdmin
+                       or UserRole.Owner
+                       or UserRole.SuperAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthenticationStateProvider
+                               .GetAuthenticationStateAsync();
+        if (auth.User.Identity?.IsAuthenticated != true)
+            return;
+
+        var cache = UserStateService.GetUserClientDTOs();
+        if (cache == null || cache.Count == 0)
+        {
+            _clients = await ClientsService.GetClientsAsync();
+            UserStateService.SetUserClients(_clients);
+        }
+        else
+        {
+            _clients = cache;
+        }
+
+        _selectedClientId = UserStateService.GetSelectedClientId();
+        if (_selectedClientId != Guid.Empty)
+        {
+            await SaveClientAsync();
+        }
+    }
+
+    private async Task SaveClientAsync()
+    {
+        if (_selectedClientId == Guid.Empty)
+            return;
+
+        _isLoading = true;
+        StateHasChanged();
+
+        UserStateService.SetClient(_selectedClientId);
+        _items = await ItemsService.GetItemsByClientIdAsync(_selectedClientId);
+
+        _isLoading = false;
+        StateHasChanged();
+    }
+
+    private void CreateItem()
+      => Nav.NavigateTo($"/items/create/{_selectedClientId}");
+
+    private void EditItem(Guid itemId)
+      => Nav.NavigateTo($"/items/edit/{itemId}");
+
+    private async Task DeleteItem(Guid itemId)
+    {
+        await ItemsService.DeleteItemAsync(itemId);
+        await SaveClientAsync();
+    }
+}

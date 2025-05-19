@@ -13,6 +13,8 @@ public class CurrencyConverter : ICurrencyConverter
 
     public async Task<decimal> ConvertAsync(decimal amount, string fromCurrency, string toCurrency, DateTime date, CancellationToken cancellationToken)
     {
+        const int decFormat = 2;
+
         if (fromCurrency.Equals(toCurrency, StringComparison.Ordinal))
         {
             return amount;
@@ -30,6 +32,6 @@ public class CurrencyConverter : ICurrencyConverter
             toRate = (await _exchangeRateProvider.GetByCurrencyForWeekAsync(toCurrency, date, cancellationToken)).Rate;
         }
 
-        return amount * toRate / fromRate;
+        return Math.Round(amount * toRate / fromRate, decFormat);
     }
 }

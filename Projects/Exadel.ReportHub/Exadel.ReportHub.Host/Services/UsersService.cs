@@ -3,6 +3,7 @@ using Exadel.ReportHub.Handlers.User.Create;
 using Exadel.ReportHub.Handlers.User.Delete;
 using Exadel.ReportHub.Handlers.User.Get;
 using Exadel.ReportHub.Handlers.User.GetById;
+using Exadel.ReportHub.Handlers.User.GetClients;
 using Exadel.ReportHub.Handlers.User.GetProfile;
 using Exadel.ReportHub.Handlers.User.UpdateActivity;
 using Exadel.ReportHub.Handlers.User.UpdateName;
@@ -157,6 +158,19 @@ public class UsersService(ISender sender) : BaseService
     public async Task<ActionResult> TurnOffUserNotificationSettings()
     {
         var result = await sender.Send(new UpdateUserNotificationSettingsRequest(null));
+        return FromResult(result);
+    }
+
+    [Authorize]
+    [HttpGet("clients")]
+    [SwaggerOperation(Summary = "Get user clients", Description = "Gets list of all user clients")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, Constants.SwaggerSummary.Common.Status401Description)]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, Constants.SwaggerSummary.Common.Status403Description)]
+    [SwaggerResponse(StatusCodes.Status404NotFound, Constants.SwaggerSummary.User.Status404Description, typeof(ErrorResponse))]
+    [SwaggerResponse(StatusCodes.Status500InternalServerError, Constants.SwaggerSummary.Common.Status500Description, typeof(ErrorResponse))]
+    public async Task<ActionResult<IList<UserClientDTO>>> GetUserClients()
+    {
+        var result = await sender.Send(new GetUserClientsRequest());
         return FromResult(result);
     }
 }

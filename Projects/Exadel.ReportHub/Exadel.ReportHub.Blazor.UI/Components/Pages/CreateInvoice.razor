@@ -1,0 +1,110 @@
+﻿@page "/invoices/create/{ClientId:guid}"
+@rendermode InteractiveServer
+
+@inject IInvoicesService InvoiceService
+@inject IItemsService ItemsService
+@inject ICustomersService CustomerService
+@inject IUserStateService UserStateService
+@inject NavigationManager Nav
+
+<h3>Create Invoice</h3>
+
+<EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
+
+  <div class="mb-3">
+    <label class="form-label">Invoice Number</label>
+    <InputText class="form-control"
+               @bind-Value="model.InvoiceNumber" />
+  </div>
+
+  <div class="row mb-3">
+    <div class="col">
+      <label class="form-label">Issue Date</label>
+      <InputDate class="form-control"
+                 @bind-Value="model.IssueDate" />
+    </div>
+    <div class="col">
+      <label class="form-label">Due Date</label>
+      <InputDate class="form-control"
+                 @bind-Value="model.DueDate" />
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Customer</label>
+    <InputSelect TValue="Guid"
+                 class="form-select"
+                 @bind-Value="model.CustomerId">
+      <option value="">-- Select customer --</option>
+      @foreach (var cust in _customers)
+      {
+        <option value="@cust.Id">@cust.Name</option>
+      }
+    </InputSelect>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Items</label>
+    @foreach (var it in _items)
+    {
+      <div class="form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               id="item_@it.Id"
+               value="@it.Id"
+               @onchange="e => OnItemToggled(it.Id, e.Value)">
+        <label class="form-check-label" for="item_@it.Id">
+          @it.Name (@it.Price)
+        </label>
+      </div>
+    }
+  </div>
+
+  <button type="submit" class="btn btn-primary">
+    Create
+  </button>
+  <button type="button" class="btn btn-secondary ms-2"
+          @onclick="Cancel">
+    Cancel
+  </button>
+</EditForm>
+
+@code {
+  [Parameter] public Guid ClientId { get; set; }
+
+  private CreateInvoiceDTO   model       = new();
+  private IList<ItemDTO>     _items      = Array.Empty<ItemDTO>();
+  private IList<CustomerDTO> _customers  = Array.Empty<CustomerDTO>();
+  private HashSet<Guid>      _selected   = new();
+
+  protected override async Task OnInitializedAsync()
+  {
+    model.ClientId  = ClientId;
+    model.IssueDate = DateTime.Today;
+    model.DueDate   = DateTime.Today.AddDays(30);
+
+    // подгружаем клиентов и айтемы для этого клиента
+    _customers = await CustomerService.GetCustomersByClientIdAsync(ClientId);
+    _items     = await ItemsService.GetItemsByClientIdAsync(ClientId);
+  }
+
+  private void OnItemToggled(Guid itemId, object checkedValue)
+  {
+    var isChecked = (bool)checkedValue;
+    if (isChecked) _selected.Add(itemId);
+    else          _selected.Remove(itemId);
+
+    model.ItemIds = _selected.ToList();
+  }
+
+  private async Task HandleValidSubmit()
+  {
+    await InvoiceService.CreateInvoiceAsync(model);
+    Nav.NavigateTo("/invoices");
+  }
+
+  private void Cancel()
+    => Nav.NavigateTo("/invoices");
+}
