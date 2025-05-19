@@ -1,0 +1,109 @@
+﻿@page "/clients"
+@rendermode InteractiveServer
+
+@inject IClientsService ClientsService
+@inject IUserStateService UserStateService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+
+<h3>Clients</h3>
+
+<AuthorizeView>
+    <NotAuthorized>
+        <p>
+            Please <NavLink href="/login">login</NavLink> to see your clients.
+        </p>
+    </NotAuthorized>
+    <Authorized>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <strong>Your clients:</strong>
+            </div>
+            @if(CanCreateClients)
+            {
+                <button class="btn btn-success"
+                        @onclick="CreateClient">
+                    + New Client
+                </button>
+            }
+        </div>
+
+        @if (_isLoading)
+        {
+            <div class="text-center py-5">
+                <div class="spinner-border" role="status"></div>
+            </div>
+        }
+        else if (_clients?.Count > 0)
+        {
+            <table class="table table-striped">
+                <thead class="table-light">
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Role</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in _clients)
+                    {
+                        <tr>
+                            <td>@c.ClientName</td>
+                            <td>@c.Role</td>
+                            <td class="text-end">
+                                @if (c.Role == UserRole.SuperAdmin)
+                                {
+                                    <button class="btn btn-sm btn-outline-danger"
+                                            @onclick="() => DeleteClient(c.ClientId)">
+                                        Delete
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                You have no clients.
+            </div>
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private IList<UserClientDTO> _clients = Array.Empty<UserClientDTO>();
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var auth = await AuthStateProvider.GetAuthenticationStateAsync();
+        if (auth.User.Identity?.IsAuthenticated != true)
+            return;
+        var cache = UserStateService.GetUserClientDTOs();
+        if (cache == null || cache.Count == 0)
+        {
+            _clients = await ClientsService.GetClientsAsync();
+            UserStateService.SetUserClients(_clients);
+        }
+        else
+        {
+            _clients = cache;
+        }
+
+        _isLoading = false;
+    }
+    private bool CanCreateClients  => _clients.Any(c => c.Role == UserRole.SuperAdmin);
+
+    private void CreateClient() => Nav.NavigateTo("/clients/create");
+
+    private void ViewClient(Guid clientId) => Nav.NavigateTo($"/clients/{clientId}");
+
+    private async Task DeleteClient(Guid clientId)
+    {
+        _clients = await ClientsService.GetClientsAsync();
+        UserStateService.SetUserClients(_clients);
+    }
+}

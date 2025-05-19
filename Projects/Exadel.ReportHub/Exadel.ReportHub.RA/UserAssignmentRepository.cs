@@ -78,4 +78,11 @@ public class UserAssignmentRepository(MongoDbContext context) : BaseRepository(c
 
         return GetCollection<UserAssignment>().DeleteManyAsync(filter, cancellationToken);
     }
+
+    public Task<IList<UserAssignment>> GetUserAssignmentsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var filter = _filterBuilder.Eq(x => x.UserId, userId);
+
+        return GetAsync<UserAssignment>(filter, cancellationToken);
+    }
 }

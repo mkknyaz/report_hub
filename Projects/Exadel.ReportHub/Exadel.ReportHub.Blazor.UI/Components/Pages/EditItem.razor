@@ -1,0 +1,94 @@
+﻿@page "/items/edit/{ItemId:guid}"
+@rendermode InteractiveServer
+
+@inject IItemsService ItemsService
+@inject ICountryService CountryService
+@inject NavigationManager Nav
+
+<PageTitle>Edit Item</PageTitle>
+
+<h3>Edit Item</h3>
+
+@if (model is null)
+{
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading…</span>
+    </div>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <InputText class="form-control"
+                       @bind-Value="model.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <InputTextArea class="form-control"
+                           rows="3"
+                           @bind-Value="model.Description" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <InputNumber class="form-control"
+                         @bind-Value="model.Price" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Currency</label>
+            <InputSelect TValue="Guid"
+                         class="form-select"
+                         @bind-Value="model.CurrencyId">
+                <option value="">-- Select currency --</option>
+                @foreach (var cur in _currencies)
+                {
+                    <option value="@cur.CurrencyId">@cur.CurrencyCode</option>
+                }
+            </InputSelect>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="Cancel">
+            Cancel
+        </button>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public Guid ItemId { get; set; }
+
+    private CreateUpdateItemDTO model;
+    private IList<CurrencyDTO> _currencies = Array.Empty<CurrencyDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _currencies = await CountryService.GetCurrenciesAsync();
+
+        var orig = await ItemsService.GetItemByIdAsync(ItemId);
+        model = new CreateUpdateItemDTO
+            {
+                ClientId = orig.ClientId,
+                Name = orig.Name,
+                Description = orig.Description,
+                Price = orig.Price,
+                CurrencyId = orig.CurrencyId
+            };
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await ItemsService.UpdateItemAsync(ItemId, model);
+        Nav.NavigateTo("/items");
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/items");
+    }
+}

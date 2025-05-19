@@ -1,0 +1,38 @@
+@page "/login"
+@rendermode InteractiveServer
+@inject IAuthService AuthService
+@inject NavigationManager Nav
+
+<PageTitle>Login</PageTitle>
+
+@if (_isError)
+{
+    <div class="alert alert-danger">Invalid email or password.</div>
+}
+
+<div>
+    <input @bind="_email" placeholder="Email" />
+</div>
+<div>
+    <input @bind="_password" type="password" placeholder="Password" />
+</div>
+<button class="btn btn-primary" @onclick="HandleLogin">Login</button>
+
+@code {
+    private string _email;
+    private string _password;
+    private bool _isError;
+
+    public async Task HandleLogin()
+    {
+        var token = await AuthService.LoginAsync(_email, _password);
+        if (token != null)
+        {
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            _isError = true;
+        }
+    }
+}

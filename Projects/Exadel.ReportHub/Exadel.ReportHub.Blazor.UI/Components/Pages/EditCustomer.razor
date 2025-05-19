@@ -1,0 +1,111 @@
+﻿@page "/customers/edit/{CustomerId:guid}"
+@rendermode InteractiveServer
+
+@inject ICustomersService CustomerService
+@inject ICountryService CountryService
+@inject IUserStateService UserStateService
+@inject NavigationManager Nav
+
+<div class="container-fluid mt-4">
+    <h3>Edit Customer</h3>
+
+    @if (!_canUpdate)
+    {
+        <div class="alert alert-warning">
+            You do not have permission to edit customers.
+        </div>
+    }
+    else if (orig is null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status"></div>
+        </div>
+    }
+    else
+    {
+        <EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <InputText class="form-control"
+                           @bind-Value="model.Name" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <div class="form-control-plaintext">@orig.Email</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Country</label>
+                <InputSelect TValue="Guid"
+                             class="form-select"
+                             @bind-Value="model.CountryId">
+                    <option value="">-- Select country --</option>
+                    @foreach (var c in _countries)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    disabled="@(!_canUpdate)">
+                Save
+            </button>
+            <button type="button"
+                    class="btn btn-secondary ms-2"
+                    @onclick="Cancel">
+                Cancel
+            </button>
+        </EditForm>
+    }
+</div>
+
+@code {
+    [Parameter] public Guid CustomerId { get; set; }
+
+    private CustomerDTO orig;
+    private UpdateCustomerDTO model;
+    private IList<CountryDTO> _countries = Array.Empty<CountryDTO>();
+
+    private UserRole CurrentRole =>
+      UserStateService.GetSelectedClient()?.Role ?? UserRole.Operator;
+    private bool _canUpdate =>
+      CurrentRole is UserRole.ClientAdmin
+                      or UserRole.Owner
+                      or UserRole.SuperAdmin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var clientId = UserStateService.GetSelectedClientId();
+
+        _countries = await CountryService.GetCountriesAsync();
+
+        orig = await CustomerService.GetCustomerByIdAsync(CustomerId, clientId);
+
+        model = new UpdateCustomerDTO
+            {
+                Name = orig.Name,
+                CountryId = orig.CountryId
+            };
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (!_canUpdate)
+            return;
+
+        await CustomerService.UpdateCustomerAsync(
+          CustomerId,
+          model,
+          orig.ClientId);
+
+        Nav.NavigateTo("/customers");
+    }
+
+    private void Cancel() => Nav.NavigateTo("/customers");
+}

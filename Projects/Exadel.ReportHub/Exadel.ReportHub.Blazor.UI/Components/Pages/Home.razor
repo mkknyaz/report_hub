@@ -1,0 +1,106 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject IClientsService ClientsService
+@inject IItemsService ItemsService
+@inject IUserStateService UserStateService
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager Nav
+
+<PageTitle>Dashboard</PageTitle>
+
+@code {
+	private string _userName = "";
+	private int _totalClients;
+	private int _totalItems;
+	private IList<ItemDTO> _recentItems = new List<ItemDTO>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		var auth = await AuthProvider.GetAuthenticationStateAsync();
+		_userName = auth.User.Identity?.Name ?? "User";
+
+		var clients = await ClientsService.GetClientsAsync();
+		_totalClients = clients.Count;
+
+		var clientId = UserStateService.GetSelectedClientId();
+		if (clientId != Guid.Empty)
+		{
+			var items = await ItemsService.GetItemsByClientIdAsync(clientId);
+			_totalItems = items.Count;
+			_recentItems = items
+					.OrderByDescending(i => i.Id)
+					.Take(5)
+					.ToList();
+		}
+	}
+}
+<div class="container-fluid p-4">
+	<h2 class="mb-4">Hello, @_userName!</h2>
+
+	<div class="row g-4 mb-5">
+		<div class="col-md-4">
+			<div class="card shadow-sm text-white bg-primary">
+				<div class="card-body">
+					<h5 class="card-title">Total Clients</h5>
+					<h2>@_totalClients</h2>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="card shadow-sm text-white bg-success">
+				<div class="card-body">
+					<h5 class="card-title">Items for Selected Client</h5>
+					<h2>@_totalItems</h2>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="card shadow-sm text-white bg-warning">
+				<div class="card-body">
+					<h5 class="card-title">Quick Actions</h5>
+					<button class="btn btn-light btn-sm me-2" @onclick='() => Nav.NavigateTo($"/items/create/{UserStateService.GetSelectedClientId()}")'>
+						+ New Item
+					</button>
+					<button class="btn btn-light btn-sm" @onclick='() => Nav.NavigateTo("/items")'>
+						View Items
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card shadow-sm mb-4">
+		<div class="card-header">
+			<strong>Recent Items</strong>
+		</div>
+		<div class="card-body p-0">
+			@if (_recentItems.Count == 0)
+			{
+				<p class="p-3 text-muted">No items to display.</p>
+			}
+			else
+			{
+				<table class="table table-hover mb-0">
+					<thead class="table-light">
+						<tr>
+							<th>Name</th>
+							<th class="text-end">Price</th>
+							<th>Currency</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var it in _recentItems)
+						{
+							<tr @onclick='() => Nav.NavigateTo($"/items/edit/{it.Id}")'
+								style="cursor: pointer;">
+								<td>@it.Name</td>
+								<td class="text-end">@it.Price.ToString("C2")</td>
+								<td>@it.CurrencyCode</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+		</div>
+	</div>
+</div>
