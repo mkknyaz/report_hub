@@ -6,6 +6,8 @@ public class ExportInvoicesAuditAction : IAuditAction
 {
     public Guid UserId { get; }
 
+    public Guid ClientId { get; }
+
     public Dictionary<string, Guid> Properties { get; }
 
     public DateTime TimeStamp { get; }
@@ -14,9 +16,10 @@ public class ExportInvoicesAuditAction : IAuditAction
 
     public bool IsSuccess { get; }
 
-    public ExportInvoicesAuditAction(Guid userId, Guid invoiceId, DateTime timeStamp, bool isSuccess)
+    public ExportInvoicesAuditAction(Guid userId, Guid invoiceId, Guid clientId, DateTime timeStamp, bool isSuccess)
     {
         UserId = userId;
+        ClientId = clientId;
         Properties = new Dictionary<string, Guid>
         {
             { "InvoiceId", invoiceId }

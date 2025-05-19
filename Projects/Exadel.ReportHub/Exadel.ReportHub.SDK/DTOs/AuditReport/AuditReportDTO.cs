@@ -8,6 +8,8 @@ public class AuditReportDTO
 
     public Guid UserId { get; set; }
 
+    public Guid ClientId { get; set; }
+
     public Dictionary<string, Guid> Properties { get; set; }
 
     public string Action { get; set; }

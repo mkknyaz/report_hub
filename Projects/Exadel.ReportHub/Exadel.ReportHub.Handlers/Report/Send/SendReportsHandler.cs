@@ -1,7 +1,10 @@
-﻿using System.Net.Mail;
+﻿using System.Linq;
+using System.Net.Mail;
 using Exadel.ReportHub.Email.Abstract;
 using Exadel.ReportHub.Email.Models;
 using Exadel.ReportHub.Handlers.Managers.Report;
+using Exadel.ReportHub.Handlers.Notifications;
+using Exadel.ReportHub.Handlers.Notifications.Report.Send;
 using Exadel.ReportHub.RA.Abstract;
 using Exadel.ReportHub.SDK.DTOs.Report;
 using Exadel.ReportHub.SDK.Enums;
@@ -12,7 +15,12 @@ namespace Exadel.ReportHub.Handlers.Report.Send;
 
 public record SendReportsRequest : IRequest<Unit>;
 
-public class SendReportsHandler(IReportManager reportManager, IUserRepository userRepository, IEmailSender emailSender, ILogger<SendReportsHandler> logger)
+public class SendReportsHandler(
+    IReportManager reportManager,
+    IUserRepository userRepository,
+    IEmailSender emailSender,
+    IPublisher publisher,
+    ILogger<SendReportsHandler> logger)
     : IRequestHandler<SendReportsRequest, Unit>
 {
     public async Task<Unit> Handle(SendReportsRequest request, CancellationToken cancellationToken)
@@ -72,6 +80,11 @@ public class SendReportsHandler(IReportManager reportManager, IUserRepository us
             {
                 logger.LogError(ex, "Failed to generate reports");
                 reportEmail.IsSuccess = false;
+            }
+            finally
+            {
+                var notification = new SendReportsNotification(user.Id, exportReportDto.ClientId, DateTime.UtcNow, reportEmail.IsSuccess);
+                await publisher.Publish(notification, cancellationToken);
             }
 
             try

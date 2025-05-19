@@ -1,0 +1,61 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+@inject HttpClient Client
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<div>
+    <input @bind="email" placeholder="Email" />
+</div>
+<div>
+    <input @bind="password" type="password" placeholder="Password" />
+</div>
+<button class="btn btn-primary" @onclick="LoginAsync">Login</button>
+
+@code {
+    private string email;
+    private string password;
+    private string error;
+
+    private async Task LoginAsync()
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            { OidcConstants.TokenRequest.ClientId, Constants.Authentication.ClientId },
+            { OidcConstants.TokenRequest.GrantType, OidcConstants.GrantTypes.Password },
+            { OidcConstants.TokenRequest.UserName, email },
+            { OidcConstants.TokenRequest.Password, password },
+            { OidcConstants.TokenRequest.Scope, Constants.Authentication.Scope }
+        };
+
+        var response = await Client.PostAsync(new Uri("/connect/token", UriKind.Relative), new FormUrlEncodedContent(parameters));
+
+        if (!response.IsSuccessStatusCode)
+        {
+            error = "Invalid email or password.";
+            return;
+        }
+
+        var dto = await response.Content.ReadFromJsonAsync<LoginResult>();
+        string token = dto.AccessToken;
+
+        if (AuthenticationStateProvider is AuthStateProvider stateProvider)
+        {
+            await stateProvider.NotifyLoginAsync(token);
+        }
+
+        Navigation.NavigateTo("/", forceLoad: true);
+    }
+
+    private class LoginResult
+    {
+        [JsonPropertyName(OidcConstants.TokenResponse.AccessToken)]
+        public string AccessToken { get; set; }
+    }
+}

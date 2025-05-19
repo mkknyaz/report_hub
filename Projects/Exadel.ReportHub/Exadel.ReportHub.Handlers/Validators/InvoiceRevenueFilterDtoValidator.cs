@@ -16,6 +16,7 @@ public class InvoiceRevenueFilterDtoValidator : AbstractValidator<InvoiceRevenue
             .ChildRules(child =>
             {
                 RuleLevelCascadeMode = CascadeMode.Stop;
+                ClassLevelCascadeMode = CascadeMode.Stop;
 
                 child.RuleFor(x => x.StartDate)
                     .NotEmpty()
@@ -24,7 +25,6 @@ public class InvoiceRevenueFilterDtoValidator : AbstractValidator<InvoiceRevenue
                     .WithMessage(Constants.Validation.Date.InvalidStartDate);
 
                 child.RuleFor(x => x.EndDate)
-                    .NotEmpty()
                     .LessThanOrEqualTo(DateTime.UtcNow)
                     .WithMessage(Constants.Validation.Date.EndDateNotInPast);
 

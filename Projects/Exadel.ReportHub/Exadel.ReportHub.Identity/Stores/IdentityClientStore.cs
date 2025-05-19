@@ -8,6 +8,13 @@ public class IdentityClientStore(IIdentityRepository identityRepository) : IClie
 {
     public async Task<Client> FindClientByIdAsync(string clientId)
     {
-        return await identityRepository.GetClientByIdAsync(clientId, CancellationToken.None);
+        var client = await identityRepository.GetClientByIdAsync(clientId, CancellationToken.None);
+
+        client.AlwaysSendClientClaims = true;
+        client.AlwaysIncludeUserClaimsInIdToken = true;
+
+        client.ClientClaimsPrefix = string.Empty;
+
+        return client;
     }
 }
